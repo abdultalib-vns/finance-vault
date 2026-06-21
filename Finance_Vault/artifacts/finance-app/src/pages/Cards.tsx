@@ -1,0 +1,831 @@
+import { useState, useMemo, useEffect } from "react";
+import { FinanceItem, CardExpense, ExpenseStatus, PaymentApp } from "../types";
+import { Currency, formatAmount } from "../lib/currency";
+import { loadExpenses, saveExpenses, saveItems, saveCashbacks, loadCashbacks } from "../lib/storage";
+import CardDetail from "../components/CardDetail";
+import ExpenseForm from "../components/ExpenseForm";
+import AddItemForm from "../components/AddItemForm";
+import SwipeableRow from "../components/SwipeableRow";
+import PullToRefresh from "../components/PullToRefresh";
+import { loadCardTemplates, loadAdminConfigFromServer } from "../admin/adminStorage";
+import { CardTemplate } from "../admin/adminTypes";
+
+interface Props {
+  masterKey: string;
+  currency: Currency;
+  items: FinanceItem[];
+  onItemsChange: (items: FinanceItem[]) => void;
+  onReload?: () => void;
+}
+
+type SubTab = "balance" | "expenses" | "newcard";
+
+const MASK = "••••••";
+
+const PAYMENT_APPS: PaymentApp[] = [
+  { name: "CRED", icon: "https://www.pngall.com/wp-content/uploads/16/Cred-Logo-PNG-Picture-thumb.png", url: "https://cred.club" },
+  { name: "Google Pay", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyVO9LUWF81Ov6LZR50eDNu5rNFCpkn0LwYQ&s", url: "https://pay.google.com" },
+  { name: "PhonePe", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTo4x8kSTmPUq4PFzl4HNT0gObFuEhivHOFYg&s", url: "https://www.phonepe.com" },
+  { name: "Paytm", icon: "https://images.icon-icons.com/730/PNG/512/paytm_icon-icons.com_62778.png", url: "https://paytm.com" },
+  { name: "Amazon Pay", icon: "https://static.vecteezy.com/system/resources/thumbnails/073/494/118/small_2x/amazon-pay-logo-modern-circular-icon-with-transparent-background-free-png.png", url: "https://www.amazon.com/pay" },
+  { name: "Navi", icon: "https://play-lh.googleusercontent.com/odLHWIoUXt-09eYccaFf_zmF8yiLR3iPqRjzwUWc_xUAJrcHFao_23CcuqrOJBaSCZRU=s96-rw", url: "https://navi.com" },
+  { name: "Mobikwik", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEt03XLHujIry51KoZxt0DLJDqQMz9k5IqUA&s", url: "https://www.mobikwik.com" },
+  { name: "FreeCharge", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWd7gE_EU9okxdsbO0WMiR2Xt3I2qbMlb7Ng&s", url: "https://www.freecharge.in" },
+];
+
+export default function Cards({ masterKey, currency, items, onItemsChange, onReload }: Props) {
+  const [subTab, setSubTab] = useState<SubTab>("balance");
+  const [selectedCard, setSelectedCard] = useState<FinanceItem | null>(null);
+  const [editItem, setEditItem] = useState<FinanceItem | null>(null);
+  const [showAmounts, setShowAmounts] = useState(false);
+  const [showPaymentApps, setShowPaymentApps] = useState(false);
+
+  const cardItems = items.filter((i) => i.type === "card" || i.type === "paylater");
+
+  function handleAddCard(item: FinanceItem) {
+    const updated = [...items, item];
+    saveItems(updated);
+    onItemsChange(updated);
+  }
+
+  function handleEditSave(updated: FinanceItem) {
+    const next = items.map((i) => i.id === updated.id ? updated : i);
+    saveItems(next);
+    onItemsChange(next);
+    setEditItem(null);
+  }
+
+  function handleDelete(id: string) {
+    const next = items.filter((i) => i.id !== id);
+    saveItems(next);
+    saveExpenses(loadExpenses().filter((e) => e.cardId !== id));
+    onItemsChange(next);
+  }
+
+  if (selectedCard) {
+    return <CardDetail card={selectedCard} currency={currency} onBack={() => setSelectedCard(null)} />;
+  }
+
+  return (
+    <div className="screen">
+      <header className="page-header">
+        <div className="page-header-row">
+          <h2 className="header-title">Cards</h2>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <button
+              type="button"
+              className="reveal-toggle"
+              onClick={() => setShowPaymentApps(true)}
+              title="Payment Apps"
+              style={{ fontSize: "1.2rem" }}
+            >
+              💰
+            </button>
+            <button
+              type="button"
+              className="reveal-toggle"
+              onClick={() => setShowAmounts((v) => !v)}
+              title={showAmounts ? "Hide amounts" : "Reveal amounts"}
+            >
+              {showAmounts ? "🙈" : "👁️"}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div className="main-tabs">
+        <button className={`main-tab ${subTab === "balance" ? "active" : ""}`} onClick={() => setSubTab("balance")}>
+          💳 Card Balance
+        </button>
+        <button className={`main-tab ${subTab === "expenses" ? "active" : ""}`} onClick={() => setSubTab("expenses")}>
+          🧾 Card Expenses
+        </button>
+        <button className={`main-tab ${subTab === "newcard" ? "active" : ""}`} onClick={() => setSubTab("newcard")}>
+          🆕 Get a Card
+        </button>
+      </div>
+
+      {subTab === "balance" ? (
+        <BalanceView
+          items={cardItems}
+          currency={currency}
+          onSelect={setSelectedCard}
+          masterKey={masterKey}
+          onAddCard={handleAddCard}
+          onEdit={setEditItem}
+          onDelete={handleDelete}
+          onReload={onReload}
+          showAmounts={showAmounts}
+        />
+      ) : subTab === "expenses" ? (
+        <ExpensesView cards={cardItems} currency={currency} onSelectCard={setSelectedCard} onReload={onReload} showAmounts={showAmounts} />
+      ) : (
+        <NewCardView />
+      )}
+
+      {editItem && (
+        <div className="modal-overlay" onClick={() => setEditItem(null)}>
+          <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
+            <AddItemForm
+              masterKey={masterKey}
+              currency={currency}
+              onAdd={() => {}}
+              initialValues={editItem}
+              onSave={handleEditSave}
+              onCancel={() => setEditItem(null)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Payment Apps Popup */}
+      {showPaymentApps && (
+        <div className="modal-overlay" onClick={() => setShowPaymentApps(false)}>
+          <div className="modal-sheet payment-apps-sheet" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 className="form-title">💰 Pay Your Bills</h3>
+              <button className="modal-close" onClick={() => setShowPaymentApps(false)}>✕</button>
+            </div>
+            <p className="modal-subtitle">Quick links to popular bill payment apps</p>
+            <div className="payment-apps-grid">
+              {PAYMENT_APPS.map((app) => (
+                <a
+                  key={app.name}
+                  href={app.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="payment-app-card"
+                >
+                <span className="payment-app-icon">
+                    {app.icon.startsWith("http") ? (
+                      <img src={app.icon} alt={app.name} className="payment-app-img" />
+                    ) : (
+                      app.icon
+                    )}
+                  </span>
+                  <span className="payment-app-name">{app.name}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function BalanceView({ items, currency, onSelect, masterKey, onAddCard, onEdit, onDelete, onReload, showAmounts }: {
+  items: FinanceItem[]; currency: Currency; onSelect: (i: FinanceItem) => void;
+  masterKey: string; onAddCard: (item: FinanceItem) => void;
+  onEdit: (item: FinanceItem) => void; onDelete: (id: string) => void;
+  onReload?: () => void; showAmounts: boolean;
+}) {
+  const [showAddForm, setShowAddForm] = useState(false);
+  const cards = items.filter((i) => i.type === "card");
+  const payLater = items.filter((i) => i.type === "paylater");
+  const expenses = loadExpenses();
+
+  const totalLimit = items.reduce((s, i) => s + (i.creditLimit ?? 0), 0);
+  const totalOutstanding = items.reduce((sum, c) => {
+    const cardExp = expenses.filter((e) => e.cardId === c.id);
+    return sum + cardExp
+      .filter((e) => e.status === "unpaid" || e.status === "bill_generated_unpaid")
+      .reduce((s, e) => s + e.amount, 0);
+  }, 0);
+
+  return (
+    <>
+      {items.length > 0 && (
+        <div className="stats-bar">
+          <div className="stat-item">
+            <span className="stat-value paid-val">{showAmounts ? formatAmount(totalLimit, currency) : MASK}</span>
+            <span className="stat-label">Total Limit</span>
+          </div>
+          <div className="stat-divider" />
+          <div className="stat-item">
+            <span className="stat-value outstanding">{showAmounts ? formatAmount(totalOutstanding, currency) : MASK}</span>
+            <span className="stat-label">Outstanding</span>
+          </div>
+          <div className="stat-divider" />
+          <div className="stat-item">
+            <span className="stat-value cashback-val">{items.length}</span>
+            <span className="stat-label">Cards</span>
+          </div>
+        </div>
+      )}
+
+      <PullToRefresh onRefresh={onReload ?? (() => {})} className="content">
+        <button className="fab-btn" onClick={() => setShowAddForm(true)} aria-label="Add Card / Pay Later" title="Add Card / Pay Later">+</button>
+
+        {showAddForm && (
+          <div className="modal-overlay" onClick={() => setShowAddForm(false)}>
+            <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
+              <AddItemForm
+                masterKey={masterKey}
+                currency={currency}
+                onAdd={(item) => { onAddCard(item); setShowAddForm(false); }}
+                allowedTypes={["card", "paylater"]}
+                defaultType="card"
+                buttonLabel="Add Card / Pay Later"
+                startOpen
+                onCancel={() => setShowAddForm(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        <CardSection title="Credit / Debit Cards" icon="💳" items={cards}
+          currency={currency} expenses={expenses} onSelect={onSelect}
+          onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
+        <CardSection title="Pay Later Services" icon="🔄" items={payLater}
+          currency={currency} expenses={expenses} onSelect={onSelect}
+          onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
+
+        {items.length === 0 && (
+          <div className="empty-state">
+            <p className="empty-icon">💳</p>
+            <p className="empty-text">No cards yet.</p>
+            <p className="empty-sub">Tap + to add your first card.</p>
+          </div>
+        )}
+      </PullToRefresh>
+    </>
+  );
+}
+
+function CardSection({ title, icon, items, currency, expenses, onSelect, onEdit, onDelete, showAmounts }: {
+  title: string; icon: string; items: FinanceItem[]; currency: Currency;
+  expenses: CardExpense[]; onSelect: (item: FinanceItem) => void;
+  onEdit: (item: FinanceItem) => void; onDelete: (id: string) => void;
+  showAmounts: boolean;
+}) {
+  if (items.length === 0) return null;
+  const totalLimit = items.reduce((s, i) => s + (i.creditLimit ?? 0), 0);
+
+  return (
+    <div className="cards-section">
+      <div className="cards-section-header">
+        <h3 className="cards-section-title">{icon} {title}</h3>
+        {totalLimit > 0 && (
+          <span className="cards-section-total">
+            Limit: {showAmounts ? formatAmount(totalLimit, currency) : MASK}
+          </span>
+        )}
+      </div>
+      {items.map((item) => {
+        const cardExp = expenses.filter((e) => e.cardId === item.id);
+        const outstanding = cardExp
+          .filter((e) => e.status === "unpaid" || e.status === "bill_generated_unpaid")
+          .reduce((s, e) => s + e.amount, 0);
+        const totalCashback = cardExp.reduce((s, e) => s + e.cashback, 0);
+        const limit = item.creditLimit;
+        const utilizationPct = limit && limit > 0 ? (outstanding / limit) * 100 : 0;
+        const isNearLimit = limit !== undefined && limit > 0 && utilizationPct >= 90;
+
+        return (
+          <SwipeableRow key={item.id} item={item} onEdit={onEdit} onDelete={onDelete}>
+            <div className={`card-row clickable ${isNearLimit ? "card-row-warn" : ""}`} onClick={() => onSelect(item)}>
+              <div className="card-row-left">
+                <p className="card-row-name">{item.name}</p>
+                <p className="card-row-secret">
+                  {showAmounts
+                    ? (item.type === "card" && item.lastFour ? `•••• •••• •••• ${item.lastFour}` : "•••• •••• ••••")
+                    : "•••• •••• •••• ••••"}
+                </p>
+                {item.creditLimit !== undefined && showAmounts && (
+                  <p className="card-row-secret">Limit: {formatAmount(item.creditLimit, currency)}</p>
+                )}
+                {isNearLimit && showAmounts && limit !== undefined && (
+                  <div className="card-utilization-bar-wrap">
+                    <div className="card-utilization-bar">
+                      <div
+                        className="card-utilization-fill"
+                        style={{ width: `${Math.min(utilizationPct, 100)}%` }}
+                      />
+                      <div className="card-utilization-threshold" />
+                    </div>
+                    <span className="card-utilization-label">
+                      {formatAmount(outstanding, currency)} / {formatAmount(limit, currency)}
+                    </span>
+                  </div>
+                )}
+                <div className="card-row-chips">
+                  {isNearLimit && (
+                    <span className="chip chip-warn">⚠️ {utilizationPct.toFixed(0)}% used</span>
+                  )}
+                  {showAmounts ? (
+                    outstanding > 0 ? (
+                      <span className="chip chip-unpaid">Due: {formatAmount(outstanding, currency)}</span>
+                    ) : cardExp.length > 0 ? (
+                      <span className="chip" style={{ background: "#d1fae5", color: "#065f46" }}>All Clear</span>
+                    ) : null
+                  ) : (
+                    cardExp.length > 0 && (
+                      <span className="chip" style={{ background: "#e5e7eb", color: "#6b7280" }}>Tap 👁️ to reveal</span>
+                    )
+                  )}
+                  {showAmounts && totalCashback > 0 && (
+                    <span className="chip chip-cashback">+{formatAmount(totalCashback, currency)} CB</span>
+                  )}
+                </div>
+              </div>
+              <div className="card-row-right">
+                <span className="card-row-chevron">›</span>
+              </div>
+            </div>
+          </SwipeableRow>
+        );
+      })}
+    </div>
+  );
+}
+
+function ExpensesView({ cards, currency, onSelectCard, onReload, showAmounts }: {
+  cards: FinanceItem[]; currency: Currency; onSelectCard: (c: FinanceItem) => void;
+  onReload?: () => void; showAmounts: boolean;
+}) {
+  const [expenses, setExpenses] = useState<CardExpense[]>(() => loadExpenses());
+  const [showForm, setShowForm] = useState(false);
+  const [pickerCardId, setPickerCardId] = useState<string>("");
+  const [cardChosen, setCardChosen] = useState(false);
+  const [filterCardId, setFilterCardId] = useState<string>("all");
+  const [filterStatus, setFilterStatus] = useState<"all" | ExpenseStatus>("all");
+  const [selectedMonth, setSelectedMonth] = useState<string>("all");
+
+  const cardMap = useMemo(() => new Map(cards.map((c) => [c.id, c])), [cards]);
+
+  const availableMonths = useMemo(() => {
+    const monthSet = new Set<string>();
+    expenses.forEach((e) => {
+      if (cardMap.has(e.cardId)) {
+        try {
+          const d = new Date(e.date + "T00:00:00");
+          monthSet.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
+        } catch { /* skip */ }
+      }
+    });
+    return [...monthSet].sort((a, b) => b.localeCompare(a));
+  }, [expenses, cardMap]);
+
+  const filtered = useMemo(() => {
+    return [...expenses]
+      .filter((e) => cardMap.has(e.cardId))
+      .filter((e) => filterCardId === "all" ? true : e.cardId === filterCardId)
+      .filter((e) => filterStatus === "all" ? true : e.status === filterStatus)
+      .filter((e) => {
+        if (selectedMonth === "all") return true;
+        try {
+          const d = new Date(e.date + "T00:00:00");
+          const mk = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+          return mk === selectedMonth;
+        } catch { return true; }
+      })
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [expenses, filterCardId, filterStatus, selectedMonth, cardMap]);
+
+  const totals = useMemo(() => {
+    const cardExp = expenses.filter((e) => cardMap.has(e.cardId));
+    return {
+      total: cardExp.reduce((s, e) => s + e.amount, 0),
+      unpaid: cardExp.filter((e) => e.status === "unpaid" || e.status === "bill_generated_unpaid").reduce((s, e) => s + e.amount, 0),
+      cashback: cardExp.reduce((s, e) => s + e.cashback, 0),
+    };
+  }, [expenses, cardMap]);
+
+  function handleAdd(expense: CardExpense) {
+    // Auto-add cashback to Cashback tracker
+    if (expense.cashback > 0) {
+      const cashbacks = loadCashbacks();
+      const card = cardMap.get(expense.cardId);
+      cashbacks.push({
+        id: `cb-${expense.id}`,
+        source: card?.name ?? "Card",
+        amount: expense.cashback,
+        date: expense.date,
+        note: expense.description,
+        createdAt: Date.now(),
+      });
+      saveCashbacks(cashbacks);
+    }
+    const updated = [expense, ...expenses];
+    saveExpenses(updated);
+    setExpenses(updated);
+    setShowForm(false);
+    setCardChosen(false);
+    setPickerCardId("");
+  }
+
+  function statusInfo(status: ExpenseStatus) {
+    switch (status) {
+      case "paid": return { label: "Paid", color: "#10b981", bg: "#d1fae5" };
+      case "unpaid": return { label: "Unpaid", color: "#f59e0b", bg: "#fef3c7" };
+      case "bill_generated_unpaid": return { label: "Bill Due", color: "#ef4444", bg: "#fee2e2" };
+      case "bill_generated": return { label: "Billed & Paid", color: "#6366f1", bg: "#ede9fe" };
+    }
+  }
+
+  if (cards.length === 0) {
+    return (
+      <PullToRefresh onRefresh={onReload ?? (() => {})} className="content">
+        <div className="empty-state">
+          <p className="empty-icon">💳</p>
+          <p className="empty-text">Add a card first</p>
+          <p className="empty-sub">Switch to Card Balance tab to add cards.</p>
+        </div>
+      </PullToRefresh>
+    );
+  }
+
+  return (
+    <>
+      <div className="stats-bar">
+        <div className="stat-item">
+          <span className="stat-value paid-val">{showAmounts ? formatAmount(totals.total, currency) : MASK}</span>
+          <span className="stat-label">Total Spent</span>
+        </div>
+        <div className="stat-divider" />
+        <div className="stat-item">
+          <span className="stat-value outstanding">{showAmounts ? formatAmount(totals.unpaid, currency) : MASK}</span>
+          <span className="stat-label">Outstanding</span>
+        </div>
+        <div className="stat-divider" />
+        <div className="stat-item">
+          <span className="stat-value cashback-val">{showAmounts ? `+${formatAmount(totals.cashback, currency)}` : MASK}</span>
+          <span className="stat-label">Cashback</span>
+        </div>
+      </div>
+
+      <PullToRefresh onRefresh={onReload ?? (() => {})} className="content">
+        {/* Step 1: Choose card first */}
+        {!showForm && !cardChosen && (
+          <button type="button" className="btn-primary" onClick={() => setCardChosen(true)}>+ Add Card Expense</button>
+        )}
+
+        {/* Step 2: Card picker shown, user must pick */}
+        {cardChosen && !showForm && (
+          <div className="expense-form-wrap">
+            <h3 className="form-title">Choose a Card</h3>
+            <div className="form-group">
+              <label>Select Card</label>
+              <select className="select-input" value={pickerCardId} onChange={(e) => setPickerCardId(e.target.value)}>
+                <option value="">-- Select a card --</option>
+                {cards.map((c) => <option key={c.id} value={c.id}>{c.name}{c.lastFour ? ` (••${c.lastFour})` : ""}</option>)}
+              </select>
+            </div>
+            {(() => {
+              const pickedCard = cardMap.get(pickerCardId);
+              const pickedOutstanding = pickerCardId ? expenses
+                .filter((e) => e.cardId === pickerCardId && (e.status === "unpaid" || e.status === "bill_generated_unpaid"))
+                .reduce((s, e) => s + e.amount, 0) : 0;
+              const pickedLimitReached = pickedCard?.creditLimit !== undefined && pickedCard.creditLimit > 0 && pickedOutstanding >= pickedCard.creditLimit;
+              return (
+                <>
+                  {pickedLimitReached && (
+                    <p className="limit-reached-hint">⚠️ {pickedCard?.name} has reached its credit limit. Pay dues first.</p>
+                  )}
+                  <div className="form-actions">
+                    <button
+                      type="button"
+                      className="btn-primary"
+                      disabled={!pickerCardId || pickedLimitReached}
+                      onClick={() => setShowForm(true)}
+                    >
+                      Continue
+                    </button>
+                    <button type="button" className="btn-secondary" onClick={() => { setCardChosen(false); setPickerCardId(""); }}>Cancel</button>
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        )}
+
+        {/* Step 3: Expense form */}
+        {showForm && pickerCardId && (
+          <div className="expense-form-wrap">
+            <div className="chosen-card-badge">
+              📌 {cardMap.get(pickerCardId)?.name ?? "Card"}
+              {cardMap.get(pickerCardId)?.lastFour ? ` (••${cardMap.get(pickerCardId)?.lastFour})` : ""}
+            </div>
+            <ExpenseForm
+              cardId={pickerCardId}
+              currency={currency}
+              onAdd={handleAdd}
+              onCancel={() => { setShowForm(false); setCardChosen(false); setPickerCardId(""); }}
+              creditLimit={cardMap.get(pickerCardId)?.creditLimit}
+              currentOutstanding={expenses
+                .filter((e) => e.cardId === pickerCardId && (e.status === "unpaid" || e.status === "bill_generated_unpaid"))
+                .reduce((s, e) => s + e.amount, 0)}
+            />
+          </div>
+        )}
+
+        {/* Month & Filters */}
+        {expenses.length > 0 && !showForm && !cardChosen && (
+          <>
+            <div className="form-group">
+              <label>📅 Month</label>
+              <select className="select-input" value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
+                <option value="all">All Months</option>
+                {availableMonths.map((m) => (
+                  <option key={m} value={m}>{fmtMonth(m)}</option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Filter by Card</label>
+              <select className="select-input" value={filterCardId} onChange={(e) => setFilterCardId(e.target.value)}>
+                <option value="all">All Cards</option>
+                {cards.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </div>
+            <div className="filter-chips">
+              {(["all", "unpaid", "paid", "bill_generated_unpaid", "bill_generated"] as const).map((f) => (
+                <button type="button" key={f} className={`filter-chip ${filterStatus === f ? "active" : ""}`} onClick={() => setFilterStatus(f)}>
+                  {f === "all" ? "All" : f === "unpaid" ? "⏳ Unpaid" : f === "paid" ? "✅ Paid" : f === "bill_generated_unpaid" ? "🧾 Bill Due" : "💜 Billed Paid"}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {filtered.length === 0 && !showForm && !cardChosen ? (
+          <div className="empty-state">
+            <p className="empty-icon">🧾</p>
+            <p className="empty-text">{expenses.length === 0 ? "No expenses yet" : "No matches"}</p>
+            {expenses.length === 0 && <p className="empty-sub">Tap + Add Card Expense to start tracking</p>}
+          </div>
+        ) : !showForm && !cardChosen && (
+          <ul className="expense-list">
+            {filtered.map((exp) => {
+              const card = cardMap.get(exp.cardId);
+              const si = statusInfo(exp.status);
+              return (
+                <li key={exp.id} className="expense-item">
+                  <div className="expense-item-top">
+                    <div className="expense-item-left">
+                      <span className="expense-desc">{exp.description}</span>
+                      <span className="expense-date">
+                        {fmtDate(exp.date)}
+                        {exp.dueDate && <> · <span style={{ color: "#ef4444" }}>Due: {fmtDate(exp.dueDate)}</span></>}
+                        {card && <> · <span className="exp-card-tag" onClick={() => onSelectCard(card)}>{card.name}</span></>}
+                      </span>
+                    </div>
+                    <div className="expense-item-right">
+                      <span className="expense-amount">{showAmounts ? formatAmount(exp.amount, currency) : MASK}</span>
+                      {showAmounts && exp.cashback > 0 && <span className="expense-cashback">+{formatAmount(exp.cashback, currency)} CB</span>}
+                    </div>
+                  </div>
+                  <div className="expense-item-bottom">
+                    <span className="status-badge" style={{ background: si.bg, color: si.color }}>{si.label}</span>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </PullToRefresh>
+    </>
+  );
+}
+
+// ── Unified card offer shape used in the detail screen ───────────
+interface CardOfferEntry {
+  id: string;
+  name: string;
+  bank: string;
+  cardType: string;
+  annualFee: string;
+  benefits: string;
+  minSalary?: string;
+  applyUrl?: string;
+  imageUrl?: string;
+  color: string;
+  featured: boolean;
+}
+
+function NewCardView() {
+  const [filterType, setFilterType] = useState<"all" | "free" | "paid">("all");
+  const [selected, setSelected] = useState<CardOfferEntry | null>(null);
+  const [allCards, setAllCards] = useState<CardOfferEntry[]>([]);
+
+  useEffect(() => {
+    loadAdminConfigFromServer().finally(() => {
+      const templates = loadCardTemplates().filter((t: CardTemplate) => t.active);
+      setAllCards(templates.map((t: CardTemplate) => ({
+        id: t.id,
+        name: t.name,
+        bank: t.bank,
+        cardType: t.cardType,
+        annualFee: t.annualFee,
+        benefits: t.benefits,
+        minSalary: t.minSalary,
+        applyUrl: t.applyUrl,
+        imageUrl: t.imageUrl,
+        color: t.color,
+        featured: t.featured,
+      })));
+    });
+  }, []);
+
+  const featuredCards = allCards.filter((c) => c.featured);
+  const filteredCards = allCards.filter((c) => {
+    if (filterType === "all") return true;
+    if (filterType === "free") return c.annualFee === "Free" || c.annualFee === "free" || c.annualFee === "";
+    return c.annualFee !== "Free" && c.annualFee !== "free" && c.annualFee !== "";
+  });
+
+  if (selected) {
+    return <CardOfferDetail offer={selected} onBack={() => setSelected(null)} />;
+  }
+
+  return (
+    <div className="content" style={{ paddingBottom: "80px" }}>
+      <div className="new-card-hero">
+        <span className="new-card-hero-icon">🆕</span>
+        <h3 className="new-card-hero-title">Get a New Credit Card</h3>
+        <p className="new-card-hero-sub">Tap any card to view full details</p>
+      </div>
+
+      {/* Featured cards horizontal scroll */}
+      {featuredCards.length > 0 && (
+        <div className="card-offers-section" style={{ marginBottom: 12 }}>
+          <div className="card-offers-header">
+            <h3 className="card-offers-title">🎁 Featured Cards</h3>
+          </div>
+          <div className="card-offers-scroll">
+            {featuredCards.map((offer) => (
+              <button
+                key={offer.id}
+                className="card-offer-chip card-offer-chip-btn"
+                onClick={() => setSelected(offer)}
+              >
+                <div className="card-offer-chip-header" style={{ background: offer.color }}>
+                  <span className="card-offer-star">★</span>
+                  <span className="card-offer-bank">{offer.bank}</span>
+                  <span className="card-offer-name">{offer.name}</span>
+                </div>
+                <div className="card-offer-body">
+                  <span className="card-offer-fee">{offer.annualFee === "Free" ? "Free" : `Fee: ${offer.annualFee}`}</span>
+                  <p className="card-offer-benefits">{offer.benefits.slice(0, 60)}{offer.benefits.length > 60 ? "…" : ""}</p>
+                  <span className="card-offer-tap-hint">Tap for details →</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="filter-chips">
+        {(["all", "free", "paid"] as const).map((f) => (
+          <button key={f} className={`filter-chip ${filterType === f ? "active" : ""}`} onClick={() => setFilterType(f)}>
+            {f === "all" ? "All Cards" : f === "free" ? "🆓 Free" : "💎 Premium"}
+          </button>
+        ))}
+      </div>
+
+      <ul className="credit-offer-list">
+        {filteredCards.map((offer) => (
+          <li
+            key={offer.id}
+            className="credit-offer-item credit-offer-item-clickable"
+            onClick={() => setSelected(offer)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === "Enter" && setSelected(offer)}
+          >
+            <div className="credit-offer-top">
+              <div className="credit-offer-info">
+                <span className="credit-offer-name">{offer.name}</span>
+                <span className="credit-offer-bank">{offer.bank}</span>
+              </div>
+              <div className="credit-offer-right">
+                <span className={`chip ${offer.annualFee === "Free" || offer.annualFee === "" ? "chip-free" : "chip-premium"}`}>
+                  {offer.annualFee === "Free" || offer.annualFee === "" ? "FREE" : offer.annualFee}
+                </span>
+                <span className="credit-offer-chevron">›</span>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      {filteredCards.length === 0 && (
+        <div style={{ textAlign: "center", padding: "32px 16px", color: "var(--text3)", fontSize: 14 }}>
+          No cards found. Cards can be managed in the Admin Panel.
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CardOfferDetail({ offer, onBack }: { offer: CardOfferEntry; onBack: () => void }) {
+  const benefitLines = offer.benefits.split(/[,\n]/).map((b) => b.trim()).filter(Boolean);
+
+  function handleApply() {
+    if (offer.applyUrl) window.open(offer.applyUrl, "_blank", "noopener,noreferrer");
+  }
+
+  return (
+    <div className="card-offer-detail-screen">
+      {/* Header */}
+      <div className="card-offer-detail-header" style={{ background: offer.color }}>
+        <button className="card-offer-detail-back" onClick={onBack} aria-label="Back">‹</button>
+        <div className="card-offer-detail-header-content">
+          <div className="card-offer-detail-bank">{offer.bank}</div>
+          <div className="card-offer-detail-name">{offer.name}</div>
+          <div className="card-offer-detail-type-badge">
+            {offer.cardType?.toUpperCase() ?? "CARD"}
+          </div>
+        </div>
+        {offer.featured && <span className="card-offer-detail-star">★ Featured</span>}
+      </div>
+
+      {/* Card Image */}
+      {offer.imageUrl && (
+        <div className="card-offer-detail-image">
+          <img src={offer.imageUrl} alt={offer.name} />
+        </div>
+      )}
+
+      {/* Body */}
+      <div className="card-offer-detail-body">
+        {/* Key facts row */}
+        <div className="card-offer-detail-facts">
+          <div className="card-offer-fact">
+            <span className="card-offer-fact-label">Annual Fee</span>
+            <span className="card-offer-fact-val" style={{ color: offer.annualFee === "Free" ? "var(--success)" : "var(--text)" }}>
+              {offer.annualFee || "Free"}
+            </span>
+          </div>
+          {offer.minSalary && (
+            <div className="card-offer-fact">
+              <span className="card-offer-fact-label">Min. Salary</span>
+              <span className="card-offer-fact-val">{offer.minSalary}</span>
+            </div>
+          )}
+          <div className="card-offer-fact">
+            <span className="card-offer-fact-label">Card Type</span>
+            <span className="card-offer-fact-val" style={{ textTransform: "capitalize" }}>
+              {offer.cardType ?? "Credit"}
+            </span>
+          </div>
+        </div>
+
+        {/* Benefits */}
+        <div className="card-offer-detail-section">
+          <h3 className="card-offer-detail-section-title">✨ Benefits & Features</h3>
+          <ul className="card-offer-benefits-list">
+            {benefitLines.map((b, i) => (
+              <li key={i} className="card-offer-benefit-item">
+                <span className="card-offer-benefit-dot" style={{ background: offer.color }} />
+                <span>{b}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Issuer */}
+        <div className="card-offer-detail-section">
+          <h3 className="card-offer-detail-section-title">🏦 Issuer</h3>
+          <p className="card-offer-detail-issuer">{offer.bank}</p>
+        </div>
+      </div>
+
+      {/* Sticky Apply button */}
+      <div className="card-offer-detail-footer">
+        {offer.applyUrl ? (
+          <button
+            className="card-offer-detail-apply-btn"
+            style={{ background: offer.color }}
+            onClick={handleApply}
+          >
+            Apply Now →
+          </button>
+        ) : (
+          <button className="card-offer-detail-apply-btn card-offer-detail-apply-disabled" disabled>
+            Apply at Bank Branch
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function fmtDate(dateStr: string): string {
+  try {
+    return new Date(dateStr + "T00:00:00").toLocaleDateString(undefined, {
+      month: "short", day: "numeric", year: "numeric",
+    });
+  } catch {
+    return dateStr;
+  }
+}
+
+function fmtMonth(monthStr: string): string {
+  try {
+    const [y, m] = monthStr.split("-");
+    const d = new Date(Number(y), Number(m) - 1, 1);
+    return d.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+  } catch { return monthStr; }
+}

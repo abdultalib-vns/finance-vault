@@ -1,0 +1,62 @@
+Step 1: The Basic Structure & Mobile Layout
+Copy and paste this into Replit:
+
+"Create the foundation for a mobile-first personal finance web app using vanilla HTML, CSS, and JS.
+
+In index.html, set up the mobile viewport meta tag so it doesn't zoom.
+
+Create two main <div> screens: an 'auth-screen' for entering a Master PIN, and a 'dashboard-screen' for the main app.
+
+In style.css, make the 'auth-screen' visible by default and hide the 'dashboard-screen'. Use Flexbox to center the login elements.
+
+Ensure the body background is a light gray and the text is dark, resembling a clean mobile app."
+
+Step 2: The Master PIN & Security Setup
+Copy and paste this into Replit:
+
+"Now, let's add security.
+
+In index.html, add the CDN link for the CryptoJS library in the <head>.
+
+In script.js, write a function that takes the value from the 'auth-screen' PIN input. If it's valid, save it to a JavaScript variable called masterKey, hide the 'auth-screen', and show the 'dashboard-screen'.
+
+Write two utility functions in script.js: encryptData(text) and decryptData(ciphertext). These should use CryptoJS AES encryption to encrypt and decrypt strings using the masterKey."
+
+Step 3: Adding and Storing Data Locally
+Copy and paste this into Replit:
+
+"Let's build the data management using the browser's localStorage.
+
+On the 'dashboard-screen' in index.html, add inputs for 'Item Name' (Bank/Card), 'Balance', and 'Secret' (Card number/Password), plus a 'Save' button. Also add an empty <ul> with the id 'bank-list'.
+
+In script.js, create a saveItem() function. It should grab the input values, encrypt only the 'Secret' using our encryptData function, and save the object to an array.
+
+Save that array to localStorage using JSON.stringify.
+
+Create a loadData() function to retrieve the array on app load, and a renderData() function to display the items in the 'bank-list' <ul>. Calculate and display the total balance at the top."
+
+Step 4: Integrating the Excel File
+Copy and paste this into Replit:
+
+"Next, we need to load data from an existing spreadsheet.
+
+In index.html, add the CDN link for the SheetJS (xlsx) library. Add a button to the dashboard that says 'Load from Template'.
+
+In script.js, write an async function that fetches a local file named exactly 'Template.xlsx'.
+
+Use SheetJS to parse 'Template.xlsx' into a JSON array.
+
+Loop through that array. For each row, assume there are columns for 'Name', 'Balance', and 'Password'. Add these to our existing app data (encrypting the Password with our masterKey) and save the updated list to localStorage. Finally, re-render the list."
+
+Step 5: Polishing the Mobile Experience
+Copy and paste this into Replit:
+
+"Finally, let's make the CSS look like a true native mobile app.
+
+Update style.css to add a fixed bottom navigation bar with three dummy icons/buttons (Home, Cards, Settings).
+
+Make sure the main content area is scrollable but leaves padding at the bottom so the navigation bar doesn't cover the last list items.
+
+Style the input fields and buttons with rounded corners (border-radius: 8px), remove default borders, and give the buttons a nice primary blue color.
+
+Style the <ul> list items to look like modern floating cards with a subtle box-shadow."

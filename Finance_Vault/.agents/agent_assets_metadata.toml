@@ -1,0 +1,20 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "OLnWDICsW5My-3QkWk_6n"
+uri = "file://artifacts/finance-app/public/icon-192.png"
+type = "image"
+title = "FinanceVault app icon"
+
+[[generated]]
+id = "XDu5MAbj0Q-f4Uruf2N2L"
+uri = "file://artifacts/finance-app/public/icon-512.png"
+type = "image"
+title = "FinanceVault large app icon"
+
+[[generated]]
+id = "lz4ITsh8B2GDa2ZNeA47p"
+uri = "file://artifacts/finance-app/public/favicon.png"
+type = "image"
+title = "FinanceVault favicon"
