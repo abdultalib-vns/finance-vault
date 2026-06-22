@@ -51,6 +51,8 @@ export default function AuthScreen({ onUnlock }: Props) {
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [bioReady, setBioReady] = useState(false);
   const [bioLoading, setBioLoading] = useState(false);
+  const [installPromptEvent, setInstallPromptEvent] = useState<any>(null);
+  const [showInstallPopup, setShowInstallPopup] = useState(false);
 
   const pinRef = useRef<HTMLInputElement>(null);
 
@@ -68,6 +70,46 @@ export default function AuthScreen({ onUnlock }: Props) {
     })();
     return () => { cancelled = true; };
   }, [isNewUser]);
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      e.preventDefault();
+      setInstallPromptEvent(e);
+      if (isNewUser) {
+        setShowInstallPopup(true);
+      }
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setShowInstallPopup(false);
+    } else if (isNewUser && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+      setShowInstallPopup(true);
+    }
+
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, [isNewUser]);
+
+  useEffect(() => {
+    const handler = () => setShowInstallPopup(false);
+    window.addEventListener("appinstalled", handler);
+    return () => window.removeEventListener("appinstalled", handler);
+  }, []);
+
+  async function handleInstall() {
+    if (installPromptEvent) {
+      installPromptEvent.prompt();
+      const { outcome } = await installPromptEvent.userChoice;
+      if (outcome === 'accepted') {
+        setShowInstallPopup(false);
+      }
+      setInstallPromptEvent(null);
+    } else if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+      alert("To install on iOS: tap the Share button at the bottom of Safari and select 'Add to Home Screen'.");
+    } else {
+      alert("Installation is not supported on this browser, or the app is already installed.");
+    }
+  }
 
   function clearFields() {
     setPin(""); setConfirmPin(""); setSecAnswer("");
@@ -334,6 +376,20 @@ export default function AuthScreen({ onUnlock }: Props) {
           </>
         )}
       </div>
+
+      {showInstallPopup && (
+        <div className="install-popup-overlay">
+          <div className="install-popup-icon">📱</div>
+          <div className="install-popup-content">
+            <h3>Install FinAura</h3>
+            <p>Get the app for a secure, fullscreen native experience!</p>
+          </div>
+          <div className="install-popup-actions">
+            <button className="btn-install" onClick={handleInstall}>Install</button>
+            <button className="btn-later" onClick={() => setShowInstallPopup(false)}>Later</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
