@@ -24,16 +24,20 @@ applyAdminTheme(loadAdminTheme());
 seedDefaultCardTemplates();
 
 export default function App() {
-  const [isAdmin, setIsAdmin] = useState(() => window.location.hash === "#/admin");
+  const [isAdmin, setIsAdmin] = useState(() => window.location.hash === "#/admin" && import.meta.env.VITE_ENABLE_ADMIN === "true");
 
   // React to hash changes so navigating #/admin ↔ main app works live
   useEffect(() => {
-    const handler = () => setIsAdmin(window.location.hash === "#/admin");
+    const handler = () => {
+      if (import.meta.env.VITE_ENABLE_ADMIN === "true") {
+        setIsAdmin(window.location.hash === "#/admin");
+      }
+    };
     window.addEventListener("hashchange", handler);
     return () => window.removeEventListener("hashchange", handler);
   }, []);
 
-  if (isAdmin) return <AdminApp />;
+  if (isAdmin && import.meta.env.VITE_ENABLE_ADMIN === "true") return <AdminApp />;
 
   // key={Date.now()} forces MainApp to fully remount after returning from admin,
   // so it re-reads all localStorage (theme, card templates, popup ads, etc.)

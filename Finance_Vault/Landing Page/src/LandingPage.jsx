@@ -1,616 +1,429 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Shield, Smartphone, Lock, Eye, EyeOff, Download, Upload, 
-  TrendingUp, CreditCard, Banknote, PiggyBank, Wallet, 
-  Calendar, LineChart, Gift, Moon, Sun, Globe, Fingerprint,
-  Database, FileSpreadsheet, Zap, CheckCircle, ArrowRight,
-  MessageCircle, Mail, Github, Twitter, ChevronDown
+  Shield, Smartphone, EyeOff, Fingerprint, CloudOff, Box, 
+  Banknote, CreditCard, LineChart, Bitcoin, Home, Car, PiggyBank, MoreHorizontal,
+  PieChart, Globe, Folder, Bell, Moon, FileText,
+  ChevronDown, Apple, Play, Star, CheckCircle, Github, Twitter, Linkedin,
+  ArrowRight, Sparkles, Lock, ChevronRight
 } from 'lucide-react';
 
 export default function LandingPage() {
-  const [activeTab, setActiveTab] = useState('security');
-  const [isDark, setIsDark] = useState(false);
-
+  // Enforce dark theme
   useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDark]);
+    document.documentElement.classList.add('dark');
+  }, []);
 
-  const features = [
-    {
-      icon: <Shield className="w-12 h-12" />,
-      title: 'Military-Grade Encryption',
-      description: 'AES-256 encryption using CryptoJS. Your secrets are locked behind your Master PIN with bank-level security.',
-      color: 'from-blue-500 to-cyan-500'
-    },
-    {
-      icon: <Database className="w-12 h-12" />,
-      title: '100% Local Storage',
-      description: 'Your data never leaves your device. Complete privacy with browser localStorage. No servers, no cloud, no tracking.',
-      color: 'from-purple-500 to-pink-500'
-    },
-    {
-      icon: <Fingerprint className="w-12 h-12" />,
-      title: 'Biometric Login',
-      description: 'Face ID, Touch ID, and fingerprint support via WebAuthn. Quick and secure access on iOS, Android, and desktop.',
-      color: 'from-green-500 to-emerald-500'
-    },
-    {
-      icon: <FileSpreadsheet className="w-12 h-12" />,
-      title: 'Import/Export Vault',
-      description: 'Backup and restore your entire financial portfolio. Import from Excel templates using SheetJS for quick setup.',
-      color: 'from-orange-500 to-red-500'
-    },
-    {
-      icon: <Globe className="w-12 h-12" />,
-      title: '20+ Currencies',
-      description: 'Support for USD, INR, EUR, JPY, GBP, PHP, and 15+ more currencies with proper locale formatting.',
-      color: 'from-indigo-500 to-purple-500'
-    },
-    {
-      icon: <Smartphone className="w-12 h-12" />,
-      title: 'Progressive Web App',
-      description: 'Install on any device. Works offline. Native app experience with bottom navigation and smooth animations.',
-      color: 'from-teal-500 to-cyan-500'
-    }
-  ];
-
-  const accountTypes = [
-    { icon: <Banknote />, name: 'Bank Accounts', desc: 'Track balances, encrypted account numbers' },
-    { icon: <CreditCard />, name: 'Credit Cards', desc: 'Expense tracking, bill generation, cashback' },
-    { icon: <TrendingUp />, name: 'Fixed Deposits', desc: 'Maturity calculator, interest tracking' },
-    { icon: <Calendar />, name: 'Recurring Deposits', desc: 'Monthly installments, overdue alerts' },
-    { icon: <LineChart />, name: 'Mutual Funds', desc: 'Investment tracking, current value' },
-    { icon: <Wallet />, name: 'Pay Later', desc: 'Credit limit, expense tracking' },
-    { icon: <PiggyBank />, name: 'Other Assets', desc: 'Encrypted notes for any financial data' }
-  ];
-
-  const steps = [
-    { num: '01', title: 'Create Master PIN', desc: 'Set up a 4-6 digit PIN to encrypt all your data' },
-    { num: '02', title: 'Add Accounts', desc: 'Add banks, cards, FDs, RDs, mutual funds, or any asset' },
-    { num: '03', title: 'Track Everything', desc: 'Monitor balances, expenses, bills, and cashback' },
-    { num: '04', title: 'Stay Secure', desc: 'Auto-lock, biometric login, encrypted backups' }
-  ];
-
-  const faqs = [
-    {
-      q: 'Is my data really safe?',
-      a: 'Yes! All sensitive data is encrypted using AES-256 encryption with your Master PIN. Data never leaves your device and is stored only in your browser\'s local storage.'
-    },
-    {
-      q: 'Can I access Finance Vault offline?',
-      a: 'Absolutely! Finance Vault is a Progressive Web App (PWA) that works completely offline. Install it on your device and use it anywhere, anytime.'
-    },
-    {
-      q: 'What happens if I forget my PIN?',
-      a: 'You can use the security question/answer recovery feature. Alternatively, you\'ll need to reset the app (which clears all data), so always keep encrypted backups!'
-    },
-    {
-      q: 'How do I backup my data?',
-      a: 'Go to Settings → Export Vault. Enter your PIN to create an encrypted .fvbackup file. Store it securely on cloud storage or external drives.'
-    },
-    {
-      q: 'Can I use this on multiple devices?',
-      a: 'Yes! Export your vault from one device and import it on another. Since all data is local, you\'ll need to manually sync via backup files.'
-    },
-    {
-      q: 'Is there a subscription fee?',
-      a: 'No! Finance Vault is completely free. No subscriptions, no ads, no hidden costs. Your financial privacy shouldn\'t cost money.'
-    }
+  const stats = [
+    { value: '1M+', label: 'Active Users' },
+    { value: '5M+', label: 'Downloads' },
+    { value: '100%', label: 'Secure' },
+    { value: '4.8/5', label: '10k+ Reviews' }
   ];
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${isDark ? 'dark bg-gray-900' : 'bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50'}`}>
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 backdrop-blur-lg bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-2.5 rounded-xl shadow-lg shadow-blue-500/50">
-                <Lock className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Finance Vault
-                </h1>
-                <p className="text-xs text-gray-600 dark:text-gray-400">Your Money, Your Privacy</p>
-              </div>
+    <div className="min-h-screen bg-[#050505] text-zinc-400 font-sans selection:bg-blue-500/30 overflow-x-hidden">
+      
+      {/* 1. Navigation / Header */}
+      <nav className="fixed top-0 w-full z-50 backdrop-blur-xl bg-[#050505]/70 border-b border-white/[0.05] transition-all">
+        <div className="container mx-auto px-6 h-16 flex justify-between items-center max-w-7xl">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-b from-blue-500 to-blue-700 flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
+              <Shield className="w-4 h-4 text-white" strokeWidth={2.5} />
             </div>
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => setIsDark(!isDark)}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                aria-label="Toggle theme"
-              >
-                {isDark ? <Sun className="w-5 h-5 text-yellow-500" /> : <Moon className="w-5 h-5 text-gray-600" />}
-              </button>
-              <a 
-                href="#app"
-                className="hidden md:flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2.5 rounded-full font-semibold hover:shadow-lg hover:shadow-blue-500/50 transition-all transform hover:scale-105"
-              >
-                <Lock className="w-4 h-4" />
-                Open Vault
-              </a>
-            </div>
+            <span className="text-lg font-bold text-zinc-100 tracking-tight">FinAura</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <button className="hidden md:block text-sm font-medium text-zinc-400 hover:text-zinc-100 transition-colors">Sign In</button>
+            <button className="h-9 px-4 rounded-full bg-zinc-100 hover:bg-white text-zinc-900 text-sm font-semibold transition-all hover:scale-105 active:scale-95">
+              Get Started
+            </button>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <header className="container mx-auto px-6 pt-20 pb-32 relative overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      {/* 2. Hero Section */}
+      <section className="relative pt-36 pb-20 lg:pt-48 lg:pb-32">
+        {/* Abstract Glows */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] opacity-30 pointer-events-none flex justify-center">
+          <div className="absolute top-[-10%] w-[60%] h-[80%] rounded-[100%] bg-blue-600/40 blur-[100px]"></div>
+          <div className="absolute top-[10%] w-[40%] h-[60%] rounded-[100%] bg-purple-600/40 blur-[100px]"></div>
         </div>
+        
+        <div className="container mx-auto px-6 relative z-10 max-w-7xl flex flex-col items-center text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-8">
+            <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+            <span className="text-sm font-medium text-zinc-300">The Ultimate Personal Finance App</span>
+          </div>
+          
+          <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold text-white mb-8 tracking-tighter leading-[1.1]">
+            Your Financial Life,<br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-b from-blue-400 to-indigo-600">
+              Locked & Secured.
+            </span>
+          </h1>
+          
+          <p className="text-lg md:text-xl text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+            The most comprehensive personal finance app that keeps your financial life completely secure, private, and always under your control.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-20 w-full sm:w-auto">
+            <button className="group flex items-center justify-center gap-3 h-14 px-8 rounded-full bg-zinc-100 text-zinc-900 font-semibold hover:bg-white transition-all hover:shadow-[0_0_40px_rgba(255,255,255,0.2)]">
+              <Apple className="w-5 h-5" />
+              Download for iOS
+            </button>
+            <button className="group flex items-center justify-center gap-3 h-14 px-8 rounded-full bg-white/5 border border-white/10 text-zinc-100 font-semibold hover:bg-white/10 transition-all">
+              <Play className="w-5 h-5 text-zinc-400 group-hover:text-zinc-100 transition-colors" />
+              Download for Android
+            </button>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-12 gap-y-8 pt-10 border-t border-white/5 w-full max-w-4xl">
+            {stats.map((stat, i) => (
+              <div key={i} className="flex flex-col items-center">
+                <div className="text-3xl font-bold text-zinc-100 tracking-tight mb-1">{stat.value}</div>
+                <div className="text-sm font-medium text-zinc-500">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-4 py-2 rounded-full text-sm font-medium mb-8">
-              <Zap className="w-4 h-4" />
-              100% Private • 100% Secure • 100% Free
+      {/* 3. Mobile Experience Highlight */}
+      <section className="py-24 relative">
+        <div className="container mx-auto px-6 max-w-7xl">
+          <div className="rounded-[2.5rem] border border-white/10 bg-zinc-900/30 backdrop-blur-3xl p-8 md:p-16 lg:p-20 shadow-2xl relative overflow-hidden flex flex-col lg:flex-row items-center gap-16">
+            
+            {/* Subtle Inner Glow */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[100px] translate-x-1/3 -translate-y-1/3"></div>
+            
+            <div className="flex-1 relative z-10">
+              <h2 className="text-4xl md:text-5xl font-bold text-zinc-100 mb-6 tracking-tighter leading-tight">
+                Designed for Mobile,<br />
+                <span className="text-zinc-500">Perfected for You.</span>
+              </h2>
+              <p className="text-lg text-zinc-400 mb-10 leading-relaxed max-w-lg">
+                The ultimate mobile-first experience. Everything you need to manage your money, beautifully crafted right in your pocket.
+              </p>
+              
+              <ul className="space-y-4">
+                {[
+                  'Intuitive & beautiful interface',
+                  'Light & Dark mode support',
+                  'Biometric authentication',
+                  '128-bit bank-grade encryption',
+                  'Real-time sync across devices'
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-500/10 text-blue-400">
+                      <CheckCircle className="w-4 h-4" />
+                    </div>
+                    <span className="text-zinc-300 font-medium">{item}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
             
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-tight mb-8">
-              <span className="text-gray-900 dark:text-white">Your Financial Life,</span>
-              <br />
-              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Locked & Secured
-              </span>
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-              The ultimate privacy-first personal finance tracker. Track 7 account types, manage expenses, 
-              generate bills, and monitor cashback — all with military-grade encryption and zero cloud storage.
-            </p>
+            <div className="relative z-10 flex-1 flex justify-center lg:justify-end">
+              {/* Phone Mockup Wrapper */}
+              <div className="relative w-[300px] h-[620px] bg-[#0A0A0A] rounded-[3rem] border-[8px] border-zinc-800 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden ring-1 ring-white/10 shadow-[inset_0_0_20px_rgba(0,0,0,1)] rotate-[-2deg] hover:rotate-0 transition-transform duration-700 ease-out">
+                 
+                 {/* Dynamic Island / Notch */}
+                 <div className="absolute top-2 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-full z-20"></div>
+                 
+                 <div className="h-full w-full bg-[#050505] flex flex-col pt-14 pb-8 px-5 relative">
+                    
+                    {/* Header */}
+                    <div className="flex justify-between items-center mb-8">
+                      <div className="w-8 h-8 rounded-full bg-white/10 border border-white/5"></div>
+                      <div className="w-8 h-8 rounded-full bg-white/10 border border-white/5"></div>
+                    </div>
 
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
-              <a 
-                href="#app"
-                className="group flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-5 rounded-2xl font-bold text-lg hover:shadow-2xl hover:shadow-blue-500/50 transition-all transform hover:scale-105"
-              >
-                <Lock className="w-6 h-6" />
-                Launch Finance Vault
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </a>
-              <a 
-                href="#features"
-                className="flex items-center justify-center gap-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white border-2 border-gray-300 dark:border-gray-700 px-8 py-5 rounded-2xl font-bold text-lg hover:border-blue-600 dark:hover:border-blue-500 hover:shadow-lg transition-all"
-              >
-                <Eye className="w-6 h-6" />
-                Explore Features
-              </a>
+                    <div className="mb-8">
+                      <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-1">Total Balance</p>
+                      <h3 className="text-4xl font-bold text-white tracking-tight">$24,500<span className="text-zinc-500">.00</span></h3>
+                    </div>
+                    
+                    {/* Chart Mockup */}
+                    <div className="h-32 mb-8 flex items-end justify-between gap-2">
+                       <div className="w-full bg-blue-500/20 h-[40%] rounded-sm"></div>
+                       <div className="w-full bg-blue-500/40 h-[60%] rounded-sm"></div>
+                       <div className="w-full bg-blue-500/60 h-[80%] rounded-sm relative">
+                         <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-blue-400">+$2.4k</div>
+                       </div>
+                       <div className="w-full bg-blue-500/80 h-[70%] rounded-sm"></div>
+                       <div className="w-full bg-blue-500 h-[100%] rounded-sm"></div>
+                    </div>
+                    
+                    {/* Transactions */}
+                    <div className="space-y-3">
+                      <div className="p-3 rounded-2xl bg-white/5 border border-white/5 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                           <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center"><Home className="w-5 h-5 text-zinc-300" /></div>
+                           <div>
+                             <p className="font-semibold text-zinc-200 text-sm">Rent</p>
+                             <p className="text-[10px] text-zinc-500">Today</p>
+                           </div>
+                        </div>
+                        <p className="font-bold text-zinc-200 text-sm">-$1,200</p>
+                      </div>
+                      <div className="p-3 rounded-2xl bg-white/5 border border-white/5 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                           <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center"><Banknote className="w-5 h-5 text-zinc-300" /></div>
+                           <div>
+                             <p className="font-semibold text-zinc-200 text-sm">Groceries</p>
+                             <p className="text-[10px] text-zinc-500">Yesterday</p>
+                           </div>
+                        </div>
+                        <p className="font-bold text-zinc-200 text-sm">-$150</p>
+                      </div>
+                    </div>
+
+                    {/* Bottom Nav Mockup */}
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[80%] h-14 bg-zinc-800/80 backdrop-blur border border-white/10 rounded-full flex justify-around items-center px-4">
+                      <div className="w-8 h-8 rounded-full bg-white/20"></div>
+                      <div className="w-8 h-8 rounded-full bg-transparent border border-white/20"></div>
+                      <div className="w-8 h-8 rounded-full bg-transparent border border-white/20"></div>
+                      <div className="w-8 h-8 rounded-full bg-transparent border border-white/20"></div>
+                    </div>
+                 </div>
+              </div>
             </div>
+            
+          </div>
+        </div>
+      </section>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+      {/* 4. Security & Privacy Features Grid */}
+      <section className="py-24 relative">
+        <div className="container mx-auto px-6 max-w-7xl">
+          <div className="text-center mb-16 max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-bold text-zinc-100 mb-6 tracking-tighter">Built for Privacy & Security</h2>
+            <p className="text-lg text-zinc-400">Your financial data is yours alone. We employ bank-grade security to ensure it stays exactly that way.</p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { icon: <Shield />, title: 'Military-Grade Encryption', desc: 'Your data is protected with AES-256 encryption both in transit and at rest.' },
+              { icon: <Smartphone />, title: '100% Local Storage', desc: 'Choose to keep your data completely offline on your device for maximum privacy.' },
+              { icon: <EyeOff />, title: 'No Data Mining', desc: 'We never sell or share your data. You are the customer, not the product.' },
+              { icon: <Fingerprint />, title: 'Biometric Protection', desc: 'Lock your vault with FaceID, TouchID or device passcode.' },
+              { icon: <CloudOff />, title: 'Fully Offline Mode', desc: 'Works completely offline. No internet connection required to view or edit data.' },
+              { icon: <Box />, title: 'Comprehensive Backups', desc: 'Automatic encrypted backups to your preferred cloud storage provider.' }
+            ].map((f, i) => (
+              <div key={i} className="group p-8 rounded-3xl bg-zinc-900/20 border border-white/5 hover:bg-zinc-900/40 transition-colors shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
+                <div className="w-12 h-12 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-center mb-6 text-zinc-300 group-hover:text-white transition-colors">
+                  {f.icon}
+                </div>
+                <h3 className="text-lg font-semibold text-zinc-100 mb-2">{f.title}</h3>
+                <p className="text-sm text-zinc-500 leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Asset Tracking Grid (Bento Style) */}
+      <section className="py-24 relative border-y border-white/5 bg-[#030303]">
+        <div className="container mx-auto px-6 max-w-7xl">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+            <div className="max-w-2xl">
+              <h2 className="text-3xl md:text-5xl font-bold text-zinc-100 mb-6 tracking-tighter">Track Every Asset</h2>
+              <p className="text-lg text-zinc-400">From cash to crypto, real estate to retirement funds, track it all in one unified dashboard.</p>
+            </div>
+            <button className="hidden md:flex items-center gap-2 text-sm font-medium text-zinc-100 bg-white/5 hover:bg-white/10 border border-white/10 px-5 py-2.5 rounded-full transition-colors">
+              View All Supported Assets <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+          
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+             {[
+               { icon: <Banknote />, title: 'Bank Accounts', desc: 'Checking, savings, & CDs', span: 'col-span-2 lg:col-span-2 row-span-2 bg-gradient-to-br from-zinc-900/50 to-zinc-900/20' },
+               { icon: <CreditCard />, title: 'Credit Cards', desc: 'Track balances and limits', span: 'col-span-1 bg-zinc-900/30' },
+               { icon: <LineChart />, title: 'Investments', desc: 'Stocks, bonds & ETFs', span: 'col-span-1 bg-zinc-900/30' },
+               { icon: <Bitcoin />, title: 'Cryptocurrency', desc: 'Wallets & exchanges', span: 'col-span-1 bg-zinc-900/30' },
+               { icon: <Home />, title: 'Real Estate', desc: 'Property values & mortgages', span: 'col-span-1 bg-zinc-900/30' },
+               { icon: <Car />, title: 'Vehicles', desc: 'Cars, boats & loans', span: 'col-span-1 lg:col-span-2 bg-zinc-900/30' },
+               { icon: <PiggyBank />, title: 'Cash', desc: 'Physical currency', span: 'col-span-1 bg-zinc-900/30' },
+               { icon: <MoreHorizontal />, title: 'And More...', desc: 'Custom categories', span: 'col-span-1 bg-white/5 border-dashed border-white/20' }
+             ].map((a, i) => (
+               <div key={i} className={`p-6 md:p-8 rounded-[2rem] border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] flex flex-col justify-between ${a.span}`}>
+                 <div className="w-10 h-10 text-zinc-400 mb-8">{a.icon}</div>
+                 <div>
+                   <h3 className="text-lg font-semibold text-zinc-100 mb-1">{a.title}</h3>
+                   <p className="text-sm text-zinc-500">{a.desc}</p>
+                 </div>
+               </div>
+             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6. How It Works (Steps) */}
+      <section className="py-32">
+        <div className="container mx-auto px-6 max-w-7xl">
+          <div className="text-center mb-24 max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-bold text-zinc-100 mb-6 tracking-tighter">Get Started In Minutes</h2>
+            <p className="text-lg text-zinc-400">No complex setups or bank logins required. Start tracking your net worth instantly.</p>
+          </div>
+          
+          <div className="flex flex-col md:flex-row justify-between relative gap-12 md:gap-4">
+             <div className="hidden md:block absolute top-6 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+             {[
+               { num: '01', title: 'Download the App', desc: 'Available on iOS and Android devices.' },
+               { num: '02', title: 'Create Your Vault', desc: 'Set up your secure PIN and biometrics.' },
+               { num: '03', title: 'Add Your Assets', desc: 'Manually add or import your balances.' },
+               { num: '04', title: 'Track & Grow', desc: 'Watch your net worth grow over time.' }
+             ].map((s, i) => (
+               <div key={i} className="relative z-10 flex flex-col items-center text-center flex-1">
+                 <div className="w-12 h-12 bg-[#050505] text-zinc-300 font-bold text-sm rounded-full flex items-center justify-center mb-6 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] ring-8 ring-[#050505]">
+                   {s.num}
+                 </div>
+                 <h3 className="text-base font-semibold text-zinc-100 mb-2">{s.title}</h3>
+                 <p className="text-sm text-zinc-500 max-w-[200px]">{s.desc}</p>
+               </div>
+             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 7. Additional Features */}
+      <section className="py-32 relative border-t border-white/5">
+         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+         <div className="container mx-auto px-6 max-w-7xl relative z-10">
+            <div className="mb-16">
+              <h2 className="text-3xl md:text-5xl font-bold text-zinc-100 mb-6 tracking-tighter">Everything You Need & More</h2>
+              <p className="text-lg text-zinc-400 max-w-2xl">Packed with powerful features to give you complete control over your finances.</p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/5 rounded-3xl overflow-hidden border border-white/5">
               {[
-                { num: '7', label: 'Account Types' },
-                { num: '20+', label: 'Currencies' },
-                { num: '100%', label: 'Local Storage' },
-                { num: 'AES-256', label: 'Encryption' }
-              ].map((stat, i) => (
-                <div key={i} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                  <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-1">
-                    {stat.num}
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">{stat.label}</div>
+                { icon: <PieChart className="w-5 h-5" />, title: 'Advanced Analytics', desc: 'Deep dive into your financial health with beautiful, interactive charts and graphs.' },
+                { icon: <Globe className="w-5 h-5" />, title: 'Multi-Currency', desc: 'Support for over 150 fiat currencies and major cryptocurrencies.' },
+                { icon: <Folder className="w-5 h-5" />, title: 'Custom Categories', desc: 'Organize your finances exactly how you want with unlimited custom categories.' },
+                { icon: <Bell className="w-5 h-5" />, title: 'Custom Reminders', desc: 'Set alerts for bills, subscriptions, and financial milestones.' },
+                { icon: <Moon className="w-5 h-5" />, title: 'Dark Mode', desc: 'A beautiful, OLED-optimized dark mode for late-night finance sessions.' },
+                { icon: <FileText className="w-5 h-5" />, title: 'Export & Reports', desc: 'Generate detailed PDF and CSV reports for tax season or personal review.' }
+              ].map((f, i) => (
+                <div key={i} className="bg-[#050505] p-10 hover:bg-zinc-900/30 transition-colors">
+                   <div className="w-10 h-10 bg-white/5 border border-white/5 text-zinc-300 rounded-xl flex items-center justify-center mb-6">{f.icon}</div>
+                   <h3 className="text-lg font-semibold text-zinc-100 mb-2">{f.title}</h3>
+                   <p className="text-sm text-zinc-500 leading-relaxed">{f.desc}</p>
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Mobile Mockup Section */}
-      <section className="container mx-auto px-6 pb-32 relative">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-gradient-to-br from-gray-900 to-indigo-900 rounded-3xl p-8 md:p-16 shadow-2xl relative overflow-hidden">
-            {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full blur-3xl"></div>
-            
-            <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
-              <div className="text-white space-y-6">
-                <h2 className="text-4xl md:text-5xl font-bold leading-tight">
-                  Designed for Mobile,
-                  <br />
-                  <span className="text-blue-400">Perfected for You</span>
-                </h2>
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  Native app experience with smooth animations, bottom navigation, swipeable cards, 
-                  and pull-to-refresh. Install as PWA for full offline access.
-                </p>
-                <ul className="space-y-4">
-                  {[
-                    'Track all 7 account types in one place',
-                    'Generate bills from credit card expenses',
-                    'Monitor RD installments with overdue alerts',
-                    'Log cashback from every source',
-                    'Auto-lock with idle timeout protection',
-                    'Dark mode for comfortable night viewing'
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-200">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              {/* iPhone Mockup */}
-              <div className="relative">
-                <div className="mx-auto w-[300px] h-[620px] bg-gray-950 rounded-[3rem] border-8 border-gray-800 shadow-2xl overflow-hidden relative">
-                  {/* Notch */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-7 bg-gray-950 rounded-b-3xl z-20"></div>
-                  
-                  {/* Screen */}
-                  <div className="w-full h-full bg-gradient-to-br from-slate-50 to-blue-50 overflow-hidden pt-8">
-                    {/* Header */}
-                    <div className="px-6 pb-4">
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                            <Lock className="w-5 h-5 text-white" />
-                          </div>
-                          <span className="font-bold text-gray-900">Finance Vault</span>
-                        </div>
-                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                          <Gift className="w-5 h-5 text-blue-600" />
-                        </div>
-                      </div>
-                      
-                      {/* Balance Card */}
-                      <div className="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl p-6 shadow-xl">
-                        <p className="text-blue-100 text-sm font-medium mb-2">Total Balance</p>
-                        <h3 className="text-4xl font-bold text-white mb-1">$24,580</h3>
-                        <div className="flex items-center gap-2 text-green-300 text-sm">
-                          <TrendingUp className="w-4 h-4" />
-                          <span>+12.5% this month</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Account Cards */}
-                    <div className="px-6 space-y-3 pb-20">
-                      {[
-                        { icon: <Banknote className="w-5 h-5" />, name: 'Chase Checking', amount: '$8,450', color: 'bg-blue-500' },
-                        { icon: <CreditCard className="w-5 h-5" />, name: 'Amex Gold', amount: '$2,340', color: 'bg-purple-500' },
-                        { icon: <TrendingUp className="w-5 h-5" />, name: 'Fixed Deposit', amount: '$10,000', color: 'bg-green-500' }
-                      ].map((acc, i) => (
-                        <div key={i} className="bg-white rounded-xl p-4 shadow-md border border-gray-100 flex items-center justify-between hover:shadow-lg transition-shadow">
-                          <div className="flex items-center gap-3">
-                            <div className={`${acc.color} w-10 h-10 rounded-lg flex items-center justify-center text-white`}>
-                              {acc.icon}
-                            </div>
-                            <div>
-                              <p className="font-semibold text-gray-900">{acc.name}</p>
-                              <p className="text-xs text-gray-500">Active</p>
-                            </div>
-                          </div>
-                          <p className="font-bold text-gray-900">{acc.amount}</p>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Bottom Navigation */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-4">
-                      <div className="flex justify-around items-center">
-                        {[
-                          { icon: <Banknote className="w-6 h-6" />, active: true },
-                          { icon: <CreditCard className="w-6 h-6" />, active: false },
-                          { icon: <Gift className="w-6 h-6" />, active: false },
-                          { icon: <Wallet className="w-6 h-6" />, active: false }
-                        ].map((nav, i) => (
-                          <div key={i} className={`p-2 rounded-xl ${nav.active ? 'bg-blue-100 text-blue-600' : 'text-gray-400'}`}>
-                            {nav.icon}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+         </div>
       </section>
 
-      {/* Features Grid */}
-      <section id="features" className="py-32 bg-white dark:bg-gray-800 transition-colors">
-        <div className="container mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto mb-20">
-            <h2 className="text-5xl font-bold mb-6 text-gray-900 dark:text-white">
-              Built for Privacy & Security
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300">
-              Enterprise-grade security meets personal finance. No compromises, no subscriptions, no tracking.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {features.map((feature, index) => (
-              <div 
-                key={index} 
-                className="group bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 p-8 rounded-3xl hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:scale-105"
-              >
-                <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${feature.color} mb-6 shadow-lg group-hover:scale-110 transition-transform`}>
-                  <div className="text-white">
-                    {feature.icon}
-                  </div>
-                </div>
-                <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">{feature.title}</h3>
-                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Account Types */}
-      <section className="py-32 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 transition-colors">
-        <div className="container mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto mb-20">
-            <h2 className="text-5xl font-bold mb-6 text-gray-900 dark:text-white">
-              Track Every Financial Asset
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300">
-              7 account types to cover your entire financial portfolio. From banks to mutual funds, track it all in one place.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
-            {accountTypes.map((type, i) => (
-              <div 
-                key={i}
-                className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-2xl hover:scale-105 transition-all group"
-              >
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform shadow-lg">
-                  {type.icon}
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{type.name}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{type.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="py-32 bg-white dark:bg-gray-800 transition-colors">
-        <div className="container mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto mb-20">
-            <h2 className="text-5xl font-bold mb-6 text-gray-900 dark:text-white">
-              Get Started in Minutes
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300">
-              No accounts, no registrations, no personal information. Just create a PIN and start tracking.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-            {steps.map((step, i) => (
-              <div key={i} className="relative">
-                <div className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all">
-                  <div className="text-6xl font-black text-transparent bg-gradient-to-br from-blue-600 to-indigo-600 bg-clip-text mb-4">
-                    {step.num}
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{step.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-400">{step.desc}</p>
-                </div>
-                {i < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-4 transform -translate-y-1/2">
-                    <ArrowRight className="w-8 h-8 text-blue-400" />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Feature Highlights */}
-      <section className="py-32 bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
-        
-        <div className="container mx-auto px-6 relative z-10">
+      {/* 8. FAQ Section */}
+      <section className="py-24">
+        <div className="container mx-auto px-6 max-w-3xl">
           <div className="text-center mb-16">
-            <h2 className="text-5xl font-bold mb-6">Everything You Need & More</h2>
-            <p className="text-xl text-blue-200 max-w-3xl mx-auto">
-              Advanced features that make Finance Vault the most comprehensive personal finance tracker
-            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-zinc-100 mb-4 tracking-tighter">Frequently Asked Questions</h2>
+            <p className="text-zinc-400">Everything you need to know about FinAura Vault.</p>
           </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {[
-              { 
-                icon: <CreditCard className="w-8 h-8" />,
-                title: 'Expense Tracking',
-                desc: 'Track every credit card expense with date, amount, cashback, and status. Filter by paid/unpaid/billed.'
-              },
-              {
-                icon: <FileSpreadsheet className="w-8 h-8" />,
-                title: 'Bill Generation',
-                desc: 'Auto-generate monthly bills from unpaid expenses. Track due dates and payment status.'
-              },
-              {
-                icon: <Calendar className="w-8 h-8" />,
-                title: 'RD Installments',
-                desc: 'Monthly installment tracker with overdue alerts, progress bars, and maturity estimates.'
-              },
-              {
-                icon: <Gift className="w-8 h-8" />,
-                title: 'Cashback Tracker',
-                desc: 'Log cashback from cards, apps, and offers. Total summary with source breakdown.'
-              },
-              {
-                icon: <Lock className="w-8 h-8" />,
-                title: 'Auto-Lock',
-                desc: 'Idle timeout protection. Auto-lock after 2-10 minutes of inactivity for security.'
-              },
-              {
-                icon: <Download className="w-8 h-8" />,
-                title: 'Backup & Restore',
-                desc: 'Export encrypted .fvbackup files. Import on any device to restore your entire vault.'
-              }
-            ].map((item, i) => (
-              <div key={i} className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition-all border border-white/20">
-                <div className="bg-white/20 w-16 h-16 rounded-xl flex items-center justify-center mb-6">
-                  {item.icon}
-                </div>
-                <h3 className="text-xl font-bold mb-3">{item.title}</h3>
-                <p className="text-blue-100">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-32 bg-white dark:bg-gray-800 transition-colors">
-        <div className="container mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto mb-20">
-            <h2 className="text-5xl font-bold mb-6 text-gray-900 dark:text-white">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300">
-              Everything you need to know about Finance Vault
-            </p>
-          </div>
-
-          <div className="max-w-4xl mx-auto space-y-6">
-            {faqs.map((faq, i) => (
-              <details 
-                key={i}
-                className="group bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-all"
-              >
-                <summary className="flex items-center justify-between cursor-pointer p-8 font-semibold text-lg text-gray-900 dark:text-white list-none">
-                  <span>{faq.q}</span>
-                  <ChevronDown className="w-6 h-6 text-blue-600 group-open:rotate-180 transition-transform" />
-                </summary>
-                <div className="px-8 pb-8 text-gray-600 dark:text-gray-400 leading-relaxed">
-                  {faq.a}
-                </div>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-32 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="container mx-auto px-6 text-center relative z-10">
-          <h2 className="text-5xl md:text-6xl font-bold mb-8">
-            Ready to Take Control?
-          </h2>
-          <p className="text-2xl mb-12 text-blue-100 max-w-3xl mx-auto">
-            Join thousands who trust Finance Vault to keep their financial data private and secure.
-          </p>
           
-          <div className="flex flex-col sm:flex-row justify-center gap-6 mb-16">
-            <a 
-              href="#app"
-              className="group inline-flex items-center justify-center gap-3 bg-white text-blue-600 px-10 py-6 rounded-2xl font-bold text-xl hover:shadow-2xl transition-all transform hover:scale-105"
-            >
-              <Lock className="w-6 h-6" />
-              Launch Finance Vault
-              <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-            </a>
-            <a 
-              href="#features"
-              className="inline-flex items-center justify-center gap-3 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white px-10 py-6 rounded-2xl font-bold text-xl hover:bg-white/20 transition-all"
-            >
-              <Eye className="w-6 h-6" />
-              Learn More
-            </a>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-8 text-sm text-blue-100">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5" />
-              No Registration Required
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5" />
-              100% Free Forever
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5" />
-              Open Source
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5" />
-              Works Offline
-            </div>
+          <div className="space-y-4">
+             {[
+               { q: 'Is my data really secure?', a: 'Yes, we use bank-grade AES-256 encryption. Your data never leaves your device unencrypted.' },
+               { q: 'Do I need to link my bank accounts?', a: 'No, FinAura Vault works completely offline. You can manually enter balances or import data.' },
+               { q: 'What happens if I lose my phone?', a: 'You can easily restore your data on a new device using your secure encrypted backup file.' },
+               { q: 'Is there a monthly subscription?', a: 'No, FinAura Vault offers a generous free tier, with optional one-time purchases for premium features.' },
+               { q: 'Can I access my data on multiple devices?', a: 'Yes, you can sync your encrypted backups via your preferred cloud provider (iCloud, Google Drive, etc).' },
+               { q: 'How do I export my data?', a: 'You can export all your data anytime in CSV or JSON format from the settings menu.' }
+             ].map((faq, i) => (
+               <details key={i} className="group rounded-2xl border border-white/5 bg-zinc-900/20 overflow-hidden">
+                 <summary className="flex justify-between items-center font-medium cursor-pointer list-none p-6 text-zinc-300 hover:text-zinc-100 transition-colors">
+                   <span>{faq.q}</span>
+                   <span className="transition-transform duration-300 group-open:rotate-180">
+                     <ChevronDown className="w-4 h-4 text-zinc-500" />
+                   </span>
+                 </summary>
+                 <div className="text-sm text-zinc-500 px-6 pb-6 pt-2 leading-relaxed">
+                   {faq.a}
+                 </div>
+               </details>
+             ))}
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-16 border-t border-gray-800">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-12 mb-12">
-            <div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-2 rounded-xl">
-                  <Lock className="w-6 h-6 text-white" />
+      {/* 9. Bottom CTA Section */}
+      <section className="py-32 relative overflow-hidden border-t border-white/5 bg-[#030303]">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-blue-600/10 rounded-[100%] blur-[100px] pointer-events-none"></div>
+        
+        <div className="container mx-auto px-6 text-center relative z-10 max-w-3xl">
+          <h2 className="text-4xl md:text-6xl font-bold text-zinc-100 mb-6 tracking-tighter">Ready to Take Control?</h2>
+          <p className="text-lg text-zinc-400 mb-10">Download FinAura Vault today and start your journey to financial peace of mind.</p>
+          
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
+            <button className="flex items-center justify-center gap-3 h-14 px-8 rounded-full bg-zinc-100 text-zinc-900 font-semibold hover:bg-white transition-all shadow-[0_0_30px_rgba(255,255,255,0.1)]">
+              <Apple className="w-5 h-5" />
+              Download for iOS
+            </button>
+            <button className="flex items-center justify-center gap-3 h-14 px-8 rounded-full bg-white/5 border border-white/10 text-zinc-100 font-semibold hover:bg-white/10 transition-all">
+              <Play className="w-5 h-5 text-zinc-400" />
+              Download for Android
+            </button>
+          </div>
+          <p className="text-xs text-zinc-500 font-medium">No credit card required. 14-day free trial on premium features.</p>
+        </div>
+      </section>
+
+      {/* 10. Footer */}
+      <footer className="border-t border-white/5 bg-[#030303] pt-20 pb-10">
+        <div className="container mx-auto px-6 max-w-7xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-12 mb-16">
+            <div className="col-span-2 lg:col-span-2">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="w-6 h-6 rounded bg-gradient-to-b from-blue-500 to-blue-700 flex items-center justify-center">
+                  <Shield className="w-3 h-3 text-white" strokeWidth={3} />
                 </div>
-                <span className="text-xl font-bold text-white">Finance Vault</span>
+                <span className="text-lg font-bold text-zinc-100 tracking-tight">FinAura Vault</span>
               </div>
-              <p className="text-sm leading-relaxed">
-                Your privacy-first personal finance tracker. Built with love for people who value security.
+              <p className="text-sm text-zinc-500 leading-relaxed max-w-xs mb-6">
+                The most secure, private, and powerful personal finance app designed for modern wealth building.
               </p>
-            </div>
-
-            <div>
-              <h3 className="text-white font-semibold mb-4">Product</h3>
-              <ul className="space-y-3 text-sm">
-                <li><a href="#features" className="hover:text-blue-400 transition-colors">Features</a></li>
-                <li><a href="#app" className="hover:text-blue-400 transition-colors">Launch App</a></li>
-                <li><a href="#faq" className="hover:text-blue-400 transition-colors">FAQ</a></li>
-                <li><a href="#docs" className="hover:text-blue-400 transition-colors">Documentation</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-white font-semibold mb-4">Resources</h3>
-              <ul className="space-y-3 text-sm">
-                <li><a href="#guide" className="hover:text-blue-400 transition-colors">User Guide</a></li>
-                <li><a href="#security" className="hover:text-blue-400 transition-colors">Security</a></li>
-                <li><a href="#privacy" className="hover:text-blue-400 transition-colors">Privacy Policy</a></li>
-                <li><a href="#changelog" className="hover:text-blue-400 transition-colors">Changelog</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-white font-semibold mb-4">Connect</h3>
               <div className="flex gap-4">
-                <a href="#github" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors">
-                  <Github className="w-5 h-5" />
-                </a>
-                <a href="#twitter" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors">
-                  <Twitter className="w-5 h-5" />
-                </a>
-                <a href="#email" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors">
-                  <Mail className="w-5 h-5" />
-                </a>
+                <a href="#" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-zinc-500 hover:text-zinc-100 transition-colors"><Twitter className="w-4 h-4" /></a>
+                <a href="#" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-zinc-500 hover:text-zinc-100 transition-colors"><Linkedin className="w-4 h-4" /></a>
+                <a href="#" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-zinc-500 hover:text-zinc-100 transition-colors"><Github className="w-4 h-4" /></a>
+              </div>
+            </div>
+            
+            <div className="col-span-1">
+              <h4 className="text-sm font-semibold text-zinc-100 mb-4">Product</h4>
+              <ul className="space-y-3 text-sm text-zinc-500">
+                <li><a href="#" className="hover:text-zinc-300 transition-colors">Features</a></li>
+                <li><a href="#" className="hover:text-zinc-300 transition-colors">Security</a></li>
+                <li><a href="#" className="hover:text-zinc-300 transition-colors">Pricing</a></li>
+                <li><a href="#" className="hover:text-zinc-300 transition-colors">Updates</a></li>
+              </ul>
+            </div>
+            <div className="col-span-1">
+              <h4 className="text-sm font-semibold text-zinc-100 mb-4">Resources</h4>
+              <ul className="space-y-3 text-sm text-zinc-500">
+                <li><a href="#" className="hover:text-zinc-300 transition-colors">Help Center</a></li>
+                <li><a href="#" className="hover:text-zinc-300 transition-colors">Guides</a></li>
+                <li><a href="#" className="hover:text-zinc-300 transition-colors">API</a></li>
+                <li><a href="#" className="hover:text-zinc-300 transition-colors">Status</a></li>
+              </ul>
+            </div>
+            <div className="col-span-2 md:col-span-4 lg:col-span-2">
+              <h4 className="text-sm font-semibold text-zinc-100 mb-4">Subscribe to updates</h4>
+              <p className="text-sm text-zinc-500 mb-4">Get the latest news and feature releases.</p>
+              <div className="flex gap-2">
+                <input type="email" placeholder="Email address" className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm text-zinc-300 w-full focus:outline-none focus:border-blue-500 transition-colors" />
+                <button className="bg-zinc-100 text-zinc-900 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-white transition-colors">Join</button>
               </div>
             </div>
           </div>
-
-          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
-            <p>&copy; 2026 Finance Vault. All rights reserved.</p>
-            <p className="text-gray-500">
-              Made with <span className="text-red-500">❤</span> for your financial privacy
-            </p>
+          
+          <div className="flex flex-col md:flex-row justify-between items-center border-t border-white/5 pt-8 gap-4">
+            <span className="text-xs text-zinc-600 font-medium">© 2026 FinAura Vault. All rights reserved.</span>
+            <div className="flex gap-6 text-xs text-zinc-600 font-medium">
+              <a href="#" className="hover:text-zinc-400 transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-zinc-400 transition-colors">Terms of Service</a>
+            </div>
           </div>
         </div>
       </footer>
