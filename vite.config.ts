@@ -20,8 +20,8 @@ export default defineConfig({
       base: basePath,
       includeAssets: ["favicon.png", "icon-192.png", "icon-512.png"],
       manifest: {
-        name: "FinanceVault",
-        short_name: "FinanceVault",
+        name: "FinAura",
+        short_name: "FinAura",
         description: "Secure personal finance tracker with PIN encryption",
         theme_color: "#2563eb",
         background_color: "#f0f2f5",

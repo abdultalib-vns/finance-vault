@@ -41,7 +41,7 @@ export function exportVault(pin: string): void {
   const a = document.createElement("a");
   a.href = url;
   const date = new Date().toISOString().slice(0, 10);
-  a.download = `financevault-backup-${date}.fvbackup`;
+  a.download = `FinAura-backup-${date}.fvbackup`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

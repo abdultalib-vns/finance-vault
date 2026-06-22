@@ -12,8 +12,8 @@
  *  Works inside an installed PWA on iOS 16+, Android, and most desktop browsers.
  */
 
-const RP_NAME      = "FinanceVault";
-const USER_HANDLE  = "financevault-user";
+const RP_NAME      = "FinAura";
+const USER_HANDLE  = "FinAura-user";
 
 const CRED_ID_KEY   = "finance_bio_cred_id";
 const ENC_PIN_KEY   = "finance_bio_enc_pin";
@@ -97,7 +97,7 @@ export async function enrollBiometric(pin: string): Promise<void> {
   const cred = await navigator.credentials.create({
     publicKey: {
       rp:   { name: RP_NAME },
-      user: { id: userIdBytes, name: "user", displayName: "FinanceVault User" },
+      user: { id: userIdBytes, name: "user", displayName: "FinAura User" },
       challenge,
       pubKeyCredParams: [
         { alg: -7,   type: "public-key" },  // ES256

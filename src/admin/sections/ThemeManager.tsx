@@ -120,7 +120,7 @@ export default function ThemeManagerSection({ settings, onUpdate }: Props) {
         <div className="admin-theme-preview" style={{ "--preview-accent": local.accentColor } as React.CSSProperties}>
           <div className="admin-preview-card">
             <div className="admin-preview-header" style={{ background: local.accentColor }}>
-              <span>FinanceVault</span>
+              <span>FinAura</span>
             </div>
             <div className="admin-preview-body">
               <button className="admin-preview-btn" style={{ background: local.accentColor }}>

@@ -191,7 +191,7 @@ export default function AuthScreen({ onUnlock }: Props) {
     <div className="auth-screen">
       <div className="auth-card">
         <div className="auth-logo">💰</div>
-        <h1 className="auth-title">FinanceVault</h1>
+        <h1 className="auth-title">FinAura</h1>
 
         {/* ── NEW USER: Enter PIN ── */}
         {step === "pin-enter" && (

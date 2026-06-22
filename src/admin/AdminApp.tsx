@@ -75,7 +75,7 @@ export default function AdminApp() {
           <span className="admin-sidebar-logo">⚙️</span>
           <div>
             <div className="admin-sidebar-name">Admin Panel</div>
-            <div className="admin-sidebar-sub">FinanceVault</div>
+            <div className="admin-sidebar-sub">FinAura</div>
           </div>
         </div>
         <nav className="admin-nav">

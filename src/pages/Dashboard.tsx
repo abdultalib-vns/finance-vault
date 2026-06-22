@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { FinanceItem } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
-import { saveItems, loadExpenses, saveExpenses, loadBankExpenses, saveBankExpenses } from "../lib/storage";
+import { loadExpenses, saveItems, saveExpenses, saveBankExpenses } from "../lib/storage";
 import AddItemForm from "../components/AddItemForm";
-import ItemCard from "../components/ItemCard";
-import NotificationBell from "../components/NotificationBell";
 
 interface Props {
   masterKey: string;
@@ -14,156 +12,18 @@ interface Props {
   onLock: () => void;
 }
 
-type ChartType = "donut" | "bar" | "horizontal";
-
-function DonutChart({ data }: { data: { label: string; value: number; color: string }[] }) {
-  const total = data.reduce((s, d) => s + d.value, 0);
-  if (total === 0) return null;
-
-  const R = 52;
-  const circ = 2 * Math.PI * R;
-  let prevLen = 0;
-
-  const segments = data.filter((d) => d.value > 0).map((seg) => {
-    const len = (seg.value / total) * circ;
-    const dashOffset = circ * 0.25 - prevLen;
-    prevLen += len;
-    return { ...seg, len, dashOffset };
-  });
-
-  return (
-    <svg width="140" height="140" viewBox="0 0 140 140">
-      <circle cx="70" cy="70" r={R} fill="none" stroke="var(--border)" strokeWidth="20" />
-      {segments.map((seg, i) => (
-        <circle key={i} cx="70" cy="70" r={R} fill="none" stroke={seg.color} strokeWidth="20" strokeDasharray={`${seg.len} ${circ - seg.len}`} strokeDashoffset={seg.dashOffset} />
-      ))}
-    </svg>
-  );
-}
-
-function BarChart({ data }: { data: { label: string; value: number; color: string }[] }) {
-  const maxVal = Math.max(...data.map((d) => d.value), 1);
-  return (
-    <div className="bar-chart">
-      {data.filter((d) => d.value > 0).map((d) => (
-        <div key={d.label} className="bar-chart-col">
-          <div className="bar-chart-bar-wrap">
-            <div
-              className="bar-chart-bar"
-              style={{
-                height: `${Math.max(4, (d.value / maxVal) * 100)}%`,
-                background: d.color,
-              }}
-            />
-          </div>
-          <span className="bar-chart-label">{d.label}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function HorizontalBarChart({ data, total }: { data: { label: string; value: number; color: string }[]; total: number }) {
-  if (total === 0) return null;
-  return (
-    <div className="h-bar-chart">
-      {data.filter((d) => d.value > 0).map((d) => (
-        <div key={d.label} className="h-bar-row">
-          <span className="h-bar-label">{d.label}</span>
-          <div className="h-bar-track">
-            <div className="h-bar-fill" style={{ width: `${Math.round((d.value / total) * 100)}%`, background: d.color }} />
-          </div>
-          <span className="h-bar-val">{Math.round((d.value / total) * 100)}%</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 export default function Dashboard({ masterKey, currency, items, onItemsChange, onLock }: Props) {
-  const [editItem, setEditItem] = useState<FinanceItem | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [chartType, setChartType] = useState<ChartType>("donut");
-  const [selectedMonth, setSelectedMonth] = useState(() => {
-    const n = new Date();
-    return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}`;
-  });
 
-  const now = new Date();
-  const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-
-  function prevMonth() {
-    const [y, m] = selectedMonth.split("-").map(Number);
-    const d = new Date(y, m - 2, 1);
-    setSelectedMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
-  }
-  function nextMonth() {
-    if (selectedMonth >= currentMonth) return;
-    const [y, m] = selectedMonth.split("-").map(Number);
-    const d = new Date(y, m, 1);
-    setSelectedMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
-  }
-
-  const [selY, selM] = selectedMonth.split("-").map(Number);
-  const selMonthLabel = new Date(selY, selM - 1, 1).toLocaleDateString(undefined, { month: "long", year: "numeric" });
-
-  // Last calendar day string of selectedMonth e.g. "2026-06-30"
-  const lastDay = new Date(selY, selM, 0);
-  const lastDayStr = `${selY}-${String(selM).padStart(2, "0")}-${String(lastDay.getDate()).padStart(2, "0")}`;
-
-  const expenses   = loadExpenses();
-  const bankExpAll = loadBankExpenses();
-
-  // ── Bank activity for selected month ──────────────────────────
-  const monthBankTxns  = bankExpAll.filter(e => e.date.startsWith(selectedMonth));
-  const monthCredits   = monthBankTxns.filter(e => e.type === "credit").reduce((s, e) => s + e.amount, 0);
-  const monthDebits    = monthBankTxns.filter(e => e.type === "debit").reduce((s, e) => s + e.amount, 0);
-
-  // Closing bank balance at end of selected month (reconstruct from current balance)
-  const bankItems = items.filter(i => i.type === "bank");
-  const closingBankBalance = bankItems.reduce((total, bank) => {
-    const txnsAfter = bankExpAll.filter(e => e.bankId === bank.id && e.date > lastDayStr);
-    const futureDebits  = txnsAfter.filter(e => e.type === "debit").reduce((s, e) => s + e.amount, 0);
-    const futureCredits = txnsAfter.filter(e => e.type === "credit").reduce((s, e) => s + e.amount, 0);
-    // closing = current + future_debits − future_credits (reversing future movement)
-    return total + bank.balance + futureDebits - futureCredits;
-  }, 0);
-
-  // ── Card dues for selected month ───────────────────────────────
-  // "Due this month" = expenses whose dueDate (or date if no dueDate) falls in selectedMonth
-  const dueThisMonth = expenses.filter(e => (e.dueDate || e.date).startsWith(selectedMonth));
-  const dueThisMonthTotal   = dueThisMonth.reduce((s, e) => s + e.amount, 0);
-  const dueThisMonthPaid    = dueThisMonth.filter(e => e.status === "paid" || e.status === "billed").reduce((s, e) => s + e.amount, 0);
-  const dueThisMonthUnpaid  = dueThisMonth.filter(e => e.status === "unpaid" || e.status === "bill_generated_unpaid").reduce((s, e) => s + e.amount, 0);
-
-  // Unpaid dues from ALL prior months (carried in to this month)
-  const carriedInDues = expenses
-    .filter(e => (e.dueDate || e.date).slice(0, 7) < selectedMonth && (e.status === "unpaid" || e.status === "bill_generated_unpaid"))
-    .reduce((s, e) => s + e.amount, 0);
-
-  // Total dues to clear this month = this month's dues + carried-in
-  const totalDuesToClear = dueThisMonthTotal + carriedInDues;
-  // What's still not cleared (carries to NEXT month)
-  const carryOutDues = dueThisMonthUnpaid + carriedInDues;
-
-  // ── Summary stats (all-time) ──────────────────────────────────
-  const unpaidTotal  = expenses.filter(e => e.status === "unpaid" || e.status === "bill_generated_unpaid").reduce((s, e) => s + e.amount, 0);
-  const bankTotal    = items.filter(i => i.type === "bank").reduce((s, i) => s + i.balance, 0);
-  const fdTotal      = items.filter(i => i.type === "fd").reduce((s, i) => s + i.balance, 0);
-  const rdTotal      = items.filter(i => i.type === "rd").reduce((s, i) => s + i.balance, 0);
-  const mfTotal      = items.filter(i => i.type === "mf").reduce((s, i) => s + i.balance, 0);
-  const cardCount    = items.filter(i => i.type === "card" || i.type === "paylater").length;
-  const savingsTotal = bankTotal + fdTotal + rdTotal + mfTotal;
-
-  const chartData = [
-    { label: "Bank", value: bankTotal, color: "#3b82f6" },
-    { label: "FD", value: fdTotal, color: "#f59e0b" },
-    { label: "RD", value: rdTotal, color: "#10b981" },
-    { label: "MF", value: mfTotal, color: "#06b6d4" },
-    { label: "Dues", value: unpaidTotal, color: "#ef4444" },
-  ].filter(d => d.value > 0);
-
-  const chartTotal = chartData.reduce((s, d) => s + d.value, 0);
+  // Data calculations
+  const bankTotal = items.filter(i => i.type === "bank").reduce((s, i) => s + i.balance, 0);
+  const fdTotal = items.filter(i => i.type === "fd").reduce((s, i) => s + i.balance, 0);
+  const rdTotal = items.filter(i => i.type === "rd").reduce((s, i) => s + i.balance, 0);
+  const mfTotal = items.filter(i => i.type === "mf").reduce((s, i) => s + i.balance, 0);
+  const savingsTotal = fdTotal + rdTotal + mfTotal;
+  
+  const expenses = loadExpenses();
+  const unpaidTotal = expenses.filter(e => e.status === "unpaid" || e.status === "bill_generated_unpaid").reduce((s, e) => s + e.amount, 0);
 
   function handleAdd(item: FinanceItem) {
     const updated = [item, ...items];
@@ -172,233 +32,178 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
     setShowAddForm(false);
   }
 
-  function handleDelete(id: string) {
-    const updated = items.filter((i) => i.id !== id);
-    saveItems(updated);
-    onItemsChange(updated);
-    saveExpenses(loadExpenses().filter((e) => e.cardId !== id));
-    saveBankExpenses(loadBankExpenses().filter((e) => e.bankId !== id));
-  }
-
-  function handleEditSave(updated: FinanceItem) {
-    const updatedItems = items.map(i => i.id === updated.id ? updated : i);
-    saveItems(updatedItems);
-    onItemsChange(updatedItems);
-    setEditItem(null);
-  }
-
   return (
-    <div className="screen">
-      <header className="dashboard-header">
-        <div className="header-top">
-          <h2 className="header-title">📊 Dashboard</h2>
-          <div className="header-actions">
-            <span className="header-count">{items.length} item{items.length !== 1 ? "s" : ""}</span>
-            <NotificationBell />
-            <button type="button" className="btn-logout" onClick={onLock} aria-label="Logout" title="Logout">🚪</button>
+    <div className="min-h-screen bg-[#050505] text-white font-sans pb-24 overflow-x-hidden">
+      {/* Top Navigation */}
+      <div className="flex justify-between items-center px-6 pt-12 pb-6">
+        <h1 className="text-2xl font-bold tracking-tight">Money</h1>
+        <div className="relative cursor-pointer" onClick={onLock}>
+          <div className="w-10 h-10 bg-[#1c1c1e] rounded-full flex items-center justify-center border border-white/10 hover:bg-[#2c2c2e] transition-colors">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          {/* Notification Badge */}
+          <div className="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-[#050505] text-[8px] font-bold flex items-center justify-center">
+            {items.length > 0 ? "1" : ""}
           </div>
         </div>
-        <div className="summary-grid">
-          <div className="summary-card green">
-            <span className="summary-val">{formatAmount(savingsTotal, currency)}</span>
-            <span className="summary-lbl">Total Savings</span>
-          </div>
-          <div className="summary-card red">
-            <span className="summary-val">{formatAmount(unpaidTotal, currency)}</span>
-            <span className="summary-lbl">Outstanding Dues</span>
-          </div>
-        </div>
-      </header>
-
-      <div className="content">
-        {chartData.length > 0 && (
-          <div className="chart-section">
-            {/* Chart Type Switcher */}
-            <div className="chart-type-switcher">
-              <button className={`chart-type-btn ${chartType === "donut" ? "active" : ""}`} onClick={() => setChartType("donut")} title="Donut Chart">🍩</button>
-              <button className={`chart-type-btn ${chartType === "bar" ? "active" : ""}`} onClick={() => setChartType("bar")} title="Bar Chart">📊</button>
-              <button className={`chart-type-btn ${chartType === "horizontal" ? "active" : ""}`} onClick={() => setChartType("horizontal")} title="Horizontal Bars">📏</button>
-            </div>
-
-            {chartType === "donut" && (
-              <div className="chart-donut-wrap">
-                <div className="chart-donut">
-                  <DonutChart data={chartData} />
-                  <div className="chart-center-text">
-                    <span className="chart-center-val">{formatAmount(savingsTotal, currency)}</span>
-                    <span className="chart-center-lbl">Net Worth</span>
-                  </div>
-                </div>
-                <div className="chart-legend">
-                  {chartData.map(d => (
-                    <div key={d.label} className="legend-item">
-                      <span className="legend-dot" style={{ background: d.color }} />
-                      <span className="legend-label">{d.label}</span>
-                      <span className="legend-val" style={d.label === "Dues" ? { color: "#ef4444" } : undefined}>
-                        {d.label === "Dues" ? `−${formatAmount(d.value, currency)}` : formatAmount(d.value, currency)}
-                      </span>
-                    </div>
-                  ))}
-                  {cardCount > 0 && (
-                    <div className="legend-item">
-                      <span className="legend-dot" style={{ background: "#8b5cf6" }} />
-                      <span className="legend-label">Cards</span>
-                      <span className="legend-val">{cardCount} card{cardCount > 1 ? "s" : ""}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {chartType === "bar" && (
-              <div className="chart-bar-wrap">
-                <BarChart data={chartData} />
-                <div className="chart-legend">
-                  {chartData.map(d => (
-                    <div key={d.label} className="legend-item">
-                      <span className="legend-dot" style={{ background: d.color }} />
-                      <span className="legend-label">{d.label}</span>
-                      <span className="legend-val" style={d.label === "Dues" ? { color: "#ef4444" } : undefined}>
-                        {d.label === "Dues" ? `−${formatAmount(d.value, currency)}` : formatAmount(d.value, currency)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {chartType === "horizontal" && (
-              <div className="chart-hbar-wrap">
-                <HorizontalBarChart data={chartData} total={chartTotal} />
-              </div>
-            )}
-
-            {chartData.length > 1 && chartType !== "horizontal" && (
-              <div className="asset-bars">
-                {chartData.map(d => (
-                  <div key={d.label} className="asset-bar-row">
-                    <span className="asset-bar-label">{d.label}</span>
-                    <div className="asset-bar-track">
-                      <div className="asset-bar-fill" style={{ width: `${Math.round((d.value / chartTotal) * 100)}%`, background: d.color }} />
-                    </div>
-                    <span className="asset-bar-pct">{Math.round((d.value / chartTotal) * 100)}%</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── Monthly Overview ─────────────────────────────── */}
-        <div className="monthly-overview">
-          {/* Month Navigator */}
-          <div className="month-nav-bar">
-            <button className="month-nav-btn" onClick={prevMonth}>‹</button>
-            <span className="month-nav-label">📅 {selMonthLabel}</span>
-            <button className="month-nav-btn" onClick={nextMonth} disabled={selectedMonth >= currentMonth}>›</button>
-          </div>
-
-          {/* Bank Activity */}
-          <div className="monthly-row">
-            <div className="monthly-stat-card">
-              <span className="monthly-stat-icon">🏦</span>
-              <div className="monthly-stat-body">
-                <span className="monthly-stat-lbl">Closing Bank Balance</span>
-                <span className="monthly-stat-val">{formatAmount(closingBankBalance, currency)}</span>
-                <span className="monthly-stat-sub">
-                  <span className="credit-text">▲ {formatAmount(monthCredits, currency)}</span>
-                  {" · "}
-                  <span className="debit-text">▼ {formatAmount(monthDebits, currency)}</span>
-                </span>
-              </div>
-            </div>
-
-            <div className="monthly-stat-card">
-              <span className="monthly-stat-icon">💳</span>
-              <div className="monthly-stat-body">
-                <span className="monthly-stat-lbl">Dues This Month</span>
-                <span className="monthly-stat-val">{formatAmount(dueThisMonthTotal, currency)}</span>
-                <span className="monthly-stat-sub">
-                  {carriedInDues > 0
-                    ? <span className="carried-text">+{formatAmount(carriedInDues, currency)} carried in</span>
-                    : <span className="paid-text">✓ {formatAmount(dueThisMonthPaid, currency)} paid</span>
-                  }
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Breakdown rows */}
-          <div className="monthly-breakdown">
-            <div className="monthly-breakdown-row">
-              <span className="mbd-label">Total to clear</span>
-              <span className="mbd-val">{formatAmount(totalDuesToClear, currency)}</span>
-            </div>
-            <div className="monthly-breakdown-row">
-              <span className="mbd-label">Paid / Billed</span>
-              <span className="mbd-val credit-text">{formatAmount(dueThisMonthPaid, currency)}</span>
-            </div>
-            <div className={`monthly-breakdown-row ${carryOutDues > 0 ? "carry-row" : ""}`}>
-              <span className="mbd-label">➡ Carrying to next month</span>
-              <span className={`mbd-val ${carryOutDues > 0 ? "debit-text" : "credit-text"}`}>
-                {carryOutDues > 0 ? formatAmount(carryOutDues, currency) : "Nothing — all cleared ✓"}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="section-header">
-          <h3 className="section-title">All Entries</h3>
-        </div>
-
-        {items.length === 0 ? (
-          <div className="empty-state">
-            <p className="empty-icon">🏦</p>
-            <p className="empty-text">No entries yet.</p>
-            <p className="empty-sub">Tap + to add bank accounts, cards, FDs, RDs, or mutual funds.</p>
-          </div>
-        ) : (
-          <ul className="item-list">
-            {items.map((item) => (
-              <ItemCard
-                key={item.id}
-                item={item}
-                masterKey={masterKey}
-                currency={currency}
-                onDelete={handleDelete}
-                onEdit={setEditItem}
-              />
-            ))}
-          </ul>
-        )}
       </div>
 
-      <button className="fab-btn" onClick={() => setShowAddForm(true)} aria-label="Add Entry" title="Add Entry">+</button>
+      <div className="px-4 space-y-4">
+        
+        {/* Main Cash Balance Card */}
+        <div className="bg-[#1c1c1e] rounded-3xl p-6 relative overflow-hidden border border-white/[0.05]">
+          <div className="flex justify-between items-start mb-2">
+            <span className="text-zinc-400 font-medium text-sm">Cash Balance</span>
+            <button className="text-zinc-500 text-xs font-medium flex items-center gap-1 hover:text-zinc-300">
+              Account & Routing 
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
+          <div className="text-[2.75rem] font-bold tracking-tight mb-8">
+            {formatAmount(bankTotal, currency)}
+          </div>
+          
+          <div className="flex gap-3">
+            <button 
+              className="flex-1 bg-[#2c2c2e] hover:bg-[#3c3c3e] transition-colors py-3.5 rounded-full font-semibold text-sm"
+              onClick={() => setShowAddForm(true)}
+            >
+              Add Cash
+            </button>
+            <button className="flex-1 bg-[#2c2c2e] hover:bg-[#3c3c3e] transition-colors py-3.5 rounded-full font-semibold text-sm">
+              Cash Out
+            </button>
+          </div>
+        </div>
+
+        {/* 2x2 Bento Grid */}
+        <div className="grid grid-cols-2 gap-4">
+          
+          {/* Savings */}
+          <div className="bg-[#1c1c1e] rounded-3xl p-5 border border-white/[0.05] flex flex-col justify-between aspect-square">
+            <div className="flex justify-between items-start">
+              <span className="text-sm font-medium text-white">Savings</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </div>
+            
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center my-4 shadow-[0_0_15px_rgba(74,222,128,0.3)]">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#050505" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="8"></circle>
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+              </svg>
+            </div>
+            
+            <div>
+              <div className="font-bold text-xl">{formatAmount(savingsTotal, currency)}</div>
+              <div className="text-zinc-500 text-[11px] mt-0.5">Save now, for later</div>
+            </div>
+          </div>
+
+          {/* Dues / Tax Filing style card */}
+          <div className="bg-[#1c1c1e] rounded-3xl p-5 border border-white/[0.05] flex flex-col justify-between aspect-square relative overflow-hidden group">
+            <div className="flex justify-between items-start z-10 relative">
+              <span className="text-sm font-medium text-white w-2/3 leading-tight">Outstanding Dues</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </div>
+            
+            {/* Abstract Graphic */}
+            <div className="absolute bottom-0 right-0 w-32 h-24 opacity-80 translate-y-4 group-hover:translate-y-2 transition-transform duration-500">
+              <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg" fill="none">
+                <rect x="20" y="40" width="60" height="40" rx="4" fill="#EAB308" transform="rotate(-15 50 60)" />
+                <rect x="30" y="30" width="60" height="40" rx="4" fill="#FDE047" transform="rotate(-5 50 60)" />
+                <line x1="40" y1="45" x2="80" y2="45" stroke="#CA8A04" strokeWidth="2" transform="rotate(-5 50 60)" />
+                <line x1="40" y1="55" x2="70" y2="55" stroke="#CA8A04" strokeWidth="2" transform="rotate(-5 50 60)" />
+              </svg>
+            </div>
+            
+            <div className="z-10 relative mt-auto">
+              <div className="font-bold text-xl text-yellow-400">{formatAmount(unpaidTotal, currency)}</div>
+              <div className="text-zinc-500 text-[11px] mt-0.5">Bills to clear</div>
+            </div>
+          </div>
+
+          {/* Bitcoin Card */}
+          <div className="bg-[#1c1c1e] rounded-3xl p-5 border border-white/[0.05] flex flex-col justify-between aspect-square">
+            <div className="flex justify-between items-start">
+              <span className="text-sm font-medium text-white">Bitcoin</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </div>
+            
+            {/* Sparkline Chart */}
+            <div className="w-full h-12 my-2 flex items-center">
+              <svg viewBox="0 0 100 40" className="w-full h-full overflow-visible" preserveAspectRatio="none">
+                <path d="M0,20 Q10,15 20,25 T40,10 T60,30 T80,15 T100,25" fill="none" stroke="#06b6d4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            
+            <div>
+              <div className="font-bold text-xl">$1.19</div>
+              <div className="text-zinc-500 text-[11px] mt-0.5 flex items-center gap-1">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                2.48% today
+              </div>
+            </div>
+          </div>
+
+          {/* Stocks Card */}
+          <div className="bg-[#1c1c1e] rounded-3xl p-5 border border-white/[0.05] flex flex-col justify-between aspect-square">
+            <div className="flex justify-between items-start">
+              <span className="text-sm font-medium text-white">Stocks</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </div>
+            
+            {/* Sparkline Chart */}
+            <div className="w-full h-12 my-2 flex items-center">
+              <svg viewBox="0 0 100 40" className="w-full h-full overflow-visible" preserveAspectRatio="none">
+                <path d="M0,15 Q15,5 25,20 T45,10 T65,35 T85,25 T100,30" fill="none" stroke="#a855f7" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            
+            <div>
+              <div className="font-bold text-xl">$543.83</div>
+              <div className="text-zinc-500 text-[11px] mt-0.5 flex items-center gap-1">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                1.43% today
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* More ways to add money */}
+        <div className="pt-4 pb-2">
+          <h3 className="text-sm font-semibold text-zinc-300 mb-3 px-2">More ways to add money</h3>
+          
+          <div className="bg-[#1c1c1e] rounded-3xl p-4 flex items-center gap-4 hover:bg-[#2c2c2e] transition-colors cursor-pointer border border-white/[0.05]">
+            <div className="w-12 h-12 rounded-2xl bg-[#050505] border border-[#2c2c2e] flex items-center justify-center shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+            </div>
+            <div className="flex-1">
+              <div className="font-semibold text-[15px] mb-0.5">Direct Deposit</div>
+              <div className="text-zinc-400 text-xs">Get paid up to 2 days faster</div>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+        </div>
+
+      </div>
 
       {showAddForm && (
-        <div className="modal-overlay" onClick={() => setShowAddForm(false)}>
-          <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-[#1c1c1e] rounded-3xl shadow-2xl overflow-hidden border border-white/10" onClick={(e) => e.stopPropagation()}>
             <AddItemForm
               masterKey={masterKey}
               currency={currency}
               onAdd={handleAdd}
               startOpen
               onCancel={() => setShowAddForm(false)}
-            />
-          </div>
-        </div>
-      )}
-
-      {editItem && (
-        <div className="modal-overlay" onClick={() => setEditItem(null)}>
-          <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
-            <AddItemForm
-              masterKey={masterKey}
-              currency={currency}
-              onAdd={() => {}}
-              initialValues={editItem}
-              onSave={handleEditSave}
-              onCancel={() => setEditItem(null)}
             />
           </div>
         </div>

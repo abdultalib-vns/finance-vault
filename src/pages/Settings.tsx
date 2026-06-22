@@ -351,7 +351,7 @@ export default function Settings({
           <h3 className="settings-section-title">📲 Install App</h3>
           {pwaPrompt ? (
             <>
-              <p className="settings-hint">Install FinanceVault on your home screen for a native app experience.</p>
+              <p className="settings-hint">Install FinAura on your home screen for a native app experience.</p>
               <button type="button" className="btn-primary" onClick={handleInstallPwa}>📲 Install on Home Screen</button>
             </>
           ) : (
@@ -403,7 +403,7 @@ export default function Settings({
         </div>
 
         <div className="settings-section">
-          <h3 className="settings-section-title">ℹ️ About FinanceVault</h3>
+          <h3 className="settings-section-title">ℹ️ About FinAura</h3>
           <div className="about-block">
             <div className="about-row"><span>Version</span><strong>{APP_VERSION}</strong></div>
             <div className="about-row"><span>Storage</span><strong>100% Local (localStorage)</strong></div>
