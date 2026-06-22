@@ -1,4 +1,5 @@
 import { useState } from "react";
+import CryptoJS from "crypto-js";
 import {
   hashAdminPin,
   saveAdminPinHash,
@@ -18,6 +19,7 @@ interface Props {
 
 export default function AdminLogin({ onLogin }: Props) {
   const [mode, setMode] = useState<Mode>(!isAdminSetup() ? "setup" : "login");
+  const [email, setEmail] = useState("");
   const [pin, setPin] = useState("");
   const [confirm, setConfirm] = useState("");
   const [resetKey, setResetKey] = useState("");
@@ -27,9 +29,17 @@ export default function AdminLogin({ onLogin }: Props) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // The expected email is securely hashed so it won't appear in the browser console or inspector
+  const EXPECTED_EMAIL_HASH = "69fdeddff192c99bf5882f0e7fff96aa574b74cb5344a906262689ace0f1cff0";
+
   function handleSetup(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    const enteredHash = CryptoJS.SHA256(email.trim().toLowerCase()).toString();
+    if (enteredHash !== EXPECTED_EMAIL_HASH) {
+      setError("Unauthorized admin email address");
+      return;
+    }
     if (pin.length < 4) { setError("PIN must be at least 4 digits"); return; }
     if (pin !== confirm) { setError("PINs do not match"); return; }
     const key = generateResetKey();
@@ -91,11 +101,18 @@ export default function AdminLogin({ onLogin }: Props) {
             </div>
             <form onSubmit={handleSetup} className="admin-login-form">
               <div className="admin-form-field">
+                <label className="admin-label">Authorized Admin Email</label>
+                <input type="email"
+                  className="admin-input" placeholder="Enter admin email"
+                  value={email} onChange={(e) => setEmail(e.target.value)}
+                  autoFocus />
+              </div>
+              <div className="admin-form-field">
                 <label className="admin-label">Admin PIN</label>
                 <input type="password" inputMode="numeric" pattern="[0-9]*"
                   className="admin-input" placeholder="Min 4 digits"
                   value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-                  maxLength={12} autoFocus />
+                  maxLength={12} />
               </div>
               <div className="admin-form-field">
                 <label className="admin-label">Confirm PIN</label>
