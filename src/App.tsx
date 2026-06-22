@@ -8,6 +8,7 @@ import Settings from "./pages/Settings";
 import BottomNav from "./components/BottomNav";
 import PopupAdBanner from "./components/PopupAdBanner";
 import ThemeUpdateBanner from "./components/ThemeUpdateBanner";
+import InstallPrompt from "./components/InstallPrompt";
 import AdminApp from "./admin/AdminApp";
 import { loadItems, loadCurrency, loadIdleTimeout, loadTheme, saveTheme } from "./lib/storage";
 import { getCurrency } from "./lib/currency";
@@ -168,6 +169,7 @@ function MainApp() {
       <BottomNav active={tab} onChange={handleTabChange} />
       <PopupAdBanner />
       <ThemeUpdateBanner />
+      <InstallPrompt />
     </div>
   );
 }
