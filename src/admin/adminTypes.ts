@@ -9,6 +9,14 @@ export interface CardTemplate {
   applyUrl?: string;
   imageUrl?: string;
   color: string;
+  shortDescription?: string;
+  tags?: string;
+  awesomeFeatures?: string;
+  eligibilityCriteria?: string;
+  feesAndCharges?: string;
+  importantInformation?: string;
+  documentsNeeded?: string;
+  stepsToApply?: string;
   featured: boolean;
   active: boolean;
   createdAt: number;

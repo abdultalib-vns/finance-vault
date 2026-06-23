@@ -601,6 +601,14 @@ interface CardOfferEntry {
   applyUrl?: string;
   imageUrl?: string;
   color: string;
+  shortDescription?: string;
+  tags?: string;
+  awesomeFeatures?: string;
+  eligibilityCriteria?: string;
+  feesAndCharges?: string;
+  importantInformation?: string;
+  documentsNeeded?: string;
+  stepsToApply?: string;
   featured: boolean;
 }
 
@@ -623,6 +631,14 @@ function NewCardView() {
         applyUrl: t.applyUrl,
         imageUrl: t.imageUrl,
         color: t.color,
+        shortDescription: t.shortDescription,
+        tags: t.tags,
+        awesomeFeatures: t.awesomeFeatures,
+        eligibilityCriteria: t.eligibilityCriteria,
+        feesAndCharges: t.feesAndCharges,
+        importantInformation: t.importantInformation,
+        documentsNeeded: t.documentsNeeded,
+        stepsToApply: t.stepsToApply,
         featured: t.featured,
       })));
     });
@@ -684,31 +700,28 @@ function NewCardView() {
         ))}
       </div>
 
-      <ul className="credit-offer-list">
+      <div className="new-card-list">
         {filteredCards.map((offer) => (
-          <li
-            key={offer.id}
-            className="credit-offer-item credit-offer-item-clickable"
-            onClick={() => setSelected(offer)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && setSelected(offer)}
-          >
-            <div className="credit-offer-top">
-              <div className="credit-offer-info">
-                <span className="credit-offer-name">{offer.name}</span>
-                <span className="credit-offer-bank">{offer.bank}</span>
-              </div>
-              <div className="credit-offer-right">
-                <span className={`chip ${offer.annualFee === "Free" || offer.annualFee === "" ? "chip-free" : "chip-premium"}`}>
-                  {offer.annualFee === "Free" || offer.annualFee === "" ? "FREE" : offer.annualFee}
-                </span>
-                <span className="credit-offer-chevron">›</span>
-              </div>
+          <div key={offer.id} className="new-card-row" onClick={() => setSelected(offer)}>
+            <div className="new-card-row-info">
+              <div className="new-card-row-bank">{offer.bank}</div>
+              <div className="new-card-row-name">{offer.name}</div>
+              <div className="new-card-row-desc">{offer.shortDescription || offer.benefits.slice(0, 60) + "..."}</div>
+              {offer.tags && <div className="new-card-row-tag">{offer.tags.split(',')[0].trim()}</div>}
+              
+              <button 
+                className="new-card-row-apply" 
+                onClick={(e) => { e.stopPropagation(); if(offer.applyUrl) window.open(offer.applyUrl, "_blank"); }}
+              >
+                Apply Now
+              </button>
             </div>
-          </li>
+            <div className="new-card-row-img-wrap">
+              {offer.imageUrl && <img src={offer.imageUrl} alt={offer.name} className="new-card-row-img" />}
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
 
       {filteredCards.length === 0 && (
         <div style={{ textAlign: "center", padding: "32px 16px", color: "var(--text3)", fontSize: 14 }}>
@@ -750,46 +763,85 @@ function CardOfferDetail({ offer, onBack }: { offer: CardOfferEntry; onBack: () 
 
       {/* Body */}
       <div className="card-offer-detail-body">
-        {/* Key facts row */}
-        <div className="card-offer-detail-facts">
-          <div className="card-offer-fact">
-            <span className="card-offer-fact-label">Annual Fee</span>
-            <span className="card-offer-fact-val" style={{ color: offer.annualFee === "Free" ? "var(--success)" : "var(--text)" }}>
-              {offer.annualFee || "Free"}
-            </span>
+        {offer.awesomeFeatures && (
+          <div className="card-offer-detail-section">
+            <h3 className="card-offer-detail-section-title">Why is {offer.name} so AWESOME?</h3>
+            <ul className="card-offer-detail-list">
+              {offer.awesomeFeatures.split('\n').filter(Boolean).map((b, i) => (
+                <li key={i}>{b}</li>
+              ))}
+            </ul>
           </div>
-          {offer.minSalary && (
-            <div className="card-offer-fact">
-              <span className="card-offer-fact-label">Min. Salary</span>
-              <span className="card-offer-fact-val">{offer.minSalary}</span>
-            </div>
-          )}
-          <div className="card-offer-fact">
-            <span className="card-offer-fact-label">Card Type</span>
-            <span className="card-offer-fact-val" style={{ textTransform: "capitalize" }}>
-              {offer.cardType ?? "Credit"}
-            </span>
+        )}
+
+        {offer.eligibilityCriteria && (
+          <div className="card-offer-detail-section">
+            <h3 className="card-offer-detail-section-title">Eligibility Criteria</h3>
+            <ul className="card-offer-detail-list">
+              {offer.eligibilityCriteria.split('\n').filter(Boolean).map((b, i) => (
+                <li key={i}>{b}</li>
+              ))}
+            </ul>
           </div>
-        </div>
+        )}
 
-        {/* Benefits */}
-        <div className="card-offer-detail-section">
-          <h3 className="card-offer-detail-section-title">✨ Benefits & Features</h3>
-          <ul className="card-offer-benefits-list">
-            {benefitLines.map((b, i) => (
-              <li key={i} className="card-offer-benefit-item">
-                <span className="card-offer-benefit-dot" style={{ background: offer.color }} />
-                <span>{b}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {offer.feesAndCharges && (
+          <div className="card-offer-detail-section">
+            <h3 className="card-offer-detail-section-title">Fees & Charges</h3>
+            <ul className="card-offer-detail-list">
+              {offer.feesAndCharges.split('\n').filter(Boolean).map((b, i) => (
+                <li key={i}>{b}</li>
+              ))}
+            </ul>
+          </div>
+        )}
 
-        {/* Issuer */}
-        <div className="card-offer-detail-section">
-          <h3 className="card-offer-detail-section-title">🏦 Issuer</h3>
-          <p className="card-offer-detail-issuer">{offer.bank}</p>
-        </div>
+        {offer.importantInformation && (
+          <div className="card-offer-detail-section">
+            <h3 className="card-offer-detail-section-title">Important Information</h3>
+            <ul className="card-offer-detail-list">
+              {offer.importantInformation.split('\n').filter(Boolean).map((b, i) => (
+                <li key={i}>{b}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {offer.documentsNeeded && (
+          <div className="card-offer-detail-section">
+            <h3 className="card-offer-detail-section-title">Documents Needed</h3>
+            <ul className="card-offer-detail-list">
+              {offer.documentsNeeded.split('\n').filter(Boolean).map((b, i) => (
+                <li key={i}>{b}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {offer.stepsToApply && (
+          <div className="card-offer-detail-section">
+            <h3 className="card-offer-detail-section-title">Steps to Apply</h3>
+            <ul className="card-offer-detail-list">
+              {offer.stepsToApply.split('\n').filter(Boolean).map((b, i) => (
+                <li key={i}>{b}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {!offer.awesomeFeatures && (
+          <div className="card-offer-detail-section">
+            <h3 className="card-offer-detail-section-title">✨ Benefits & Features</h3>
+            <ul className="card-offer-benefits-list">
+              {benefitLines.map((b, i) => (
+                <li key={i} className="card-offer-benefit-item">
+                  <span className="card-offer-benefit-dot" style={{ background: offer.color }} />
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       {/* Sticky Apply button */}

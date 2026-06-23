@@ -23,6 +23,14 @@ const EMPTY: Omit<CardTemplate, "id" | "createdAt"> = {
   applyUrl: "",
   imageUrl: "",
   color: "#2563eb",
+  shortDescription: "",
+  tags: "",
+  awesomeFeatures: "",
+  eligibilityCriteria: "",
+  feesAndCharges: "",
+  importantInformation: "",
+  documentsNeeded: "",
+  stepsToApply: "",
   featured: false,
   active: true,
 };
@@ -50,6 +58,14 @@ export default function CardTemplatesSection({ templates, onUpdate }: Props) {
       applyUrl: t.applyUrl ?? "",
       imageUrl: t.imageUrl ?? "",
       color: t.color,
+      shortDescription: t.shortDescription ?? "",
+      tags: t.tags ?? "",
+      awesomeFeatures: t.awesomeFeatures ?? "",
+      eligibilityCriteria: t.eligibilityCriteria ?? "",
+      feesAndCharges: t.feesAndCharges ?? "",
+      importantInformation: t.importantInformation ?? "",
+      documentsNeeded: t.documentsNeeded ?? "",
+      stepsToApply: t.stepsToApply ?? "",
       featured: t.featured,
       active: t.active,
     });
@@ -198,6 +214,62 @@ export default function CardTemplatesSection({ templates, onUpdate }: Props) {
                     value={form.benefits}
                     onChange={(e) => setForm({ ...form, benefits: e.target.value })} rows={3} />
                 </div>
+                
+                {/* --- New Detail Fields --- */}
+                <div className="admin-form-field admin-form-field-full">
+                  <h4 style={{ marginTop: 16, marginBottom: 8, color: "var(--text)", borderBottom: "1px solid var(--border)", paddingBottom: 4 }}>
+                    Dashboard Display
+                  </h4>
+                </div>
+                <div className="admin-form-field">
+                  <label className="admin-label">Short Description</label>
+                  <input className="admin-input" placeholder="e.g. Best for everyday cashback" value={form.shortDescription}
+                    onChange={(e) => setForm({ ...form, shortDescription: e.target.value })} />
+                </div>
+                <div className="admin-form-field">
+                  <label className="admin-label">Tags (comma separated)</label>
+                  <input className="admin-input" placeholder="e.g. Rewards, Welcome Benefit" value={form.tags}
+                    onChange={(e) => setForm({ ...form, tags: e.target.value })} />
+                </div>
+
+                <div className="admin-form-field admin-form-field-full">
+                  <h4 style={{ marginTop: 16, marginBottom: 8, color: "var(--text)", borderBottom: "1px solid var(--border)", paddingBottom: 4 }}>
+                    Detailed Screen Sections
+                  </h4>
+                  <p style={{ fontSize: 12, color: "var(--text3)", marginBottom: 12 }}>Enter text separated by newlines to automatically create bullet points.</p>
+                </div>
+                
+                <div className="admin-form-field admin-form-field-full">
+                  <label className="admin-label">Why is this card AWESOME?</label>
+                  <textarea className="admin-input admin-textarea" placeholder="Earn 5X Reward Points...\nLounge Access..."
+                    value={form.awesomeFeatures} onChange={(e) => setForm({ ...form, awesomeFeatures: e.target.value })} rows={4} />
+                </div>
+                <div className="admin-form-field admin-form-field-full">
+                  <label className="admin-label">Eligibility Criteria</label>
+                  <textarea className="admin-input admin-textarea" placeholder="Age: 21 to 65 years\nIncome: ₹60,000 per month..."
+                    value={form.eligibilityCriteria} onChange={(e) => setForm({ ...form, eligibilityCriteria: e.target.value })} rows={3} />
+                </div>
+                <div className="admin-form-field admin-form-field-full">
+                  <label className="admin-label">Fees & Charges</label>
+                  <textarea className="admin-input admin-textarea" placeholder="Joining Fee: ₹4,999 + GST\nAnnual Fee: ₹4,999 + GST..."
+                    value={form.feesAndCharges} onChange={(e) => setForm({ ...form, feesAndCharges: e.target.value })} rows={3} />
+                </div>
+                <div className="admin-form-field admin-form-field-full">
+                  <label className="admin-label">Important Information</label>
+                  <textarea className="admin-input admin-textarea" placeholder="Please ensure your mobile number is linked..."
+                    value={form.importantInformation} onChange={(e) => setForm({ ...form, importantInformation: e.target.value })} rows={3} />
+                </div>
+                <div className="admin-form-field admin-form-field-full">
+                  <label className="admin-label">Documents Needed</label>
+                  <textarea className="admin-input admin-textarea" placeholder="PAN Card\nAadhaar\nIncome Proof..."
+                    value={form.documentsNeeded} onChange={(e) => setForm({ ...form, documentsNeeded: e.target.value })} rows={3} />
+                </div>
+                <div className="admin-form-field admin-form-field-full">
+                  <label className="admin-label">Steps to Apply</label>
+                  <textarea className="admin-input admin-textarea" placeholder="Click Apply Now\nComplete application..."
+                    value={form.stepsToApply} onChange={(e) => setForm({ ...form, stepsToApply: e.target.value })} rows={3} />
+                </div>
+                {/* --- End New Detail Fields --- */}
                 <div className="admin-form-field">
                   <label className="admin-label">Min. Salary (optional)</label>
                   <input className="admin-input" placeholder="e.g. ₹25,000/month" value={form.minSalary}
