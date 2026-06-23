@@ -1,16 +1,25 @@
-import { CardTemplate, PopupAd, SessionRecord, AnalyticsEvent, AdminThemeSettings } from "./adminTypes";
+import { CardTemplate, PopupAd, SessionRecord, AnalyticsEvent, AdminThemeSettings, GlobalAppConfig, CustomCurrency } from "./adminTypes";
 import CryptoJS from "crypto-js";
 import { generateId } from "../lib/utils";
 
 const API_CONFIG = "/api/admin/config";
 
-/** Push shared config sections to the server (fire-and-forget, fails silently). */
-function pushToServer(payload: { cardTemplates?: CardTemplate[]; popupAds?: PopupAd[]; themeSettings?: AdminThemeSettings }): void {
+/** Push shared config sections to the server. Alerts if Vercel KV fails. */
+function pushToServer(payload: { cardTemplates?: CardTemplate[]; popupAds?: PopupAd[]; themeSettings?: AdminThemeSettings; globalConfig?: GlobalAppConfig; customCurrencies?: CustomCurrency[] }): void {
   fetch(API_CONFIG, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
-  }).catch(() => { /* offline or no API server — localStorage is the fallback */ });
+  })
+    .then(async (res) => {
+      if (!res.ok) {
+        const err = await res.text();
+        alert("Failed to sync globally. Did you create the Vercel KV database? Error: " + err);
+      }
+    })
+    .catch((e) => {
+      console.error("Failed to connect to API:", e);
+    });
 }
 
 /**
@@ -46,6 +55,8 @@ const ADMIN_SESSIONS_KEY   = "admin_analytics_sessions";
 const ADMIN_EVENTS_KEY     = "admin_analytics_events";
 const ADMIN_THEME_KEY      = "admin_theme_settings";
 const ADMIN_ACTIVE_KEY     = "admin_active_heartbeat";
+const ADMIN_GLOBAL_CONFIG_KEY = "admin_global_config";
+const ADMIN_CURRENCIES_KEY = "admin_custom_currencies";
 
 // ── Admin PIN ────────────────────────────────────────────────────
 export function hashAdminPin(pin: string): string {

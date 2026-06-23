@@ -17,6 +17,7 @@ const EMPTY: Omit<PopupAd, "id" | "createdAt"> = {
   active: true,
   startDate: "",
   endDate: "",
+  allowDoNotShow: true,
 };
 
 const TYPE_ICONS: Record<string, string> = {
@@ -53,6 +54,7 @@ export default function PopupAdsSection({ ads, onUpdate }: Props) {
       active: ad.active,
       startDate: ad.startDate ?? "",
       endDate: ad.endDate ?? "",
+      allowDoNotShow: ad.allowDoNotShow ?? true,
     });
     setEditId(ad.id);
     setShowForm(true);

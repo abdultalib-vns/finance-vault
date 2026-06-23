@@ -133,7 +133,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
   // "Due this month" = expenses whose dueDate (or date if no dueDate) falls in selectedMonth
   const dueThisMonth = expenses.filter(e => (e.dueDate || e.date).startsWith(selectedMonth));
   const dueThisMonthTotal   = dueThisMonth.reduce((s, e) => s + e.amount, 0);
-  const dueThisMonthPaid    = dueThisMonth.filter(e => e.status === "paid" || e.status === "billed").reduce((s, e) => s + e.amount, 0);
+  const dueThisMonthPaid    = dueThisMonth.filter(e => e.status === "paid" || e.status === "bill_generated").reduce((s, e) => s + e.amount, 0);
   const dueThisMonthUnpaid  = dueThisMonth.filter(e => e.status === "unpaid" || e.status === "bill_generated_unpaid").reduce((s, e) => s + e.amount, 0);
 
   // Unpaid dues from ALL prior months (carried in to this month)
