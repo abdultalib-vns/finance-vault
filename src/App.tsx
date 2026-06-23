@@ -147,6 +147,16 @@ function MainApp() {
     return <SplashScreen onFinish={handleSplashDone} />;
   }
 
+  if (globalConfig.maintenanceMode) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg)', padding: 20, textAlign: 'center' }}>
+        <span style={{ fontSize: '4rem', marginBottom: 20 }}>🚧</span>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Under Maintenance</h1>
+        <p style={{ color: 'var(--text2)', maxWidth: 400, lineHeight: 1.5 }}>{globalConfig.maintenanceMessage}</p>
+      </div>
+    );
+  }
+
   if (!masterKey) {
     return <AuthScreen onUnlock={handleUnlock} />;
   }
@@ -161,16 +171,6 @@ function MainApp() {
           setShowWelcome(false);
         }}
       />
-    );
-  }
-
-  if (globalConfig.maintenanceMode) {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg)', padding: 20, textAlign: 'center' }}>
-        <span style={{ fontSize: '4rem', marginBottom: 20 }}>🚧</span>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Under Maintenance</h1>
-        <p style={{ color: 'var(--text2)', maxWidth: 400, lineHeight: 1.5 }}>{globalConfig.maintenanceMessage}</p>
-      </div>
     );
   }
 

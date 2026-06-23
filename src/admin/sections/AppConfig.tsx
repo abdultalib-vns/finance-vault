@@ -36,14 +36,14 @@ export default function AppConfigSection() {
         </p>
         
         <div className="admin-form-row">
-          <label className="admin-toggle-label" style={{ background: 'var(--surface2)', padding: '12px 16px', borderRadius: 12, border: '1px solid var(--border)' }}>
+          <label className="admin-checkbox" style={{ background: 'var(--surface2)', padding: '12px 16px', borderRadius: 12, border: '1px solid var(--border)' }}>
             <input
               type="checkbox"
-              className="admin-toggle"
               checked={config.maintenanceMode}
               onChange={(e) => handleChange("maintenanceMode", e.target.checked)}
+              style={{ width: 18, height: 18 }}
             />
-            <span className="admin-toggle-text" style={{ fontWeight: 600 }}>Enable Maintenance Mode</span>
+            <span style={{ fontWeight: 600 }}>Enable Maintenance Mode</span>
           </label>
         </div>
 
@@ -67,14 +67,14 @@ export default function AppConfigSection() {
         </p>
 
         <div className="admin-form-row">
-          <label className="admin-toggle-label" style={{ background: 'var(--surface2)', padding: '12px 16px', borderRadius: 12, border: '1px solid var(--border)' }}>
+          <label className="admin-checkbox" style={{ background: 'var(--surface2)', padding: '12px 16px', borderRadius: 12, border: '1px solid var(--border)' }}>
             <input
               type="checkbox"
-              className="admin-toggle"
               checked={config.showGlobalBanner}
               onChange={(e) => handleChange("showGlobalBanner", e.target.checked)}
+              style={{ width: 18, height: 18 }}
             />
-            <span className="admin-toggle-text" style={{ fontWeight: 600 }}>Show Banner</span>
+            <span style={{ fontWeight: 600 }}>Show Banner</span>
           </label>
         </div>
 
