@@ -342,3 +342,37 @@ export function clearAdminData(): void {
   localStorage.removeItem(ADMIN_EVENTS_KEY);
   localStorage.removeItem(ADMIN_THEME_KEY);
 }
+
+// -- Global Config ------------------------------------------------
+export function loadGlobalConfig(): GlobalAppConfig {
+  try {
+    const raw = localStorage.getItem(ADMIN_GLOBAL_CONFIG_KEY);
+    if (raw) return JSON.parse(raw) as GlobalAppConfig;
+  } catch {}
+  return {
+    maintenanceMode: false,
+    maintenanceMessage: "FinAura is currently down for maintenance. Please check back later.",
+    showGlobalBanner: false,
+    globalBannerText: "Welcome to FinAura!",
+    minAppVersion: "1.0.0",
+  };
+}
+
+export function saveGlobalConfig(config: GlobalAppConfig): void {
+  localStorage.setItem(ADMIN_GLOBAL_CONFIG_KEY, JSON.stringify(config));
+  pushToServer({ globalConfig: config });
+}
+
+// -- Custom Currencies --------------------------------------------
+export function loadCustomCurrencies(): CustomCurrency[] {
+  try {
+    const raw = localStorage.getItem(ADMIN_CURRENCIES_KEY);
+    if (raw) return JSON.parse(raw) as CustomCurrency[];
+  } catch {}
+  return [];
+}
+
+export function saveCustomCurrencies(currencies: CustomCurrency[]): void {
+  localStorage.setItem(ADMIN_CURRENCIES_KEY, JSON.stringify(currencies));
+  pushToServer({ customCurrencies: currencies });
+}
