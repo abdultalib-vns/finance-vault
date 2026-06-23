@@ -5444,3 +5444,17 @@ html, body {
   overflow-y: auto;
   padding-right: 8px;
 }
+
+.admin-feedback-status-completed {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.admin-feedback-popup-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  justify-content: flex-end;
+}

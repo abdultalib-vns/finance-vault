@@ -54,6 +54,42 @@ export default async function handler(req: any, res: any) {
     }
   }
 
-  res.setHeader('Allow', ['GET', 'POST', 'OPTIONS']);
+  if (req.method === 'PATCH') {
+    try {
+      const { id, status } = req.body;
+      if (!id || !status) return res.status(400).json({ error: 'ID and status required.' });
+
+      let existing: any[] = (await kv.get(KV_KEY)) || [];
+      const index = existing.findIndex((fb) => fb.id === id);
+      
+      if (index !== -1) {
+        existing[index].status = status;
+        await kv.set(KV_KEY, existing);
+        return res.status(200).json({ success: true });
+      }
+      return res.status(404).json({ error: 'Feedback not found.' });
+    } catch (e) {
+      console.error("Vercel KV Error:", e);
+      return res.status(500).json({ error: 'Failed to update feedback.' });
+    }
+  }
+
+  if (req.method === 'DELETE') {
+    try {
+      const { id } = req.query;
+      if (!id) return res.status(400).json({ error: 'ID required.' });
+
+      let existing: any[] = (await kv.get(KV_KEY)) || [];
+      existing = existing.filter((fb) => fb.id !== id);
+      await kv.set(KV_KEY, existing);
+
+      return res.status(200).json({ success: true });
+    } catch (e) {
+      console.error("Vercel KV Error:", e);
+      return res.status(500).json({ error: 'Failed to delete feedback.' });
+    }
+  }
+
+  res.setHeader('Allow', ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS']);
   return res.status(405).end(`Method ${req.method} Not Allowed`);
 }

@@ -43,6 +43,33 @@ export default function FeedbacksSection() {
     });
   }
 
+  async function handleMarkCompleted(id: string) {
+    try {
+      const resp = await fetch("/api/feedback", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: "completed" }),
+      });
+      if (!resp.ok) throw new Error();
+      setFeedbacks(prev => prev.map(f => f.id === id ? { ...f, status: "completed" } : f));
+      if (selected?.id === id) setSelected(prev => prev ? { ...prev, status: "completed" } : null);
+    } catch {
+      alert("Failed to mark as completed.");
+    }
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Are you sure you want to delete this feedback?")) return;
+    try {
+      const resp = await fetch(`/api/feedback?id=${id}`, { method: "DELETE" });
+      if (!resp.ok) throw new Error();
+      setFeedbacks(prev => prev.filter(f => f.id !== id));
+      if (selected?.id === id) setSelected(null);
+    } catch {
+      alert("Failed to delete feedback.");
+    }
+  }
+
   return (
     <div className="admin-section-content">
       <div className="admin-section-header-bar">
@@ -94,7 +121,7 @@ export default function FeedbacksSection() {
                     <td className="admin-feedback-date">{formatDate(fb.createdAt)}</td>
                     <td>
                       <span className={`admin-feedback-status admin-feedback-status-${fb.status}`}>
-                        {fb.status === "new" ? "🆕 New" : fb.status}
+                        {fb.status === "new" ? "🆕 New" : fb.status === "completed" ? "✅ Completed" : fb.status}
                       </span>
                     </td>
                   </tr>
@@ -116,11 +143,21 @@ export default function FeedbacksSection() {
             <div className="admin-feedback-popup-meta">
               <span>📅 {formatDate(selected.createdAt)}</span>
               <span className={`admin-feedback-status admin-feedback-status-${selected.status}`}>
-                {selected.status === "new" ? "🆕 New" : selected.status}
+                {selected.status === "new" ? "🆕 New" : selected.status === "completed" ? "✅ Completed" : selected.status}
               </span>
             </div>
             <div className="admin-feedback-popup-body">
               <p>{selected.description}</p>
+            </div>
+            <div className="admin-feedback-popup-actions">
+              {selected.status !== "completed" && (
+                <button className="admin-btn admin-btn-success" onClick={() => handleMarkCompleted(selected.id)}>
+                  ✅ Mark as Completed
+                </button>
+              )}
+              <button className="admin-btn admin-btn-danger" onClick={() => handleDelete(selected.id)}>
+                🗑️ Delete
+              </button>
             </div>
           </div>
         </div>
