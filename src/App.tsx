@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import AuthScreen from "./pages/AuthScreen";
 import Dashboard from "./pages/Dashboard";
 import Cards from "./pages/Cards";
@@ -8,8 +8,10 @@ import Settings from "./pages/Settings";
 import BottomNav from "./components/BottomNav";
 import PopupAdBanner from "./components/PopupAdBanner";
 import ThemeUpdateBanner from "./components/ThemeUpdateBanner";
+import SplashScreen from "./components/SplashScreen";
+import WelcomeSetup, { isOnboardingDone } from "./components/WelcomeSetup";
 import AdminApp from "./admin/AdminApp";
-import { loadItems, loadCurrency, loadIdleTimeout, loadTheme, saveTheme } from "./lib/storage";
+import { loadItems, loadCurrency, loadIdleTimeout, loadTheme, saveTheme, loadPinHash } from "./lib/storage";
 import { getCurrency } from "./lib/currency";
 import { FinanceItem, NavTab, Currency } from "./types";
 import { startSession, endSession, trackTabVisit, applyAdminTheme, loadAdminTheme, loadAdminConfigFromServer, seedDefaultCardTemplates } from "./admin/adminStorage";
@@ -45,15 +47,20 @@ export default function App() {
 }
 
 function MainApp() {
+  const [showSplash, setShowSplash] = useState(true);
   const [masterKey, setMasterKey] = useState<string | null>(null);
+  const [showWelcome, setShowWelcome] = useState(false);
   const [items, setItems] = useState<FinanceItem[]>([]);
   const [tab, setTab] = useState<NavTab>("dashboard");
   const [currency, setCurrency] = useState<Currency>(() => getCurrency(loadCurrency()));
   const [idleMinutes, setIdleMinutes] = useState<number>(() => loadIdleTimeout());
   const [theme, setThemeState] = useState<"light" | "dark">(() => loadTheme());
+  const [wasNewUser] = useState(() => !loadPinHash());
 
   const idleTimerRef = useRef<number | null>(null);
   const sessionIdRef = useRef<string | null>(null);
+
+  const handleSplashDone = useCallback(() => setShowSplash(false), []);
 
   // Re-apply admin theme overrides every time MainApp mounts (e.g. after returning from admin)
   useEffect(() => {
@@ -82,6 +89,10 @@ function MainApp() {
     else document.documentElement.classList.remove("dark-mode");
     // Start analytics session
     sessionIdRef.current = startSession();
+    // Show welcome setup for first-time users
+    if (wasNewUser && !isOnboardingDone()) {
+      setShowWelcome(true);
+    }
   }
 
   function handleLock() {
@@ -129,8 +140,25 @@ function MainApp() {
     if (sessionIdRef.current) trackTabVisit(sessionIdRef.current, newTab);
   }
 
+  if (showSplash) {
+    return <SplashScreen onFinish={handleSplashDone} />;
+  }
+
   if (!masterKey) {
     return <AuthScreen onUnlock={handleUnlock} />;
+  }
+
+  if (showWelcome) {
+    return (
+      <WelcomeSetup
+        masterKey={masterKey}
+        onComplete={(cur, th) => {
+          setCurrency(cur);
+          setThemeState(th);
+          setShowWelcome(false);
+        }}
+      />
+    );
   }
 
   return (
