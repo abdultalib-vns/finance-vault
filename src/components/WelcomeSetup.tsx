@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CURRENCIES, getCurrency } from "../lib/currency";
+import { getDynamicCurrencies, getCurrency } from "../lib/currency";
 import { saveCurrency, saveTheme, loadTheme } from "../lib/storage";
 import {
   isBiometricSupported,
@@ -43,7 +43,8 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
   const ITEMS_PER_PAGE = 10;
   const isSearching = searchQuery.trim().length > 0;
 
-  const filteredCurrencies = CURRENCIES.filter(
+  const dynamicCurrencies = getDynamicCurrencies();
+  const filteredCurrencies = dynamicCurrencies.filter(
     (c) =>
       c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.code.toLowerCase().includes(searchQuery.toLowerCase()) ||

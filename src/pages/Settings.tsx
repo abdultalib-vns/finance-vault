@@ -3,7 +3,7 @@ import { hashPin } from "../lib/crypto";
 import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses } from "../lib/storage";
 import { encryptData, decryptData } from "../lib/crypto";
 import { FinanceItem, Currency } from "../types";
-import { CURRENCIES, getCurrency } from "../lib/currency";
+import { getDynamicCurrencies, getCurrency } from "../lib/currency";
 import {
   isBiometricSupported,
   isBiometricEnrolled,
@@ -280,7 +280,7 @@ export default function Settings({
         <div className="settings-section">
           <h3 className="settings-section-title">Display Currency</h3>
           <select className="settings-select" value={currency.code} onChange={(e) => handleCurrencyChange(e.target.value)}>
-            {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.symbol} — {c.name} ({c.code})</option>)}
+            {getDynamicCurrencies().map((c) => <option key={c.code} value={c.code}>{c.symbol} — {c.name} ({c.code})</option>)}
           </select>
           <p className="settings-hint">Affects how balances are displayed. Stored values are unchanged.</p>
         </div>

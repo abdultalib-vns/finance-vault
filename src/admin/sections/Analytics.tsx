@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { SessionRecord } from "../adminTypes";
-import { loadSessions, loadEvents, getActiveUserCount } from "../adminStorage";
+import { SessionRecord, AnalyticsEvent } from "../adminTypes";
 
 function formatDuration(start: number, end?: number): string {
   const ms = (end ?? Date.now()) - start;
@@ -23,20 +22,33 @@ function getLast7Days(): string[] {
 export default function AnalyticsSection() {
   const [sessions, setSessions] = useState<SessionRecord[]>([]);
   const [activeUsers, setActiveUsers] = useState(0);
+  const [events, setEvents] = useState<AnalyticsEvent[]>([]);
   const [, setTick] = useState(0);
 
   useEffect(() => {
-    const refresh = () => {
-      setSessions(loadSessions());
-      setActiveUsers(getActiveUserCount());
-      setTick((t) => t + 1);
+    let mounted = true;
+    const fetchGlobalAnalytics = async () => {
+      try {
+        const resp = await fetch("/api/analytics");
+        if (!resp.ok) return;
+        const data = await resp.json();
+        if (mounted) {
+          setSessions(data.sessions || []);
+          setEvents(data.events || []);
+          setActiveUsers(data.activeUsers || 0);
+          setTick(t => t + 1);
+        }
+      } catch {}
     };
-    refresh();
-    const id = setInterval(refresh, 5000);
-    return () => clearInterval(id);
+
+    fetchGlobalAnalytics();
+    const id = setInterval(fetchGlobalAnalytics, 10000); // 10s refresh for admin panel
+    return () => {
+      mounted = false;
+      clearInterval(id);
+    };
   }, []);
 
-  const events = loadEvents();
   const last7Days = getLast7Days();
 
   const sessionsByDay = last7Days.map((date) => ({

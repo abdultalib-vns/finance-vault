@@ -6,6 +6,8 @@ import ThemeManagerSection from "./sections/ThemeManager";
 import PopupAdsSection from "./sections/PopupAds";
 import ChangePinSection from "./sections/ChangePin";
 import FeedbacksSection from "./sections/Feedbacks";
+import AppConfigSection from "./sections/AppConfig";
+import CurrencyManagerSection from "./sections/CurrencyManager";
 import { loadCardTemplates, loadPopupAds, loadAdminTheme, applyAdminTheme } from "./adminStorage";
 import { CardTemplate, PopupAd, AdminTab, AdminThemeSettings } from "./adminTypes";
 
@@ -61,6 +63,8 @@ export default function AdminApp() {
   }
 
   const NAV_ITEMS: { id: AdminTab; label: string; icon: string }[] = [
+    { id: "config",    label: "App Config",     icon: "⚙️" },
+    { id: "currencies",label: "Currencies",     icon: "💱" },
     { id: "cards",     label: "Card Templates", icon: "💳" },
     { id: "analytics", label: "Analytics",      icon: "📊" },
     { id: "theme",     label: "Theme",          icon: "🎨" },
@@ -121,6 +125,8 @@ export default function AdminApp() {
           </div>
         </div>
 
+        {tab === "config" && <AppConfigSection />}
+        {tab === "currencies" && <CurrencyManagerSection />}
         {tab === "cards" && (
           <CardTemplatesSection templates={templates} onUpdate={setTemplates} />
         )}

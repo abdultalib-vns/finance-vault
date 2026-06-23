@@ -14,7 +14,8 @@ import AdminApp from "./admin/AdminApp";
 import { loadItems, loadCurrency, loadIdleTimeout, loadTheme, saveTheme, loadPinHash } from "./lib/storage";
 import { getCurrency } from "./lib/currency";
 import { FinanceItem, NavTab, Currency } from "./types";
-import { startSession, endSession, trackTabVisit, applyAdminTheme, loadAdminTheme, loadAdminConfigFromServer, seedDefaultCardTemplates } from "./admin/adminStorage";
+import { startSession, endSession, trackTabVisit, applyAdminTheme, loadAdminTheme, loadAdminConfigFromServer, seedDefaultCardTemplates, loadGlobalConfig } from "./admin/adminStorage";
+import { GlobalAppConfig } from "./admin/adminTypes";
 
 const storedTheme = loadTheme();
 if (storedTheme === "dark") document.documentElement.classList.add("dark-mode");
@@ -58,6 +59,7 @@ function MainApp() {
   const [wasNewUser] = useState(() => !loadPinHash());
 
   const idleTimerRef = useRef<number | null>(null);
+  const [globalConfig, setGlobalConfig] = useState<GlobalAppConfig>(() => loadGlobalConfig());
   const sessionIdRef = useRef<string | null>(null);
 
   const handleSplashDone = useCallback(() => setShowSplash(false), []);
@@ -65,9 +67,10 @@ function MainApp() {
   // Re-apply admin theme overrides every time MainApp mounts (e.g. after returning from admin)
   useEffect(() => {
     // Fetch latest admin config from server so all devices stay in sync,
-    // then re-apply the theme in case it changed.
+    // then re-apply the theme and config in case it changed.
     loadAdminConfigFromServer().then(() => {
       applyAdminTheme(loadAdminTheme());
+      setGlobalConfig(loadGlobalConfig());
     });
   }, []);
 
@@ -152,50 +155,67 @@ function MainApp() {
     return (
       <WelcomeSetup
         masterKey={masterKey}
-        onComplete={(cur, th) => {
-          setCurrency(cur);
-          setThemeState(th);
+        onComplete={(newCurrency, newTheme) => {
+          setCurrency(newCurrency);
+          setTheme(newTheme);
           setShowWelcome(false);
         }}
       />
     );
   }
 
-  return (
-    <div className="app-shell">
-      <div className="screen-container">
-        {tab === "dashboard" && (
-          <Dashboard masterKey={masterKey} currency={currency} items={items} onItemsChange={setItems} onLock={handleLock} />
-        )}
-        {tab === "cards" && (
-          <Cards masterKey={masterKey} currency={currency} items={items} onItemsChange={setItems} onReload={handleReload} />
-        )}
-        {tab === "banks" && (
-          <Banks masterKey={masterKey} currency={currency} items={items} onItemsChange={setItems} onReload={handleReload} />
-        )}
-        {tab === "cashback" && (
-          <Cashback currency={currency} />
-        )}
-        {tab === "settings" && (
-          <Settings
-            masterKey={masterKey}
-            currency={currency}
-            onCurrencyChange={setCurrency}
-            onLock={handleLock}
-            onMasterKeyChange={setMasterKey}
-            items={items}
-            onItemsChange={setItems}
-            idleMinutes={idleMinutes}
-            onIdleMinutesChange={setIdleMinutes}
-            theme={theme}
-            onThemeChange={setTheme}
-            onReload={handleReload}
-          />
-        )}
+  if (globalConfig.maintenanceMode) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg)', padding: 20, textAlign: 'center' }}>
+        <span style={{ fontSize: '4rem', marginBottom: 20 }}>🚧</span>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Under Maintenance</h1>
+        <p style={{ color: 'var(--text2)', maxWidth: 400, lineHeight: 1.5 }}>{globalConfig.maintenanceMessage}</p>
       </div>
-      <BottomNav active={tab} onChange={handleTabChange} />
+    );
+  }
+
+  return (
+    <div className="app-shell" style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+      {globalConfig.showGlobalBanner && (
+        <div style={{ background: 'var(--primary)', color: '#fff', padding: '10px 16px', textAlign: 'center', fontSize: '0.85rem', fontWeight: 600, flexShrink: 0, zIndex: 9999 }}>
+          {globalConfig.globalBannerText}
+        </div>
+      )}
       <PopupAdBanner />
       <ThemeUpdateBanner />
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+        <div className="screen-container">
+          {tab === "dashboard" && (
+            <Dashboard masterKey={masterKey} currency={currency} items={items} onItemsChange={setItems} onLock={handleLock} />
+          )}
+          {tab === "cards" && (
+            <Cards masterKey={masterKey} currency={currency} items={items} onItemsChange={setItems} onReload={handleReload} />
+          )}
+          {tab === "banks" && (
+            <Banks masterKey={masterKey} currency={currency} items={items} onItemsChange={setItems} onReload={handleReload} />
+          )}
+          {tab === "cashback" && (
+            <Cashback currency={currency} />
+          )}
+          {tab === "settings" && (
+            <Settings
+              masterKey={masterKey}
+              currency={currency}
+              onCurrencyChange={setCurrency}
+              onLock={handleLock}
+              onMasterKeyChange={setMasterKey}
+              items={items}
+              onItemsChange={setItems}
+              idleMinutes={idleMinutes}
+              onIdleMinutesChange={setIdleMinutes}
+              theme={theme}
+              onThemeChange={setTheme}
+              onReload={handleReload}
+            />
+          )}
+        </div>
+        <BottomNav active={tab} onChange={handleTabChange} />
+      </div>
     </div>
   );
 }

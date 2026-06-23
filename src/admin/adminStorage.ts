@@ -209,34 +209,69 @@ export function loadEvents(): AnalyticsEvent[] {
 }
 
 export function trackEvent(type: string, details?: string): void {
+  const payload = { type, details, timestamp: Date.now() };
   const events = loadEvents();
-  events.push({ type, details, timestamp: Date.now() });
+  events.push(payload);
   saveEvents(events);
+  
+  fetch('/api/analytics', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'event', payload })
+  }).catch(() => {});
 }
 
 export function startSession(): string {
   const id = generateId();
-  const sessions = loadSessions();
-  sessions.push({
+  const payload = {
     id,
     date: new Date().toISOString().split("T")[0],
     startTime: Date.now(),
     tabVisits: {},
-  });
+  };
+  const sessions = loadSessions();
+  sessions.push(payload);
   saveSessions(sessions);
   // Heartbeat for realtime active users
   localStorage.setItem(ADMIN_ACTIVE_KEY, Date.now().toString());
+
+  fetch('/api/analytics', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'start_session', payload })
+  }).catch(() => {});
+
+  // Global heartbeat every 30s
+  const interval = setInterval(() => {
+    if (!localStorage.getItem(ADMIN_ACTIVE_KEY)) {
+      clearInterval(interval);
+      return;
+    }
+    fetch('/api/analytics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'heartbeat', payload: { id } })
+    }).catch(() => {});
+  }, 30000);
+
   return id;
 }
 
 export function endSession(sessionId: string): void {
+  const endTime = Date.now();
   const sessions = loadSessions();
   const session = sessions.find((s) => s.id === sessionId);
   if (session) {
-    session.endTime = Date.now();
+    session.endTime = endTime;
     saveSessions(sessions);
   }
   localStorage.removeItem(ADMIN_ACTIVE_KEY);
+
+  fetch('/api/analytics', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'end_session', payload: { id: sessionId, endTime } })
+  }).catch(() => {});
 }
 
 export function trackTabVisit(sessionId: string, tab: string): void {
@@ -248,6 +283,12 @@ export function trackTabVisit(sessionId: string, tab: string): void {
   }
   // Update heartbeat
   localStorage.setItem(ADMIN_ACTIVE_KEY, Date.now().toString());
+
+  fetch('/api/analytics', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'track_tab', payload: { id: sessionId, tab } })
+  }).catch(() => {});
 }
 
 export function getActiveUserCount(): number {

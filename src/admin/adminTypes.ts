@@ -14,6 +14,21 @@ export interface CardTemplate {
   createdAt: number;
 }
 
+export interface GlobalAppConfig {
+  maintenanceMode: boolean;
+  maintenanceMessage: string;
+  showGlobalBanner: boolean;
+  globalBannerText: string;
+  minAppVersion: string;
+}
+
+export interface CustomCurrency {
+  code: string;
+  symbol: string;
+  name: string;
+  active: boolean;
+}
+
 export interface PopupAd {
   id: string;
   title: string;
@@ -49,4 +64,4 @@ export interface AdminThemeSettings {
   accentColorLight: string;
 }
 
-export type AdminTab = "cards" | "analytics" | "theme" | "ads" | "feedbacks" | "security";
+export type AdminTab = "config" | "currencies" | "cards" | "analytics" | "theme" | "ads" | "feedbacks" | "security";

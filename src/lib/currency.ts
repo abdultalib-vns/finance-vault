@@ -26,8 +26,30 @@ export const CURRENCIES: Currency[] = [
 
 export const DEFAULT_CURRENCY = CURRENCIES[0];
 
+export function getDynamicCurrencies(): Currency[] {
+  try {
+    const raw = localStorage.getItem("admin_custom_currencies");
+    if (raw) {
+      const custom = JSON.parse(raw) as any[];
+      // Filter only active currencies and map to standard Currency object format
+      // Note: we use "en-US" as a fallback locale for custom currencies since they only define code/symbol
+      const activeCustom = custom.filter(c => c.active !== false);
+      if (activeCustom.length > 0) {
+        return activeCustom.map(c => ({
+          code: c.code,
+          symbol: c.symbol,
+          name: c.name,
+          locale: "en-US"
+        }));
+      }
+    }
+  } catch {}
+  return CURRENCIES;
+}
+
 export function getCurrency(code: string): Currency {
-  return CURRENCIES.find((c) => c.code === code) ?? DEFAULT_CURRENCY;
+  const list = getDynamicCurrencies();
+  return list.find((c) => c.code === code) ?? DEFAULT_CURRENCY;
 }
 
 export function formatAmount(amount: number, currency: Currency | undefined | null): string {
