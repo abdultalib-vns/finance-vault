@@ -30,7 +30,14 @@ export async function loadAdminConfigFromServer(): Promise<boolean> {
   try {
     const res = await fetch(API_CONFIG);
     if (!res.ok) return false;
-    const data = await res.json() as { cardTemplates?: CardTemplate[]; popupAds?: PopupAd[]; themeSettings?: AdminThemeSettings | null };
+    const data = await res.json() as { 
+      cardTemplates?: CardTemplate[]; 
+      popupAds?: PopupAd[]; 
+      themeSettings?: AdminThemeSettings | null;
+      globalConfig?: GlobalAppConfig | null;
+      customCurrencies?: CustomCurrency[] | null;
+    };
+    
     if (Array.isArray(data.cardTemplates)) {
       localStorage.setItem(ADMIN_CARDS_KEY, JSON.stringify(data.cardTemplates));
     }
@@ -39,6 +46,12 @@ export async function loadAdminConfigFromServer(): Promise<boolean> {
     }
     if (data.themeSettings != null) {
       localStorage.setItem(ADMIN_THEME_KEY, JSON.stringify(data.themeSettings));
+    }
+    if (data.globalConfig != null) {
+      localStorage.setItem(ADMIN_GLOBAL_CONFIG_KEY, JSON.stringify(data.globalConfig));
+    }
+    if (Array.isArray(data.customCurrencies)) {
+      localStorage.setItem(ADMIN_CURRENCIES_KEY, JSON.stringify(data.customCurrencies));
     }
     return true;
   } catch {
