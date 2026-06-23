@@ -209,6 +209,34 @@ export default function Settings({
     handleClearAll();
   }
 
+  const [fbTitle, setFbTitle] = useState("");
+  const [fbDesc, setFbDesc] = useState("");
+  const [fbMsg, setFbMsg] = useState("");
+  const [fbLoading, setFbLoading] = useState(false);
+
+  async function handleFeedbackSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setFbMsg("");
+    if (!fbTitle.trim()) { setFbMsg("Please enter a title."); return; }
+    if (!fbDesc.trim()) { setFbMsg("Please enter a description."); return; }
+    setFbLoading(true);
+    try {
+      const resp = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: fbTitle.trim(), description: fbDesc.trim() }),
+      });
+      if (!resp.ok) throw new Error("Server error");
+      setFbMsg("✅ Thank you! Your feedback has been submitted.");
+      setFbTitle("");
+      setFbDesc("");
+    } catch {
+      setFbMsg("❌ Could not submit feedback. Please try again later.");
+    } finally {
+      setFbLoading(false);
+    }
+  }
+
   const stats = {
     bank: items.filter(i => i.type === "bank").length,
     card: items.filter(i => i.type === "card").length,
@@ -400,6 +428,33 @@ export default function Settings({
               </div>
             </div>
           )}
+        </div>
+
+        <div className="settings-section">
+          <h3 className="settings-section-title">💬 Feedback & Suggestions</h3>
+          <p className="settings-hint">Have a feature idea or found a bug? Let us know!</p>
+          <form className="settings-form" onSubmit={handleFeedbackSubmit}>
+            <input
+              type="text"
+              className="settings-input"
+              placeholder="Title (e.g. Add new currency, Bug report...)"
+              value={fbTitle}
+              onChange={(e) => setFbTitle(e.target.value)}
+              maxLength={100}
+            />
+            <textarea
+              className="settings-textarea"
+              placeholder="Describe your feedback or suggestion in detail..."
+              value={fbDesc}
+              onChange={(e) => setFbDesc(e.target.value)}
+              rows={4}
+              maxLength={1000}
+            />
+            {fbMsg && <p className={`settings-msg ${fbMsg.startsWith("✅") ? "success" : "error"}`}>{fbMsg}</p>}
+            <button type="submit" className="btn-primary" disabled={fbLoading}>
+              {fbLoading ? "Submitting…" : "📩 Submit Feedback"}
+            </button>
+          </form>
         </div>
 
         <div className="settings-section">

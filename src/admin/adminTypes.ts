@@ -49,4 +49,4 @@ export interface AdminThemeSettings {
   accentColorLight: string;
 }
 
-export type AdminTab = "cards" | "analytics" | "theme" | "ads" | "security";
+export type AdminTab = "cards" | "analytics" | "theme" | "ads" | "feedbacks" | "security";

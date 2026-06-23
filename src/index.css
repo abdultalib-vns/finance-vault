@@ -5248,3 +5248,199 @@ html, body {
 .welcome-btn-row .welcome-btn-primary {
   flex: 1;
 }
+
+/* -----------------------------------------------------------------------
+   ADMIN FEEDBACKS
+   ----------------------------------------------------------------------- */
+.admin-feedback-loading,
+.admin-feedback-error,
+.admin-feedback-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text2);
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px dashed var(--border);
+  margin-top: 20px;
+}
+
+.admin-feedback-error {
+  color: #ef4444;
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.admin-feedback-empty-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.admin-feedback-count {
+  margin-top: 20px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  color: var(--text2);
+  font-weight: 500;
+}
+
+.admin-feedback-table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.admin-feedback-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.admin-feedback-table th {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.admin-feedback-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: middle;
+}
+
+.admin-feedback-row {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.admin-feedback-row:hover {
+  background: var(--surface2);
+}
+
+.admin-feedback-row:last-child td {
+  border-bottom: none;
+}
+
+.admin-feedback-idx {
+  color: var(--text3);
+  font-weight: 500;
+  width: 40px;
+}
+
+.admin-feedback-title-cell {
+  font-weight: 600;
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-feedback-date {
+  color: var(--text2);
+  white-space: nowrap;
+}
+
+.admin-feedback-status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.admin-feedback-status-new {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.admin-feedback-status-read {
+  background: rgba(107, 114, 128, 0.15);
+  color: #6b7280;
+}
+
+/* Detail Popup Overlay */
+.admin-feedback-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.admin-feedback-popup {
+  background: var(--surface);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px;
+  padding: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid var(--border);
+}
+
+.admin-feedback-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.admin-feedback-popup-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-right: 16px;
+}
+
+.admin-feedback-popup-close {
+  background: var(--surface2);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text2);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.admin-feedback-popup-close:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+.admin-feedback-popup-meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text2);
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-feedback-popup-body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text);
+  white-space: pre-wrap;
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-right: 8px;
+}

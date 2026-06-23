@@ -5,6 +5,7 @@ import AnalyticsSection from "./sections/Analytics";
 import ThemeManagerSection from "./sections/ThemeManager";
 import PopupAdsSection from "./sections/PopupAds";
 import ChangePinSection from "./sections/ChangePin";
+import FeedbacksSection from "./sections/Feedbacks";
 import { loadCardTemplates, loadPopupAds, loadAdminTheme, applyAdminTheme } from "./adminStorage";
 import { CardTemplate, PopupAd, AdminTab, AdminThemeSettings } from "./adminTypes";
 
@@ -64,6 +65,7 @@ export default function AdminApp() {
     { id: "analytics", label: "Analytics",      icon: "📊" },
     { id: "theme",     label: "Theme",          icon: "🎨" },
     { id: "ads",       label: "Popup Ads",      icon: "📢" },
+    { id: "feedbacks", label: "Feedbacks",      icon: "💬" },
     { id: "security",  label: "Security",       icon: "🔐" },
   ];
 
@@ -129,6 +131,7 @@ export default function AdminApp() {
         {tab === "ads" && (
           <PopupAdsSection ads={ads} onUpdate={setAds} />
         )}
+        {tab === "feedbacks" && <FeedbacksSection />}
         {tab === "security" && <ChangePinSection />}
       </main>
 
