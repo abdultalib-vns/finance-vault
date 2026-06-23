@@ -136,45 +136,7 @@ export function resetAdminPin(): void {
 const ADMIN_CARDS_SEEDED_KEY = "admin_cards_seeded";
 
 /** Default card offers — seeded once so they can be edited in the admin panel. */
-const DEFAULT_CARD_TEMPLATES: CardTemplate[] = [
-  { 
-    id: "seed-hdfc-moneyback", 
-    name: "HDFC MoneyBack+", 
-    bank: "HDFC", 
-    cardType: "credit", 
-    annualFee: "Free", 
-    benefits: "2% cashback on online spends, 1% on others", 
-    shortDescription: "Best for everyday cashback on all your spends",
-    tags: "Cashback, Popular",
-    applyUrl: "https://www.hdfcbank.com/personal/pay/cards/credit-cards", 
-    color: "#2563eb", 
-    featured: false, 
-    active: true, 
-    createdAt: 1 
-  },
-  { 
-    id: "seed-sbi-elite", 
-    name: "SBI Elite", 
-    bank: "SBI", 
-    cardType: "credit", 
-    annualFee: "₹4,999", 
-    benefits: "5X rewards on dining, grocery, movies", 
-    shortDescription: "Premium rewards card with lounge access and free movies",
-    tags: "Plus 11500 Rewards",
-    awesomeFeatures: "Earn 5X Reward Points on Dining, Departmental stores and Grocery Spends\n6 complimentary Airport Lounge visits per calendar year, outside India (max 2 visits per quarter)\nEnjoy 2 complimentary Domestic Airport Lounge visits every quarter in India\nGet free movie tickets worth ₹6,000 every year",
-    eligibilityCriteria: "Age: 21 to 65 years\nEmployment Status: Salaried or Self-Employed\nIncome: ₹60,000 per month\nNew to Credit: Not Allowed",
-    feesAndCharges: "Joining Fee: ₹4,999 + GST\nAnnual Fee: ₹4,999 + GST (Spend based reversal on annual spends of ₹10 Lakhs)",
-    importantInformation: "Please ensure your mobile number is linked to Aadhaar\nMinimum transaction of ₹500 is required within 30 days",
-    documentsNeeded: "PAN Card / Form 60\nAadhaar, Passport, or Utility bill\nIncome Proof: Bank statement or salary slips\nPhotograph",
-    stepsToApply: "Click on the Apply Now button\nYou will be redirected to SBI Cards page\nComplete the application in 3 simple steps",
-    applyUrl: "https://www.sbicard.com/en/personal/credit-cards.page", 
-    imageUrl: "https://www.sbicard.com/sbi-card-en/assets/media/images/personal/credit-cards/lifestyle/sbi-card-elite/card-face/sbi-card-elite.png",
-    color: "#262626", 
-    featured: true, 
-    active: true, 
-    createdAt: 8 
-  },
-];
+const DEFAULT_CARD_TEMPLATES: CardTemplate[] = [];
 
 /** Seed default cards on first run (only if never seeded before). */
 export function seedDefaultCardTemplates(): void {
