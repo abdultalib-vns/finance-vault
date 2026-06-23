@@ -19,15 +19,17 @@ export default function AppConfigSection() {
 
   return (
     <div className="admin-section-content">
-      <div className="admin-section-header-bar">
-        <h2>⚙️ Global App Configuration</h2>
-        <button className="admin-btn admin-btn-primary" onClick={handleSave}>
+      <div className="admin-section-header">
+        <div>
+          <h2 className="admin-section-title">⚙️ Global App Configuration</h2>
+          <p className="admin-section-desc">
+            Configure global settings that apply to all users instantly.
+          </p>
+        </div>
+        <button className="admin-btn admin-btn-primary" onClick={handleSave} style={{ padding: '8px 20px', fontSize: '0.95rem' }}>
           {saved ? "✅ Saved" : "💾 Save Changes"}
         </button>
       </div>
-      <p className="admin-section-desc">
-        Configure global settings that apply to all users instantly.
-      </p>
 
       <div className="admin-card">
         <h3 className="admin-card-title">🚧 Maintenance Mode</h3>

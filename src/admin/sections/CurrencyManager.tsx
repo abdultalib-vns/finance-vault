@@ -72,15 +72,17 @@ export default function CurrencyManagerSection() {
 
   return (
     <div className="admin-section-content">
-      <div className="admin-section-header-bar">
-        <h2>💱 Currency Manager</h2>
-        <button className="admin-btn admin-btn-primary" onClick={handleSaveAll}>
+      <div className="admin-section-header">
+        <div>
+          <h2 className="admin-section-title">💱 Currency Manager</h2>
+          <p className="admin-section-desc">
+            Manage the currencies available for users to select during onboarding and in settings.
+          </p>
+        </div>
+        <button className="admin-btn admin-btn-primary" onClick={handleSaveAll} style={{ padding: '8px 20px', fontSize: '0.95rem' }}>
           {saved ? "✅ Saved" : "💾 Save Changes"}
         </button>
       </div>
-      <p className="admin-section-desc">
-        Manage the currencies available for users to select during onboarding and in settings.
-      </p>
 
       {/* Add / Edit Form */}
       <div className="admin-card">
