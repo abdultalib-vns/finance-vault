@@ -4829,26 +4829,25 @@ html, body {
 
 /* Currency grid */
 .welcome-currency-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .welcome-currency-btn {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: 10px;
+  padding: 12px;
   border: 1.5px solid var(--border);
-  border-radius: 99px;
+  border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
   transition: all 0.15s;
   text-align: left;
-  white-space: nowrap;
 }
 
 .welcome-currency-btn:hover {
@@ -4863,29 +4862,121 @@ html, body {
 }
 
 .welcome-currency-symbol {
-  font-size: 0.95rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--primary);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface2);
+  border-radius: 8px;
   flex-shrink: 0;
 }
 
+.welcome-currency-btn.active .welcome-currency-symbol {
+  background: var(--primary);
+  color: #fff;
+}
+
+.welcome-currency-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
 .welcome-currency-code {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--text);
+  line-height: 1.2;
 }
 
 .welcome-currency-name {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--text2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .welcome-currency-check {
+  position: absolute;
+  top: 4px;
+  right: 6px;
   font-size: 0.7rem;
   color: var(--primary);
   font-weight: 700;
-  margin-left: 2px;
 }
+
+.welcome-currency-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 24px 12px;
+  color: var(--text3);
+  font-size: 0.85rem;
+}
+
+/* Pagination */
+.welcome-currency-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.welcome-page-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.welcome-page-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.welcome-page-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.welcome-page-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.welcome-page-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.welcome-page-dot.active {
+  background: var(--primary);
+  width: 20px;
+  border-radius: 99px;
+}
+
 
 /* Theme grid */
 .welcome-theme-grid {

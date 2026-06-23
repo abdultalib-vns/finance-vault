@@ -29,6 +29,7 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
   const [step, setStep] = useState<WelcomeStep>("currency");
   const [selectedCurrency, setSelectedCurrency] = useState("USD");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currencyPage, setCurrencyPage] = useState(0);
   const [selectedTheme, setSelectedTheme] = useState<"light" | "dark">(() => loadTheme());
   const [bioSupported, setBioSupported] = useState(false);
   const [bioEnrolling, setBioEnrolling] = useState(false);
@@ -39,12 +40,20 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
     isBiometricSupported().then(setBioSupported);
   }, []);
 
+  const ITEMS_PER_PAGE = 10;
+  const isSearching = searchQuery.trim().length > 0;
+
   const filteredCurrencies = CURRENCIES.filter(
     (c) =>
       c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.symbol.includes(searchQuery)
   );
+
+  const totalPages = Math.ceil(filteredCurrencies.length / ITEMS_PER_PAGE);
+  const displayedCurrencies = isSearching
+    ? filteredCurrencies
+    : filteredCurrencies.slice(currencyPage * ITEMS_PER_PAGE, (currencyPage + 1) * ITEMS_PER_PAGE);
 
   function handleCurrencyNext() {
     saveCurrency(selectedCurrency);
@@ -125,25 +134,59 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
                 className="welcome-search"
                 placeholder="Search currencies..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => { setSearchQuery(e.target.value); setCurrencyPage(0); }}
                 autoFocus
               />
             </div>
 
             <div className="welcome-currency-grid">
-              {filteredCurrencies.map((c) => (
+              {displayedCurrencies.map((c) => (
                 <button
                   key={c.code}
                   className={`welcome-currency-btn ${selectedCurrency === c.code ? "active" : ""}`}
                   onClick={() => setSelectedCurrency(c.code)}
                 >
                   <span className="welcome-currency-symbol">{c.symbol}</span>
-                  <span className="welcome-currency-code">{c.code}</span>
-                  <span className="welcome-currency-name">{c.name}</span>
+                  <div className="welcome-currency-info">
+                    <span className="welcome-currency-code">{c.code}</span>
+                    <span className="welcome-currency-name">{c.name}</span>
+                  </div>
                   {selectedCurrency === c.code && <span className="welcome-currency-check">✓</span>}
                 </button>
               ))}
+              {displayedCurrencies.length === 0 && (
+                <p className="welcome-currency-empty">No currencies match your search</p>
+              )}
             </div>
+
+            {/* Page indicator & navigation (hidden during search) */}
+            {!isSearching && totalPages > 1 && (
+              <div className="welcome-currency-pagination">
+                <button
+                  className="welcome-page-btn"
+                  onClick={() => setCurrencyPage((p) => Math.max(0, p - 1))}
+                  disabled={currencyPage === 0}
+                >
+                  ←
+                </button>
+                <div className="welcome-page-dots">
+                  {Array.from({ length: totalPages }).map((_, i) => (
+                    <button
+                      key={i}
+                      className={`welcome-page-dot ${i === currencyPage ? "active" : ""}`}
+                      onClick={() => setCurrencyPage(i)}
+                    />
+                  ))}
+                </div>
+                <button
+                  className="welcome-page-btn"
+                  onClick={() => setCurrencyPage((p) => Math.min(totalPages - 1, p + 1))}
+                  disabled={currencyPage === totalPages - 1}
+                >
+                  →
+                </button>
+              </div>
+            )}
 
             <button className="welcome-btn-primary" onClick={handleCurrencyNext}>
               Continue →
