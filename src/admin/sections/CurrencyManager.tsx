@@ -83,28 +83,33 @@ export default function CurrencyManagerSection() {
       </p>
 
       {/* Add / Edit Form */}
-      <div className="admin-form-group" style={{ marginTop: 24, padding: 20, background: 'var(--surface2)', borderRadius: 12 }}>
-        <h3 style={{ marginBottom: 16 }}>{editingId ? `Edit Currency (${editingId})` : "Add New Currency"}</h3>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 2fr", gap: 12, marginBottom: 16 }}>
-          <div>
+      <div className="admin-card">
+        <h3 className="admin-card-title">{editingId ? `📝 Edit Currency (${editingId})` : "➕ Add New Currency"}</h3>
+        <p className="admin-card-desc">
+          {editingId ? "Update the details for the selected currency below." : "Enter a 3-letter currency code, symbol, and full name to add a new option for your users."}
+        </p>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 2fr", gap: 16, marginBottom: 20 }}>
+          <div className="admin-form-row" style={{ marginBottom: 0 }}>
             <label className="admin-label">Code (e.g. USD)</label>
-            <input type="text" className="admin-input" value={code} onChange={e => setCode(e.target.value)} maxLength={3} />
+            <input type="text" className="admin-input" style={{ fontSize: '1rem', fontWeight: 600 }} value={code} onChange={e => setCode(e.target.value)} maxLength={3} />
           </div>
-          <div>
+          <div className="admin-form-row" style={{ marginBottom: 0 }}>
             <label className="admin-label">Symbol (e.g. $)</label>
-            <input type="text" className="admin-input" value={symbol} onChange={e => setSymbol(e.target.value)} maxLength={5} />
+            <input type="text" className="admin-input" style={{ fontSize: '1rem', fontWeight: 600 }} value={symbol} onChange={e => setSymbol(e.target.value)} maxLength={5} />
           </div>
-          <div>
+          <div className="admin-form-row" style={{ marginBottom: 0 }}>
             <label className="admin-label">Name (e.g. US Dollar)</label>
-            <input type="text" className="admin-input" value={name} onChange={e => setName(e.target.value)} />
+            <input type="text" className="admin-input" style={{ fontSize: '1rem' }} value={name} onChange={e => setName(e.target.value)} />
           </div>
         </div>
+
         <div style={{ display: "flex", gap: 12 }}>
-          <button className="admin-btn admin-btn-primary" onClick={handleAdd}>
+          <button className="admin-btn admin-btn-primary" style={{ padding: '10px 24px', fontSize: '0.95rem' }} onClick={handleAdd}>
             {editingId ? "Update Currency" : "Add Currency"}
           </button>
           {editingId && (
-            <button className="admin-btn admin-btn-secondary" onClick={() => { setEditingId(null); setCode(""); setSymbol(""); setName(""); }}>
+            <button className="admin-btn admin-btn-secondary" style={{ padding: '10px 24px', fontSize: '0.95rem' }} onClick={() => { setEditingId(null); setCode(""); setSymbol(""); setName(""); }}>
               Cancel
             </button>
           )}
@@ -112,45 +117,56 @@ export default function CurrencyManagerSection() {
       </div>
 
       {/* Currencies Table */}
-      <div className="admin-table-wrap" style={{ marginTop: 24 }}>
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Status</th>
-              <th>Code</th>
-              <th>Symbol</th>
-              <th>Name</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currencies.map(c => (
-              <tr key={c.code} style={{ opacity: c.active ? 1 : 0.5 }}>
-                <td>
-                  <button 
-                    className={`admin-btn ${c.active ? 'admin-btn-success' : 'admin-btn-secondary'}`}
-                    style={{ padding: "4px 8px", fontSize: "0.75rem" }}
-                    onClick={() => toggleActive(c.code)}
-                  >
-                    {c.active ? "Active" : "Hidden"}
-                  </button>
-                </td>
-                <td style={{ fontWeight: 600 }}>{c.code}</td>
-                <td>{c.symbol}</td>
-                <td>{c.name}</td>
-                <td>
-                  <button className="admin-btn admin-btn-secondary" style={{ marginRight: 8, padding: "4px 8px" }} onClick={() => handleEdit(c)}>Edit</button>
-                  <button className="admin-btn admin-btn-danger" style={{ padding: "4px 8px" }} onClick={() => handleDelete(c.code)}>Delete</button>
-                </td>
-              </tr>
-            ))}
-            {currencies.length === 0 && (
+      <div className="admin-card" style={{ marginTop: 24, padding: 0, overflow: 'hidden' }}>
+        <div style={{ padding: '24px 24px 16px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3 className="admin-card-title" style={{ margin: 0 }}>🌍 Available Currencies</h3>
+          <span style={{ fontSize: '0.85rem', color: 'var(--text2)', fontWeight: 500 }}>
+            {currencies.length} total • {currencies.filter(c => c.active).length} active
+          </span>
+        </div>
+        <div className="admin-table-wrap" style={{ border: 'none', borderRadius: 0 }}>
+          <table className="admin-table">
+            <thead>
               <tr>
-                <td colSpan={5} style={{ textAlign: "center", padding: 24 }}>No currencies added yet.</td>
+                <th>Status</th>
+                <th>Code</th>
+                <th>Symbol</th>
+                <th>Name</th>
+                <th style={{ textAlign: 'right' }}>Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {currencies.map(c => (
+                <tr key={c.code} style={{ opacity: c.active ? 1 : 0.6, transition: 'opacity 0.2s' }}>
+                  <td>
+                    <button 
+                      className={`admin-btn ${c.active ? 'admin-btn-success' : 'admin-btn-secondary'}`}
+                      style={{ padding: "6px 12px", fontSize: "0.8rem", fontWeight: 600, borderRadius: 20 }}
+                      onClick={() => toggleActive(c.code)}
+                    >
+                      {c.active ? "● Active" : "○ Hidden"}
+                    </button>
+                  </td>
+                  <td style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--text)' }}>{c.code}</td>
+                  <td style={{ fontSize: '1.1rem', color: 'var(--primary)' }}>{c.symbol}</td>
+                  <td style={{ fontWeight: 500 }}>{c.name}</td>
+                  <td style={{ textAlign: 'right' }}>
+                    <button className="admin-btn admin-btn-secondary" style={{ marginRight: 8, padding: "6px 16px" }} onClick={() => handleEdit(c)}>Edit</button>
+                    <button className="admin-btn admin-btn-danger" style={{ padding: "6px 16px" }} onClick={() => handleDelete(c.code)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+              {currencies.length === 0 && (
+                <tr>
+                  <td colSpan={5} style={{ textAlign: "center", padding: 40, color: 'var(--text2)' }}>
+                    <div style={{ fontSize: '2rem', marginBottom: 12 }}>📭</div>
+                    No custom currencies added yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

@@ -29,72 +29,86 @@ export default function AppConfigSection() {
         Configure global settings that apply to all users instantly.
       </p>
 
-      <div className="admin-form-group" style={{ marginTop: 24, padding: 20, background: 'var(--surface2)', borderRadius: 12 }}>
-        <h3 style={{ marginBottom: 16 }}>🚧 Maintenance Mode</h3>
-        <label className="admin-toggle-label">
-          <input
-            type="checkbox"
-            className="admin-toggle"
-            checked={config.maintenanceMode}
-            onChange={(e) => handleChange("maintenanceMode", e.target.checked)}
-          />
-          <span className="admin-toggle-text">Enable Maintenance Mode</span>
-        </label>
-        <p className="admin-input-hint" style={{ marginTop: 4, marginBottom: 16 }}>
-          When enabled, the main app will be blocked for all users except admins.
+      <div className="admin-card">
+        <h3 className="admin-card-title">🚧 Maintenance Mode</h3>
+        <p className="admin-card-desc">
+          When enabled, the main app will be completely blocked for all users except admins. Use this when performing critical database migrations or updates.
         </p>
+        
+        <div className="admin-form-row">
+          <label className="admin-toggle-label" style={{ background: 'var(--surface2)', padding: '12px 16px', borderRadius: 12, border: '1px solid var(--border)' }}>
+            <input
+              type="checkbox"
+              className="admin-toggle"
+              checked={config.maintenanceMode}
+              onChange={(e) => handleChange("maintenanceMode", e.target.checked)}
+            />
+            <span className="admin-toggle-text" style={{ fontWeight: 600 }}>Enable Maintenance Mode</span>
+          </label>
+        </div>
 
-        <label className="admin-label">Maintenance Message</label>
-        <textarea
-          className="admin-input"
-          style={{ resize: 'vertical', minHeight: 80 }}
-          value={config.maintenanceMessage}
-          onChange={(e) => handleChange("maintenanceMessage", e.target.value)}
-          placeholder="E.g. We are currently upgrading our servers. Please check back in an hour."
-          disabled={!config.maintenanceMode}
-        />
+        <div className="admin-form-row">
+          <label className="admin-label">Maintenance Message</label>
+          <textarea
+            className="admin-input"
+            style={{ resize: 'vertical', minHeight: 80, fontSize: '0.95rem' }}
+            value={config.maintenanceMessage}
+            onChange={(e) => handleChange("maintenanceMessage", e.target.value)}
+            placeholder="E.g. We are currently upgrading our servers. Please check back in an hour."
+            disabled={!config.maintenanceMode}
+          />
+        </div>
       </div>
 
-      <div className="admin-form-group" style={{ marginTop: 24, padding: 20, background: 'var(--surface2)', borderRadius: 12 }}>
-        <h3 style={{ marginBottom: 16 }}>📢 Global Announcement Banner</h3>
-        <label className="admin-toggle-label">
-          <input
-            type="checkbox"
-            className="admin-toggle"
-            checked={config.showGlobalBanner}
-            onChange={(e) => handleChange("showGlobalBanner", e.target.checked)}
-          />
-          <span className="admin-toggle-text">Show Banner</span>
-        </label>
-        <p className="admin-input-hint" style={{ marginTop: 4, marginBottom: 16 }}>
-          Shows a dismissible alert banner at the top of the dashboard for all users.
+      <div className="admin-card">
+        <h3 className="admin-card-title">📢 Global Announcement Banner</h3>
+        <p className="admin-card-desc">
+          Display a prominent, dismissible alert banner at the very top of the dashboard for all logged-in users. Great for welcoming users to a new version or warning about upcoming downtime.
         </p>
 
-        <label className="admin-label">Banner Text</label>
-        <input
-          type="text"
-          className="admin-input"
-          value={config.globalBannerText}
-          onChange={(e) => handleChange("globalBannerText", e.target.value)}
-          placeholder="E.g. Welcome to FinAura v2.0! Check out our new features."
-          disabled={!config.showGlobalBanner}
-        />
+        <div className="admin-form-row">
+          <label className="admin-toggle-label" style={{ background: 'var(--surface2)', padding: '12px 16px', borderRadius: 12, border: '1px solid var(--border)' }}>
+            <input
+              type="checkbox"
+              className="admin-toggle"
+              checked={config.showGlobalBanner}
+              onChange={(e) => handleChange("showGlobalBanner", e.target.checked)}
+            />
+            <span className="admin-toggle-text" style={{ fontWeight: 600 }}>Show Banner</span>
+          </label>
+        </div>
+
+        <div className="admin-form-row">
+          <label className="admin-label">Banner Text</label>
+          <input
+            type="text"
+            className="admin-input"
+            style={{ fontSize: '0.95rem' }}
+            value={config.globalBannerText}
+            onChange={(e) => handleChange("globalBannerText", e.target.value)}
+            placeholder="E.g. Welcome to FinAura v2.0! Check out our new features."
+            disabled={!config.showGlobalBanner}
+          />
+        </div>
       </div>
 
-      <div className="admin-form-group" style={{ marginTop: 24, padding: 20, background: 'var(--surface2)', borderRadius: 12 }}>
-        <h3 style={{ marginBottom: 16 }}>📲 App Versioning</h3>
-        <label className="admin-label">Minimum Required Version</label>
-        <input
-          type="text"
-          className="admin-input"
-          value={config.minAppVersion}
-          onChange={(e) => handleChange("minAppVersion", e.target.value)}
-          placeholder="e.g. 1.0.0"
-        />
-        <p className="admin-input-hint">
-          If a user's browser has an older version cached, they will be prompted to clear their cache or update.
-          (Current app version is typically 1.0.0 or 2.0.0)
+      <div className="admin-card">
+        <h3 className="admin-card-title">📲 App Versioning</h3>
+        <p className="admin-card-desc">
+          Enforce a minimum app version. If a user's browser has an older version cached via the PWA service worker, they will be prompted to hard-refresh or update the app.
         </p>
+        
+        <div className="admin-form-row">
+          <label className="admin-label">Minimum Required Version</label>
+          <input
+            type="text"
+            className="admin-input"
+            style={{ maxWidth: 200, fontSize: '0.95rem' }}
+            value={config.minAppVersion}
+            onChange={(e) => handleChange("minAppVersion", e.target.value)}
+            placeholder="e.g. 1.0.0"
+          />
+        </div>
       </div>
     </div>
   );
