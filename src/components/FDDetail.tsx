@@ -1,5 +1,5 @@
 import React from "react";
-import { LayoutDashboard, ArrowLeft, Calendar } from "lucide-react";
+import { LayoutDashboard, ArrowLeft, Calendar , Flag, CheckCircle,  } from "lucide-react";
 import { FinanceItem } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
 
@@ -69,14 +69,14 @@ export default function FDDetail({ fd, currency, onBack }: Props) {
         <div className="fd-info-row">
           {r > 0 && <span className="fd-info-chip"><LayoutDashboard size={20} /> {r}% p.a. (Simple Interest)</span>}
           {fd.startDate    && <span className="fd-info-chip"><Calendar size={16} /> Started: {fmtDate(fd.startDate)}</span>}
-          {fd.maturityDate && <span className="fd-info-chip">🏁 Matures: {fmtDate(fd.maturityDate)}</span>}
+          {fd.maturityDate && <span className="fd-info-chip"><><Flag size={14} /> Matures:</> {fmtDate(fd.maturityDate)}</span>}
         </div>
 
         {/* Progress / countdown */}
         {progressPct !== null && (
           <div className="fd-card">
             <div className="fd-card-row">
-              <span>{isMatured ? "🎉 Matured!" : `${daysLeft} days to maturity`}</span>
+              <span>{isMatured ? <><CheckCircle size={16} /> Matured!</> : `${daysLeft} days to maturity`}</span>
               <span>{Math.round(progressPct)}% elapsed</span>
             </div>
             <div className="rd-progress-bar" style={{ marginTop: 8 }}>

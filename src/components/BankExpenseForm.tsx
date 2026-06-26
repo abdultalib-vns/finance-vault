@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { Plus , Minus,  } from "lucide-react";
 import { useState } from "react";
 import { BankExpense, FinanceItem } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
@@ -64,7 +64,7 @@ export default function BankExpenseForm({ banks, currency, initialBankId, onAdd,
           <button type="button"
             className={`type-tab ${type === "debit" ? "active" : ""}`}
             onClick={() => setType("debit")}>
-            ➖ Debit (Out)
+            <><Minus size={16} /> Debit (Out)</>
           </button>
           <button type="button"
             className={`type-tab ${type === "credit" ? "active" : ""}`}

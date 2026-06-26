@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { CreditCard, Gift, ArrowRight, CheckCircle, Calendar, ChevronLeft, ChevronRight, AlertTriangle, X, Coins, Receipt, Sparkles, Building2, TrendingUp, RefreshCw, ClipboardList, Gem, Star } from "lucide-react";
+import { CreditCard, Gift, ArrowRight, CheckCircle, Calendar, ChevronLeft, ChevronRight, AlertTriangle, X, Coins, Receipt, Sparkles, Building2, TrendingUp, RefreshCw, ClipboardList, Gem, Star, EyeOff, Eye, Pin, Hourglass, CheckCircle2 } from "lucide-react";
 import { FinanceItem, CardExpense, ExpenseStatus, PaymentApp } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
 import { loadExpenses, saveExpenses, saveItems, saveCashbacks, loadCashbacks } from "../lib/storage";
@@ -105,7 +105,7 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
               onClick={() => setShowAmounts((v) => !v)}
               title={showAmounts ? "Hide amounts" : "Reveal amounts"}
             >
-              {showAmounts ? "🙈" : "👁️"}
+              {showAmounts ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
         </div>
@@ -265,7 +265,7 @@ function BalanceView({ items, currency, onSelect, masterKey, onAddCard, onEdit, 
         <CardSection title="Credit / Debit Cards" icon={<CreditCard size={20} />} items={cards}
           currency={currency} expenses={expenses} onSelect={onSelect}
           onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
-        <CardSection title="Pay Later Services" icon="🔄" items={payLater}
+        <CardSection title="Pay Later Services" icon={<RefreshCw size={16} />} items={payLater}
           currency={currency} expenses={expenses} onSelect={onSelect}
           onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
 
@@ -349,7 +349,7 @@ function CardSection({ title, icon, items, currency, expenses, onSelect, onEdit,
                     ) : null
                   ) : (
                     cardExp.length > 0 && (
-                      <span className="chip" style={{ background: "#e5e7eb", color: "#6b7280" }}>Tap 👁️ to reveal</span>
+                      <span className="chip" style={{ background: "#e5e7eb", color: "#6b7280" }}>Tap <Eye size={14} style={{display:"inline", verticalAlign:"middle"}}/> to reveal</span>
                     )
                   )}
                   {showAmounts && totalCashback > 0 && (
@@ -570,7 +570,7 @@ function ExpensesView({ cards, currency, onSelectCard, onReload, showAmounts }: 
             <div className="filter-chips">
               {(["all", "unpaid", "paid", "bill_generated_unpaid", "bill_generated"] as const).map((f) => (
                 <button type="button" key={f} className={`filter-chip ${filterStatus === f ? "active" : ""}`} onClick={() => setFilterStatus(f)}>
-                  {f === "all" ? "All" : f === "unpaid" ? "⏳ Unpaid" : f === "paid" ? <><CheckCircle size={20} /> Paid</> : f === "bill_generated_unpaid" ? <><Receipt size={20} /> Bill Due</> : "💜 Billed Paid"}
+                  {f === "all" ? "All" : f === "unpaid" ? <><Hourglass size={16} /> Unpaid</> : f === "paid" ? <><CheckCircle size={20} /> Paid</> : f === "bill_generated_unpaid" ? <><Receipt size={20} /> Bill Due</> : <><CheckCircle2 size={16} /> Billed Paid</>}
                 </button>
               ))}
             </div>
@@ -714,7 +714,7 @@ function NewCardView({ targetCardId }: { targetCardId?: string | null }) {
                 onClick={() => setSelected(offer)}
               >
                 <div className="card-offer-chip-header" style={{ background: offer.color }}>
-                  <span className="card-offer-star">★</span>
+                  <span className="card-offer-star"><Star size={12} fill="currentColor" /></span>
                   <span className="card-offer-bank">{offer.bank}</span>
                   <span className="card-offer-name">{offer.name}</span>
                 </div>
@@ -788,7 +788,7 @@ function CardOfferDetail({ offer, onBack }: { offer: CardOfferEntry; onBack: () 
             {offer.cardType?.toUpperCase() ?? "CARD"}
           </div>
         </div>
-        {offer.featured && <span className="card-offer-detail-star">★ Featured</span>}
+        {offer.featured && <span className="card-offer-detail-star"><><Star size={12} fill="currentColor" /> Featured</></span>}
       </div>
 
       {/* Card Image */}

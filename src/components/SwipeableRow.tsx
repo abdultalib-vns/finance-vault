@@ -1,4 +1,4 @@
-import { Check, Trash } from "lucide-react";
+import { Check, Trash , Pencil,  } from "lucide-react";
 import { useEffect, useRef, useState, ReactNode } from "react";
 import { FinanceItem } from "../types";
 
@@ -74,7 +74,7 @@ export default function SwipeableRow({ item, onEdit, onDelete, children }: Props
     <div ref={rowRef} style={{ position: "relative", overflow: "hidden" }}>
       <div className="swipe-actions">
         <button type="button" className="swipe-btn swipe-edit" onClick={handleEdit}>
-          <span className="swipe-icon">✏️</span>
+          <span className="swipe-icon"><Pencil size={16} /></span>
           <span className="swipe-label">Edit</span>
         </button>
         <button

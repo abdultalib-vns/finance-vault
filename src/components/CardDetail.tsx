@@ -1,4 +1,4 @@
-import { Search, Check, ArrowLeft, Ban, CheckCircle, Calendar, Receipt } from "lucide-react";
+import { Search, Check, ArrowLeft, Ban, CheckCircle, Calendar, Receipt , CheckSquare, Square, FileText, AlertTriangle, Hourglass,  } from "lucide-react";
 import { useState, useMemo } from "react";
 import { FinanceItem, CardExpense, CardBill, ExpenseStatus } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
@@ -334,7 +334,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
               )}
               {hasUnpaid && !showForm && !selectMode && (
                 <button className="btn-outline" onClick={() => setSelectMode(true)}>
-                  ☑️ Select & Generate Bill
+                  <><CheckSquare size={16} /> Select & Generate Bill</>
                 </button>
               )}
               {selectMode && (
@@ -373,7 +373,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
                     className={`filter-chip ${filter === f ? "active" : ""}`}
                     onClick={() => setFilter(f)}
                   >
-                    {f === "all" ? "All" : f === "unpaid" ? "⏳ Unpaid" : f === "paid" ? "<CheckCircle size={20} /> Paid" : "<Receipt size={20} /> Billed"}
+                    {f === "all" ? "All" : f === "unpaid" ? <><Hourglass size={16} /> Unpaid</> : f === "paid" ? "<CheckCircle size={20} /> Paid" : "<Receipt size={20} /> Billed"}
                   </button>
                 ))}
               </div>
@@ -403,7 +403,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
                     >
                       <div className="expense-item-top">
                         {selectMode && exp.status === "unpaid" && (
-                          <span className="select-checkbox">{isSelected ? "☑️" : "⬜"}</span>
+                          <span className="select-checkbox">{isSelected ? <CheckSquare size={16} /> : <Square size={16} />}</span>
                         )}
                         <div className="expense-item-left">
                           <span className="expense-desc">{exp.description}</span>
@@ -464,7 +464,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
           <>
             {bills.length === 0 ? (
               <div className="empty-state">
-                <p className="empty-icon">📄</p>
+                <p className="empty-icon"><FileText size={20} /></p>
                 <p className="empty-text">No bills generated yet</p>
                 <p className="empty-sub">Add unpaid expenses and click "Generate Bill"</p>
               </div>
@@ -485,7 +485,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
                                 : { background: "#fee2e2", color: "#ef4444" }
                             }
                           >
-                            {bill.status === "paid" ? "<Check size={16} /> Paid" : "⚠ Unpaid"}
+                            {bill.status === "paid" ? "<Check size={16} /> Paid" : <><AlertTriangle size={16} /> Unpaid</>}
                           </span>
                         </div>
                         <span className="bill-total">{formatAmount(bill.totalAmount, currency)}</span>

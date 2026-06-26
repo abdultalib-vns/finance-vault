@@ -1,4 +1,4 @@
-import { Gift, ArrowRight, X } from "lucide-react";
+import { Gift, ArrowRight, X , Star,  } from "lucide-react";
 import { useEffect, useState } from "react";
 import { loadCardTemplates, loadAdminConfigFromServer } from "../admin/adminStorage";
 import { CardTemplate } from "../admin/adminTypes";
@@ -35,7 +35,7 @@ export default function CardOffersBanner() {
         {displayList.map((t) => (
           <div key={t.id} className="card-offer-chip" style={{ "--chip-color": t.color } as React.CSSProperties}>
             <div className="card-offer-chip-header" style={{ background: t.color }}>
-              {t.featured && <span className="card-offer-star">★</span>}
+              {t.featured && <span className="card-offer-star"><Star size={12} fill="currentColor" /></span>}
               <span className="card-offer-bank">{t.bank}</span>
               <span className="card-offer-name">{t.name}</span>
             </div>

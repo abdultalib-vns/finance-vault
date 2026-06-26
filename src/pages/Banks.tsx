@@ -1,4 +1,4 @@
-import { LayoutDashboard, Building2, CheckCircle, Calendar, ChevronRight, Plus, DollarSign, Coins, TrendingUp } from "lucide-react";
+import { LayoutDashboard, Building2, CheckCircle, Calendar, ChevronRight, Plus, DollarSign, Coins, TrendingUp, Minus, EyeOff, Eye, ClipboardList } from "lucide-react";
 import React, { useState, useMemo } from "react";
 import { FinanceItem, BankExpense } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
@@ -83,7 +83,7 @@ export default function Banks({ masterKey, currency, items, onItemsChange, onRel
             onClick={() => setShowAmounts((v) => !v)}
             title={showAmounts ? "Hide amounts" : "Reveal amounts"}
           >
-            {showAmounts ? "🙈" : "👁️"}
+            {showAmounts ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
         </div>
       </header>
@@ -210,7 +210,7 @@ function OverviewTab({ items, currency, showAmounts, onSelectFD, onSelectRD }: {
           <span className="overview-stat-count">{banks.length} account{banks.length !== 1 ? "s" : ""}</span>
         </div>
         <div className="overview-stat-card">
-          <span className="overview-stat-icon">📈</span>
+          <span className="overview-stat-icon"><TrendingUp size={20} /></span>
           <span className="overview-stat-val">{showAmounts ? formatAmount(fdTotal, currency) : MASK}</span>
           <span className="overview-stat-lbl">Fixed Deposits</span>
           <span className="overview-stat-count">{fds.length} FD{fds.length !== 1 ? "s" : ""}</span>
@@ -235,7 +235,7 @@ function OverviewTab({ items, currency, showAmounts, onSelectFD, onSelectRD }: {
           <h3 className="section-title"><LayoutDashboard size={20} /> Returns & Gains</h3>
           {fdInterestEarned > 0 && (
             <div className="gains-row">
-              <span>📈 Est. FD Interest Earned</span>
+              <span><TrendingUp size={16} /> Est. FD Interest Earned</span>
               <span className="gains-val" style={{ color: "#10b981" }}>
                 {showAmounts ? `+${formatAmount(fdInterestEarned, currency)}` : MASK}
               </span>
@@ -354,7 +354,7 @@ function AccountsTab({ items, masterKey, currency, onAddItem, onEdit, onDelete, 
 
         <SimpleSection title="Bank Accounts" icon={<Building2 size={20} />} items={banks}
           masterKey={masterKey} currency={currency} onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
-        <SimpleSection title="Other" icon="📋" items={others}
+        <SimpleSection title="Other" icon={<ClipboardList size={16} />} items={others}
           masterKey={masterKey} currency={currency} onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
 
         {banks.length === 0 && others.length === 0 && (
@@ -421,7 +421,7 @@ function InvestmentsTab({ items, currency, masterKey, onAddItem, onSelectFD, onS
         )}
 
         {fds.length > 0 && (
-          <FDSection title="Fixed Deposits" icon="📈" items={fds}
+          <FDSection title="Fixed Deposits" icon={<TrendingUp size={16} />} items={fds}
             currency={currency} onSelect={onSelectFD} onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
         )}
         {rds.length > 0 && (
@@ -435,7 +435,7 @@ function InvestmentsTab({ items, currency, masterKey, onAddItem, onSelectFD, onS
 
         {fds.length === 0 && rds.length === 0 && mfs.length === 0 && (
           <div className="empty-state">
-            <p className="empty-icon">📈</p>
+            <p className="empty-icon"><TrendingUp size={20} /></p>
             <p className="empty-text">No investments yet.</p>
             <p className="empty-sub">Tap + to add FD, RD, or Mutual Fund.</p>
           </div>
@@ -489,7 +489,7 @@ function BankRowContent({ item, masterKey, currency, showAmounts }: {
             className="icon-btn sm"
             onClick={(e) => { e.stopPropagation(); setShowSecret((v) => !v); }}
           >
-            {showSecret ? "🙈" : "👁️"}
+            {showSecret ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
         )}
       </div>
@@ -782,7 +782,7 @@ function TransactionsTab({ banks, currency, allItems, onItemsChange, onReload, s
             <div className="filter-chips">
               {(["all", "debit", "credit"] as const).map((f) => (
                 <button type="button" key={f} className={`filter-chip ${filterType === f ? "active" : ""}`} onClick={() => setFilterType(f)}>
-                  {f === "all" ? "All" : f === "debit" ? "➖ Debit" : <><Plus size={16} /> Credit</>}
+                  {f === "all" ? "All" : f === "debit" ? <><Minus size={16} /> Debit</> : <><Plus size={16} /> Credit</>}
                 </button>
               ))}
             </div>

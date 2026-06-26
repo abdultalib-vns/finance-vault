@@ -1,3 +1,4 @@
+import { Construction,  } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import AuthScreen from "./pages/AuthScreen";
 import Dashboard from "./pages/Dashboard";
@@ -165,7 +166,7 @@ function MainApp() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', justifyContent: 'center', alignItems: 'center', background: 'var(--bg)', padding: '24px', textAlign: 'center' }}>
         <div style={{ background: 'var(--surface)', padding: '48px 32px', borderRadius: '32px', boxShadow: '0 12px 48px rgba(0,0,0,0.1)', border: '1px solid var(--border)', maxWidth: '400px', width: '100%' }}>
-          <div style={{ fontSize: '5rem', marginBottom: '24px', animation: 'pulse 2s infinite' }}>🚧</div>
+          <div style={{ fontSize: '5rem', marginBottom: '24px', animation: 'pulse 2s infinite' }}><Construction size={80} /></div>
           <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '16px', color: 'var(--text)' }}>We'll Be Right Back!</h2>
           <p style={{ fontSize: '1.1rem', color: 'var(--text2)', lineHeight: '1.6', margin: 0 }}>
             {globalConfig.maintenanceMessage || "We are currently performing some scheduled maintenance. Please check back shortly."}

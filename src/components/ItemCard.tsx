@@ -1,4 +1,4 @@
-import { LayoutDashboard, CreditCard, Building2, Check, ArrowLeft, Calendar, Trash, TrendingUp, RefreshCw, ClipboardList } from "lucide-react";
+import { LayoutDashboard, CreditCard, Building2, Check, ArrowLeft, Calendar, Trash, TrendingUp, RefreshCw, ClipboardList , Pencil, EyeOff, Eye,  } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { FinanceItem } from "../types";
 import { decryptData } from "../lib/crypto";
@@ -88,7 +88,7 @@ export default function ItemCard({ item, masterKey, currency, onDelete, onEdit }
     <li ref={cardRef} className="item-card" style={{ position: "relative", overflow: "hidden", borderRadius: "var(--radius)" }}>
       <div className="swipe-actions">
         <button type="button" className="swipe-btn swipe-edit" onClick={handleEdit}>
-          <span className="swipe-icon">✏️</span>
+          <span className="swipe-icon"><Pencil size={16} /></span>
           <span className="swipe-label">Edit</span>
         </button>
         <button
@@ -145,7 +145,7 @@ export default function ItemCard({ item, masterKey, currency, onDelete, onEdit }
                   onClick={() => setShowSensitive((v) => !v)}
                   title={showSensitive ? "Hide" : "Show balance"}
                 >
-                  {showSensitive ? "🙈" : "👁️"}
+                  {showSensitive ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>

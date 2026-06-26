@@ -1,4 +1,4 @@
-import { LayoutDashboard, Check, ArrowLeft, ArrowRight, Calendar } from "lucide-react";
+import { LayoutDashboard, Check, ArrowLeft, ArrowRight, Calendar , AlertTriangle,  } from "lucide-react";
 import { useState, useMemo } from "react";
 import { FinanceItem, RDInstallment } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
@@ -161,7 +161,7 @@ export default function RDDetail({ rd, currency, onBack, onBalanceUpdate }: Prop
                   className={`rd-toggle-btn ${inst.paid ? "paid" : "unpaid"}`}
                   onClick={() => toggle(inst.month)}
                 >
-                  {inst.paid ? "<Check size={16} /> Paid" : isPast ? "⚠ Overdue" : "Mark Paid"}
+                  {inst.paid ? "<Check size={16} /> Paid" : isPast ? <><AlertTriangle size={16} /> Overdue</> : "Mark Paid"}
                 </button>
               </li>
             );

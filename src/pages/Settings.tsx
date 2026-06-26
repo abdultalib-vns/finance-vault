@@ -1,4 +1,4 @@
-import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt } from "lucide-react";
+import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt , TrendingUp, RefreshCw, ClipboardList,  } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { hashPin } from "../lib/crypto";
 import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses } from "../lib/storage";
@@ -397,11 +397,11 @@ export default function Settings({
           <div className="stats-grid">
             {stats.bank > 0 && <div className="stat-chip"><Building2 size={20} /> {stats.bank} Bank</div>}
             {stats.card > 0 && <div className="stat-chip"><CreditCard size={20} /> {stats.card} Card</div>}
-            {stats.paylater > 0 && <div className="stat-chip">🔄 {stats.paylater} PayLater</div>}
-            {stats.fd > 0 && <div className="stat-chip">📈 {stats.fd} FD</div>}
+            {stats.paylater > 0 && <div className="stat-chip"><RefreshCw size={14} /> {stats.paylater} PayLater</div>}
+            {stats.fd > 0 && <div className="stat-chip"><TrendingUp size={14} /> {stats.fd} FD</div>}
             {stats.rd > 0 && <div className="stat-chip"><Calendar size={16} /> {stats.rd} RD</div>}
             {stats.mf > 0 && <div className="stat-chip"><LayoutDashboard size={20} /> {stats.mf} MF</div>}
-            {stats.other > 0 && <div className="stat-chip">📋 {stats.other} Other</div>}
+            {stats.other > 0 && <div className="stat-chip"><ClipboardList size={14} /> {stats.other} Other</div>}
             {stats.expenses > 0 && <div className="stat-chip"><Receipt size={20} /> {stats.expenses} Expenses</div>}
             {stats.cashbacks > 0 && <div className="stat-chip"><Gift size={20} /> {stats.cashbacks} Cashbacks</div>}
             {stats.bankExpenses > 0 && <div className="stat-chip"><DollarSign size={20} /> {stats.bankExpenses} Txns</div>}

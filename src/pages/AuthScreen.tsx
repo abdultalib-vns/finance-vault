@@ -1,4 +1,4 @@
-import { Lock, AlertTriangle } from "lucide-react";
+import { Lock, AlertTriangle , Key, Smartphone,  } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { hashPin } from "../lib/crypto";
 import {
@@ -321,7 +321,7 @@ export default function AuthScreen({ onUnlock }: Props) {
                   className="btn-recover"
                   onClick={() => { clearFields(); setStep("recover-check"); }}
                 >
-                  🔑 Recover your password
+                  <><Key size={16} /> Recover your password</>
                 </button>
               )}
             </form>
@@ -387,7 +387,7 @@ export default function AuthScreen({ onUnlock }: Props) {
 
       {showInstallPopup && (
         <div className="install-popup-overlay">
-          <div className="install-popup-icon">📱</div>
+          <div className="install-popup-icon"><Smartphone size={40} /></div>
           <div className="install-popup-content">
             <h3>Install FinAura</h3>
             <p>Get the app for a secure, fullscreen native experience!</p>
