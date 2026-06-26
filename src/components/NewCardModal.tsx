@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { loadCardTemplates } from "../admin/adminStorage";
+import { loadCardTemplates, loadAdminConfigFromServer } from "../admin/adminStorage";
 import { CardTemplate } from "../admin/adminTypes";
 
 interface NewCardModalProps {
@@ -13,23 +13,25 @@ export default function NewCardModal({ onShowMore }: NewCardModalProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    // Only fetch active templates
-    const templates = loadCardTemplates().filter(t => t.active);
-    
-    // Load seen cards from local storage
-    let seen: string[] = [];
-    try {
-      seen = JSON.parse(localStorage.getItem(SEEN_CARDS_KEY) || "[]");
-    } catch {
-      seen = [];
-    }
+    loadAdminConfigFromServer().finally(() => {
+      // Only fetch active templates
+      const templates = loadCardTemplates().filter(t => t.active);
+      
+      // Load seen cards from local storage
+      let seen: string[] = [];
+      try {
+        seen = JSON.parse(localStorage.getItem(SEEN_CARDS_KEY) || "[]");
+      } catch {
+        seen = [];
+      }
 
-    // Filter to only new unseen cards
-    const unseen = templates.filter(t => !seen.includes(t.id));
-    
-    if (unseen.length > 0) {
-      setNewCards(unseen);
-    }
+      // Filter to only new unseen cards
+      const unseen = templates.filter(t => !seen.includes(t.id));
+      
+      if (unseen.length > 0) {
+        setNewCards(unseen);
+      }
+    });
   }, []);
 
   if (newCards.length === 0) return null;
