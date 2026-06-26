@@ -9,6 +9,7 @@ import BottomNav from "./components/BottomNav";
 import PopupAdBanner from "./components/PopupAdBanner";
 import ThemeUpdateBanner from "./components/ThemeUpdateBanner";
 import SplashScreen from "./components/SplashScreen";
+import NewCardModal from "./components/NewCardModal";
 import WelcomeSetup, { isOnboardingDone } from "./components/WelcomeSetup";
 import AdminApp from "./admin/AdminApp";
 import { loadItems, loadCurrency, loadIdleTimeout, loadTheme, saveTheme, loadPinHash } from "./lib/storage";
@@ -63,6 +64,7 @@ function MainApp() {
   const sessionIdRef = useRef<string | null>(null);
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const initialConfigVersion = useRef(globalConfig.configVersion || 1);
+  const [targetCardId, setTargetCardId] = useState<string | null>(null);
 
   const handleSplashDone = useCallback(() => setShowSplash(false), []);
 
@@ -200,13 +202,17 @@ function MainApp() {
       )}
       <PopupAdBanner />
       <ThemeUpdateBanner />
+      <NewCardModal onShowMore={(cardId) => {
+        setTargetCardId(cardId);
+        setTab("cards");
+      }} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
         <div className="screen-container">
           {tab === "dashboard" && (
             <Dashboard masterKey={masterKey} currency={currency} items={items} onItemsChange={setItems} onLock={handleLock} />
           )}
           {tab === "cards" && (
-            <Cards masterKey={masterKey} currency={currency} items={items} onItemsChange={setItems} onReload={handleReload} />
+            <Cards masterKey={masterKey} currency={currency} items={items} onItemsChange={setItems} onReload={handleReload} targetCardId={targetCardId} />
           )}
           {tab === "banks" && (
             <Banks masterKey={masterKey} currency={currency} items={items} onItemsChange={setItems} onReload={handleReload} />

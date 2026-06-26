@@ -80,7 +80,7 @@ export default function AuthScreen({ onUnlock }: Props) {
       }
     };
     window.addEventListener("beforeinstallprompt", handler);
-    
+
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setShowInstallPopup(false);
     } else if (isNewUser && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
@@ -329,7 +329,7 @@ export default function AuthScreen({ onUnlock }: Props) {
               <>
                 <div className="auth-divider"><span>or</span></div>
                 <button type="button" className="btn-bio" onClick={handleBiometric} disabled={bioLoading}>
-                  {bioLoading ? "Authenticating…" : "🔐 Sign in with Face ID / Biometric"}
+                  {bioLoading ? "Authenticating…" : "🔐 Sign in with Biometric"}
                 </button>
               </>
             )}

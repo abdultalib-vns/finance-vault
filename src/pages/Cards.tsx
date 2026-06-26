@@ -16,6 +16,7 @@ interface Props {
   items: FinanceItem[];
   onItemsChange: (items: FinanceItem[]) => void;
   onReload?: () => void;
+  targetCardId?: string | null;
 }
 
 type SubTab = "balance" | "expenses" | "newcard";
@@ -33,13 +34,19 @@ const PAYMENT_APPS: PaymentApp[] = [
   { name: "FreeCharge", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWd7gE_EU9okxdsbO0WMiR2Xt3I2qbMlb7Ng&s", url: "https://www.freecharge.in" },
 ];
 
-export default function Cards({ masterKey, currency, items, onItemsChange, onReload }: Props) {
+export default function Cards({ masterKey, currency, items, onItemsChange, onReload, targetCardId }: Props) {
   const [subTab, setSubTab] = useState<SubTab>("balance");
   const [selectedCard, setSelectedCard] = useState<FinanceItem | null>(null);
   const [editItem, setEditItem] = useState<FinanceItem | null>(null);
   const [showAmounts, setShowAmounts] = useState(false);
   const [showPaymentApps, setShowPaymentApps] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
+
+  useEffect(() => {
+    if (targetCardId) {
+      setSubTab("newcard");
+    }
+  }, [targetCardId]);
 
   const cardItems = items.filter((i) => i.type === "card" || i.type === "paylater");
 
@@ -130,7 +137,7 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
       ) : subTab === "expenses" ? (
         <ExpensesView cards={cardItems} currency={currency} onSelectCard={setSelectedCard} onReload={onReload} showAmounts={showAmounts} />
       ) : (
-        <NewCardView />
+        <NewCardView targetCardId={targetCardId} />
       )}
 
       {editItem && (
@@ -632,7 +639,7 @@ interface CardOfferEntry {
   featured: boolean;
 }
 
-function NewCardView() {
+function NewCardView({ targetCardId }: { targetCardId?: string | null }) {
   const [filterType, setFilterType] = useState<"all" | "free" | "paid">("all");
   const [selected, setSelected] = useState<CardOfferEntry | null>(null);
   const [allCards, setAllCards] = useState<CardOfferEntry[]>([]);
@@ -663,6 +670,15 @@ function NewCardView() {
       })));
     });
   }, []);
+
+  useEffect(() => {
+    if (targetCardId && allCards.length > 0) {
+      const card = allCards.find(c => c.id === targetCardId);
+      if (card) {
+        setSelected(card);
+      }
+    }
+  }, [targetCardId, allCards]);
 
   const featuredCards = allCards.filter((c) => c.featured);
   const filteredCards = allCards.filter((c) => {
