@@ -95,6 +95,8 @@ export default function SwipeableRow({ item, onEdit, onDelete, children }: Props
           zIndex: 1,
           background: "var(--surface)",
           touchAction: "pan-y",
+          willChange: "transform",
+          WebkitBackfaceVisibility: "hidden",
         }}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}

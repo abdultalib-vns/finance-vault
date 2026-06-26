@@ -123,10 +123,10 @@ html, body {
 /* Glassmorphism utility */
 .glass {
   background: var(--surface);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: var(--glass-border);
   box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .app-shell {
@@ -159,8 +159,6 @@ html, body {
 
 .auth-card {
   background: var(--surface);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: var(--glass-border);
   border-radius: 24px;
   padding: 40px 28px 32px;
@@ -344,7 +342,6 @@ html, body {
   background: rgba(255,255,255,0.15);
   border-radius: var(--radius);
   padding: 20px;
-  backdrop-filter: blur(8px);
 }
 
 .balance-label {
@@ -710,8 +707,6 @@ html, body {
 }
 
 .card-row {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: var(--glass-border);
   display: flex;
   justify-content: space-between;
@@ -811,8 +806,6 @@ html, body {
 
 /* ── Settings ───────────────────────────── */
 .settings-section {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: var(--glass-border);
   background: var(--surface);
   border-radius: var(--radius);
@@ -947,8 +940,6 @@ html, body {
 /* ── Bottom Nav ─────────────────────────── */
 .bottom-nav {
   background: var(--surface);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border-top: var(--glass-border);
   position: fixed;
   bottom: 0;
@@ -963,6 +954,8 @@ html, body {
   align-items: stretch;
   box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
   z-index: 100;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -1082,8 +1075,6 @@ html, body {
 
 :root.dark-mode .summary-card.green,
 :root.dark-mode .summary-card.red {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: var(--glass-border);
   background: linear-gradient(135deg, rgba(255,255,255,0.16), rgba(255,255,255,0.1));
 }
@@ -1452,8 +1443,6 @@ html, body {
 }
 
 .summary-card {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: var(--glass-border);
   border-radius: 10px;
   padding: 12px 14px;
@@ -1463,8 +1452,6 @@ html, body {
 }
 
 .summary-card.green {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: var(--glass-border);
   background: linear-gradient(135deg, #d1fae5, #a7f3d0);
 }
@@ -2268,10 +2255,11 @@ html, body {
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
   z-index: 200;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  backdrop-filter: blur(2px);
 }
 
 .modal-sheet {
@@ -2291,8 +2279,6 @@ html, body {
 .modal-subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 16px; }
 .payment-apps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .payment-app-card {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: var(--glass-border); display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 8px; border-radius: 12px; background: var(--bg); text-decoration: none; color: var(--text); transition: background 0.15s; border: 1px solid var(--border); }
 .payment-app-card:hover { background: var(--border); }
 .payment-app-icon {
@@ -2319,8 +2305,6 @@ html, body {
 
 .new-card-list { display: flex; flex-direction: column; gap: 16px; padding: 0 16px; margin-top: 10px; }
 .new-card-row {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: var(--glass-border); background: #1f2229; border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: stretch; gap: 12px; cursor: pointer; color: white; position: relative; overflow: hidden; border: 1px solid #374151; }
 .new-card-row::before { content: ""; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary); }
 .new-card-row-info { flex: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; }
@@ -2382,8 +2366,6 @@ html, body {
 .overview-hero-amount { font-size: 1.6rem; font-weight: 800; color: var(--text); }
 .overview-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 8px 0; }
 .overview-stat-card {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: var(--glass-border); background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 12px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .overview-stat-icon { font-size: 1.5rem; }
 .overview-stat-val { font-weight: 700; font-size: 0.95rem; }
@@ -2394,8 +2376,6 @@ html, body {
 .gains-val { font-weight: 700; }
 .upcoming-section { padding: 8px 0; }
 .upcoming-card {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: var(--glass-border); display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; }
 .upcoming-card.clickable { cursor: pointer; }
 .upcoming-left { display: flex; flex-direction: column; gap: 2px; }
@@ -2448,8 +2428,6 @@ html, body {
 
 .monthly-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
 .monthly-stat-card {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: var(--glass-border);
   background: var(--bg);
   border: 1px solid var(--border);
@@ -3017,8 +2995,6 @@ html, body {
   gap: 16px;
 }
 .admin-card-item {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: var(--glass-border);
   background: var(--surface);
   border-radius: var(--radius);
@@ -3792,8 +3768,6 @@ html, body {
 .card-offers-scroll::-webkit-scrollbar { display: none; }
 
 .card-offer-chip {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: var(--glass-border);
   min-width: 160px;
   border-radius: 10px;
@@ -5087,8 +5061,6 @@ html, body {
 }
 
 .welcome-theme-card {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: var(--glass-border);
   position: relative;
   padding: 12px;
@@ -5136,8 +5108,6 @@ html, body {
 }
 
 .welcome-theme-light-preview .wtp-card {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: var(--glass-border);
   background: #fff;
   border-radius: 4px;
@@ -5476,7 +5446,6 @@ html, body {
   inset: 0;
   z-index: 9999;
   background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
