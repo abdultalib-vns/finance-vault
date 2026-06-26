@@ -264,8 +264,11 @@ export default function Settings({
 
   return (
     <div className="screen">
-      <header className="page-header">
+      <header className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 className="header-title">Settings</h2>
+        <a href="https://velolaunch.lovable.app" target="_blank" rel="noopener noreferrer">
+          <img src="/VeloLaunch.png" alt="VeloLaunch" style={{ height: "32px", objectFit: "contain", opacity: 0.9, transition: "opacity 0.2s ease" }} onMouseOver={e => e.currentTarget.style.opacity = "1"} onMouseOut={e => e.currentTarget.style.opacity = "0.9"} />
+        </a>
       </header>
       <div className="content">
         <div className="settings-section">
