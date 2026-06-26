@@ -478,7 +478,7 @@ html, body {
 .label-badge {
   font-size: 0.6875rem;
   font-weight: 600;
-  color: #7c3aed;
+  color: var(--primary);
   background: #ede9fe;
   padding: 1px 6px;
   border-radius: 99px;
@@ -779,7 +779,7 @@ html, body {
 
 .row-action-btn.edit {
   background: #eff6ff;
-  color: #2563eb;
+  color: var(--primary);
 }
 
 .row-action-btn.del {
@@ -797,7 +797,7 @@ html, body {
 
 .row-action-btn.cancel-confirm {
   background: #e5e7eb;
-  color: #374151;
+  color: var(--text2);
   font-weight: 600;
   font-size: 0.7rem;
   padding: 4px 8px;
@@ -1068,9 +1068,9 @@ html, body {
   line-height: 1;
 }
 
-.stat-value.outstanding { color: #ef4444; }
-.stat-value.paid-val    { color: #10b981; }
-.stat-value.cashback-val{ color: #8b5cf6; }
+.stat-value.outstanding { color: var(--danger); }
+.stat-value.paid-val    { color: var(--success); }
+.stat-value.cashback-val{ color: var(--primary); }
 
 .stat-label {
   font-size: 0.6875rem;
@@ -1225,7 +1225,7 @@ html, body {
 .expense-cashback {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #8b5cf6;
+  color: var(--primary);
 }
 
 .expense-item-bottom {
@@ -1258,7 +1258,7 @@ html, body {
 
 .exp-action-btn.pay {
   background: #d1fae5;
-  color: #065f46;
+  color: var(--success);
 }
 
 .exp-action-btn.del {
@@ -1288,7 +1288,7 @@ html, body {
 }
 
 .cashback-hint {
-  color: #8b5cf6 !important;
+  color: var(--primary) !important;
 }
 
 /* ── Bill List ──────────────────────────── */
@@ -1355,12 +1355,12 @@ html, body {
 }
 
 .bill-due {
-  color: #ef4444;
+  color: var(--danger);
   font-weight: 500;
 }
 
 .bill-cashback {
-  color: #8b5cf6;
+  color: var(--primary);
   font-weight: 600;
 }
 
@@ -1428,12 +1428,12 @@ html, body {
 
 .chip-unpaid {
   background: #fef3c7;
-  color: #b45309;
+  color: #f59e0b;
 }
 
 .chip-cashback {
   background: #ede9fe;
-  color: #7c3aed;
+  color: var(--primary);
 }
 
 .card-row-chevron {
@@ -1513,7 +1513,7 @@ html, body {
   padding: 10px 20px;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #991b1b;
+  color: var(--danger);
 }
 
 .accounts-due-amt {
@@ -1597,7 +1597,7 @@ html, body {
 .fd-matured-note {
   margin-top: 8px;
   font-size: 0.8125rem;
-  color: #10b981;
+  color: var(--success);
   font-weight: 500;
 }
 
@@ -1689,12 +1689,12 @@ html, body {
 }
 
 .rd-month-item.paid {
-  border-left-color: #10b981;
+  border-left-color: var(--success);
   opacity: 0.85;
 }
 
 .rd-month-item.overdue {
-  border-left-color: #ef4444;
+  border-left-color: var(--danger);
 }
 
 .rd-month-left {
@@ -1731,12 +1731,12 @@ html, body {
 
 .rd-toggle-btn.paid {
   background: #d1fae5;
-  color: #065f46;
+  color: var(--success);
 }
 
 .rd-toggle-btn.unpaid {
   background: #ede9fe;
-  color: #5b21b6;
+  color: var(--primary);
 }
 
 /* ── Cashback Page ────────────────────────── */
@@ -1791,7 +1791,7 @@ html, body {
 
 .cb-source-amt {
   font-weight: 700;
-  color: #7c3aed;
+  color: var(--primary);
 }
 
 /* ── Select Input ─────────────────────────── */
@@ -2340,19 +2340,19 @@ html, body {
 .card-offer-detail-list li::before { content: "•"; position: absolute; left: 4px; color: var(--primary); font-size: 1.2rem; top: -2px; }
 .card-offer-detail-section { background: var(--surface); margin: 12px 16px; border-radius: 12px; padding: 16px; border: 1px solid var(--border); }
 .card-offer-detail-section-title { font-size: 1rem; font-weight: 700; margin-bottom: 12px; color: var(--text); }
-.chip-free { background: #d1fae5 !important; color: #065f46 !important; font-weight: 700; }
-.chip-premium { background: #ede9fe !important; color: #5b21b6 !important; font-weight: 700; }
+.chip-free { background: var(--success-light) !important; color: var(--success) !important; font-weight: 700; }
+.chip-premium { background: var(--primary-light) !important; color: var(--primary) !important; font-weight: 700; }
 
 /* ── Chosen Card Badge ────────────────────────────────────────── */
-.chosen-card-badge { display: inline-block; background: #ede9fe; color: #5b21b6; font-weight: 600; font-size: 0.85rem; padding: 6px 12px; border-radius: 8px; margin-bottom: 8px; }
+.chosen-card-badge { display: inline-block; background: #ede9fe; color: var(--primary); font-weight: 600; font-size: 0.85rem; padding: 6px 12px; border-radius: 8px; margin-bottom: 8px; }
 
 /* ── Select for Bill ──────────────────────────────────────────── */
 .expense-item.selectable { cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s; }
 .expense-item.selectable:hover { border-color: var(--border); }
-.expense-item.selected { border-color: #6366f1; background: #ede9fe22; }
+.expense-item.selected { border-color: var(--primary); background: var(--surface2); }
 .select-checkbox { font-size: 1.2rem; margin-right: 8px; flex-shrink: 0; }
 .select-bill-actions { display: flex; gap: 8px; width: 100%; }
-.exp-action-btn.edit { color: #6366f1; }
+.exp-action-btn.edit { color: var(--primary); }
 
 /* ── Chart Type Switcher ──────────────────────────────────────── */
 .chart-type-switcher { display: flex; gap: 6px; justify-content: center; margin-bottom: 12px; }
@@ -2402,8 +2402,8 @@ html, body {
 .upcoming-name { font-weight: 600; font-size: 0.9rem; }
 .upcoming-date { font-size: 0.75rem; color: var(--muted); }
 .upcoming-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
-.upcoming-days { font-weight: 700; font-size: 0.85rem; color: #5b21b6; }
-.upcoming-days.urgent { color: #ef4444; }
+.upcoming-days { font-weight: 700; font-size: 0.85rem; color: var(--primary); }
+.upcoming-days.urgent { color: var(--danger); }
 .upcoming-amount { font-size: 0.8rem; color: var(--muted); }
 .overview-breakdown { padding: 8px 0; }
 
@@ -2875,9 +2875,9 @@ html, body {
   font-size: 11px;
   font-weight: 600;
 }
-.admin-badge-featured { background: #fef3c7; color: #b45309; }
+.admin-badge-featured { background: #fef3c7; color: #f59e0b; }
 .admin-badge-success  { background: var(--success-light); color: var(--success); }
-.admin-badge-live     { background: #fee2e2; color: #ef4444; }
+.admin-badge-live     { background: #fee2e2; color: var(--danger); }
 
 .admin-toggle {
   display: inline-flex;
@@ -2894,7 +2894,7 @@ html, body {
   transition: all 0.15s;
 }
 .admin-toggle.active   { background: var(--success-light); color: var(--success); border-color: var(--success); }
-.admin-toggle.featured { background: #fef3c7; color: #b45309; border-color: #f59e0b; }
+.admin-toggle.featured { background: #fef3c7; color: #f59e0b; border-color: #f59e0b; }
 
 .admin-error {
   color: var(--danger);
@@ -3745,7 +3745,7 @@ html, body {
   background: #fb923c;
 }
 .card-utilization-label { font-size: 11px; color: var(--danger); font-weight: 600; }
-.chip-warn { background: #fee2e2; color: #dc2626; font-weight: 600; }
+.chip-warn { background: #fee2e2; color: var(--danger); font-weight: 600; }
 
 /* ── Expense form limit warning ─────────────────────────────── */
 .expense-limit-warning {
@@ -4091,10 +4091,10 @@ html, body {
 .mbd-label { color: var(--muted); }
 .mbd-val { font-weight: 700; }
 
-.credit-text { color: #10b981; }
-.debit-text  { color: #ef4444; }
+.credit-text { color: var(--success); }
+.debit-text  { color: var(--danger); }
 .carried-text { color: #f59e0b; font-weight: 600; }
-.paid-text { color: #10b981; }
+.paid-text { color: var(--success); }
 
 .modal-sheet::before {
   content: "";
@@ -5371,8 +5371,8 @@ html, body {
 }
 
 .admin-feedback-error {
-  color: #ef4444;
-  border-color: #ef4444;
+  color: var(--danger);
+  border-color: var(--danger);
   background: rgba(239, 68, 68, 0.1);
 }
 
@@ -5462,12 +5462,12 @@ html, body {
 
 .admin-feedback-status-new {
   background: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
+  color: var(--primary);
 }
 
 .admin-feedback-status-read {
   background: rgba(107, 114, 128, 0.15);
-  color: #6b7280;
+  color: var(--text3);
 }
 
 /* Detail Popup Overlay */
@@ -5553,7 +5553,7 @@ html, body {
 
 .admin-feedback-status-completed {
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: var(--success);
 }
 
 .admin-feedback-popup-actions {
@@ -5631,7 +5631,7 @@ html, body {
 }
 .update-banner button {
   background: #fff;
-  color: #3b82f6;
+  color: var(--primary);
   border: none;
   border-radius: 6px;
   padding: 6px 12px;
@@ -5642,3 +5642,5 @@ html, body {
 .update-banner button:hover {
   opacity: 0.9;
 }
+
+.chip-muted { background: var(--surface2); color: var(--text3); }
