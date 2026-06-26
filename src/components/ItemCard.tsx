@@ -182,6 +182,20 @@ export default function ItemCard({ item, masterKey, currency, onDelete, onEdit }
 
           <p className="swipe-hint"><ArrowLeft size={16} /> Swipe to edit or delete</p>
         </div>
+        <div className="swipe-actions" style={{ position: "absolute", left: "100%", top: 0, bottom: 0, width: 140, display: "flex" }}>
+          <button type="button" className="swipe-btn swipe-edit" onClick={handleEdit}>
+            <span className="swipe-icon"><Pencil size={16} /></span>
+            <span className="swipe-label">Edit</span>
+          </button>
+          <button
+            type="button"
+            className={`swipe-btn swipe-delete ${confirmDelete ? "confirm" : ""}`}
+            onClick={handleDelete}
+          >
+            <span className="swipe-icon">{confirmDelete ? <Check size={16} /> : <Trash size={16} />}</span>
+            <span className="swipe-label">{confirmDelete ? "Sure?" : "Delete"}</span>
+          </button>
+        </div>
       </div>
     </li>
   );

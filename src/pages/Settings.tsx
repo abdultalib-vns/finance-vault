@@ -88,12 +88,12 @@ export default function Settings({
     onMasterKeyChange(newPin);
     setNewPin("");
     setConfirmPin("");
-    setPinMsg("<CheckCircle size={20} /> PIN changed! All data re-encrypted.");
+    setPinMsg("Success: PIN changed! All data re-encrypted.");
 
     if (isBiometricEnrolled()) {
       disableBiometric();
       setBioEnabled(false);
-      setBioMsg("<AlertTriangle size={20} /> Biometric login was disabled because the PIN changed. Re-enable it below.");
+      setBioMsg("Error: Biometric login was disabled because the PIN changed. Re-enable it below.");
     }
   }
 
@@ -115,7 +115,7 @@ export default function Settings({
     try {
       await enrollBiometric(masterKey);
       setBioEnabled(true);
-      setBioMsg("<CheckCircle size={20} /> Biometric login enabled!");
+      setBioMsg("Success: Biometric login enabled!");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Could not enable biometric login.";
       setBioMsg(`<AlertTriangle size={20} /> ${msg}`);
@@ -141,7 +141,7 @@ export default function Settings({
     try {
       await exportVault(ioPin);
       setIoLoading(true);
-      setIoMsg("<CheckCircle size={20} /> Backup downloaded successfully.");
+      setIoMsg("Success: Backup downloaded successfully.");
       setShowExportPin(false);
       setIoPin("");
     } catch (err) {
@@ -205,7 +205,7 @@ export default function Settings({
       return;
     }
     if (hashPin(clearPin) !== hashPin(masterKey)) {
-      setClearMsg("<XCircle size={16} /> Incorrect PIN.");
+      setClearMsg("Error: Incorrect PIN.");
       return;
     }
     handleClearAll();
@@ -229,11 +229,11 @@ export default function Settings({
         body: JSON.stringify({ title: fbTitle.trim(), description: fbDesc.trim() }),
       });
       if (!resp.ok) throw new Error("Server error");
-      setFbMsg("<CheckCircle size={20} /> Thank you! Your feedback has been submitted.");
+      setFbMsg("Success: Thank you! Your feedback has been submitted.");
       setFbTitle("");
       setFbDesc("");
     } catch {
-      setFbMsg("<XCircle size={16} /> Could not submit feedback. Please try again later.");
+      setFbMsg("Error: Could not submit feedback. Please try again later.");
     } finally {
       setFbLoading(false);
     }
@@ -293,7 +293,10 @@ export default function Settings({
         <div className="settings-section">
           <h3 className="settings-section-title"><Archive size={20} /> Backup & Restore</h3>
           <p className="settings-hint">Export all your data as an encrypted backup file. Import it on another device using the same PIN.</p>
-          {ioMsg && <p className={`settings-msg ${ioMsg.startsWith("<CheckCircle size={20} />") ? "success" : "error"}`}>{ioMsg}</p>}
+          {ioMsg && <p className={`settings-msg ${ioMsg.startsWith("Success:") ? "success" : "error"}`}>
+                {ioMsg.startsWith("Success:") ? <CheckCircle size={20} style={{display:"inline", verticalAlign:"middle", marginRight: 4}}/> : <AlertTriangle size={20} style={{display:"inline", verticalAlign:"middle", marginRight: 4}}/>}
+                {ioMsg.replace("Success: ", "").replace("Error: ", "")}
+              </p>}
           {!showImportPin && (
             <>
               {!showExportPin ? (
@@ -340,7 +343,10 @@ export default function Settings({
             <p className="settings-label">Change Master PIN</p>
             <input type="password" inputMode="numeric" placeholder="New PIN (min 4 digits)" value={newPin} onChange={(e) => setNewPin(e.target.value)} className="settings-input" />
             <input type="password" inputMode="numeric" placeholder="Confirm New PIN" value={confirmPin} onChange={(e) => setConfirmPin(e.target.value)} className="settings-input" />
-            {pinMsg && <p className={`settings-msg ${pinMsg.startsWith("<CheckCircle size={20} />") ? "success" : "error"}`}>{pinMsg}</p>}
+            {pinMsg && <p className={`settings-msg ${pinMsg.startsWith("Success:") ? "success" : "error"}`}>
+                {pinMsg.startsWith("Success:") ? <CheckCircle size={20} style={{display:"inline", verticalAlign:"middle", marginRight: 4}}/> : <AlertTriangle size={20} style={{display:"inline", verticalAlign:"middle", marginRight: 4}}/>}
+                {pinMsg.replace("Success: ", "").replace("Error: ", "")}
+              </p>}
             <button type="submit" className="btn-primary">Update PIN</button>
           </form>
         </div>
@@ -352,13 +358,19 @@ export default function Settings({
           ) : bioEnabled ? (
             <>
               <p className="settings-hint"><CheckCircle size={20} /> Enabled — Sign in with Touch ID, Face ID, or fingerprint.</p>
-              {bioMsg && <p className={`settings-msg ${bioMsg.startsWith("<CheckCircle size={20} />") ? "success" : "error"}`}>{bioMsg}</p>}
+              {bioMsg && <p className={`settings-msg ${bioMsg.startsWith("Success:") ? "success" : "error"}`}>
+                {bioMsg.startsWith("Success:") ? <CheckCircle size={20} style={{display:"inline", verticalAlign:"middle", marginRight: 4}}/> : <AlertTriangle size={20} style={{display:"inline", verticalAlign:"middle", marginRight: 4}}/>}
+                {bioMsg.replace("Success: ", "").replace("Error: ", "")}
+              </p>}
               <button type="button" className="btn-outline" onClick={handleDisableBio}>Disable Biometric Login</button>
             </>
           ) : (
             <>
               <p className="settings-hint">Use Touch ID, Face ID, or Fingerprint instead of typing your PIN every time.</p>
-              {bioMsg && <p className={`settings-msg ${bioMsg.startsWith("<CheckCircle size={20} />") ? "success" : "error"}`}>{bioMsg}</p>}
+              {bioMsg && <p className={`settings-msg ${bioMsg.startsWith("Success:") ? "success" : "error"}`}>
+                {bioMsg.startsWith("Success:") ? <CheckCircle size={20} style={{display:"inline", verticalAlign:"middle", marginRight: 4}}/> : <AlertTriangle size={20} style={{display:"inline", verticalAlign:"middle", marginRight: 4}}/>}
+                {bioMsg.replace("Success: ", "").replace("Error: ", "")}
+              </p>}
               <button type="button" className="btn-primary" onClick={handleEnableBio} disabled={bioLoading}>{bioLoading ? "Setting up…" : "Enable Biometric Login"}</button>
             </>
           )}
@@ -455,7 +467,10 @@ export default function Settings({
               rows={4}
               maxLength={1000}
             />
-            {fbMsg && <p className={`settings-msg ${fbMsg.startsWith("<CheckCircle size={20} />") ? "success" : "error"}`}>{fbMsg}</p>}
+            {fbMsg && <p className={`settings-msg ${fbMsg.startsWith("Success:") ? "success" : "error"}`}>
+                {fbMsg.startsWith("Success:") ? <CheckCircle size={20} style={{display:"inline", verticalAlign:"middle", marginRight: 4}}/> : <AlertTriangle size={20} style={{display:"inline", verticalAlign:"middle", marginRight: 4}}/>}
+                {fbMsg.replace("Success: ", "").replace("Error: ", "")}
+              </p>}
             <button type="submit" className="btn-primary" disabled={fbLoading}>
               {fbLoading ? "Submitting…" : <><Send size={16} /> Submit Feedback</>}
             </button>
