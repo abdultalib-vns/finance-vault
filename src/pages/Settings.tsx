@@ -467,6 +467,11 @@ export default function Settings({
           </div>
           <p className="settings-info-text">🔐 All secrets are encrypted with AES using your PIN as the key. Your data never leaves your device.</p>
         </div>
+
+        {/* Credit */}
+        <div style={{ textAlign: "center", padding: "10px 0 30px", fontSize: "0.75rem", color: "var(--text3)", opacity: 0.8, lineHeight: 1.4 }}>
+          Developed by VeloLaunch <br /> A Company by <a href="https://smartvistaitsolutions.in" target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 600 }}>Smart Vista IT Solutions</a>
+        </div>
       </div>
     </div>
   );

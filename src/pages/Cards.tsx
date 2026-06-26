@@ -39,6 +39,7 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
   const [editItem, setEditItem] = useState<FinanceItem | null>(null);
   const [showAmounts, setShowAmounts] = useState(false);
   const [showPaymentApps, setShowPaymentApps] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const cardItems = items.filter((i) => i.type === "card" || i.type === "paylater");
 
@@ -72,6 +73,15 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
         <div className="page-header-row">
           <h2 className="header-title">Cards</h2>
           <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <button
+              type="button"
+              className="reveal-toggle"
+              onClick={() => setShowCalendar(true)}
+              title="Due Dates Calendar"
+              style={{ fontSize: "1.2rem" }}
+            >
+              📅
+            </button>
             <button
               type="button"
               className="reveal-toggle"
@@ -140,36 +150,46 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
 
       {/* Payment Apps Popup */}
       {showPaymentApps && (
-        <div className="modal-overlay" onClick={() => setShowPaymentApps(false)}>
-          <div className="modal-sheet payment-apps-sheet" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3 className="form-title">💰 Pay Your Bills</h3>
-              <button className="modal-close" onClick={() => setShowPaymentApps(false)}>✕</button>
-            </div>
-            <p className="modal-subtitle">Quick links to popular bill payment apps</p>
-            <div className="payment-apps-grid">
-              {PAYMENT_APPS.map((app) => (
-                <a
-                  key={app.name}
-                  href={app.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="payment-app-card"
-                >
-                <span className="payment-app-icon">
-                    {app.icon.startsWith("http") ? (
-                      <img src={app.icon} alt={app.name} className="payment-app-img" />
-                    ) : (
-                      app.icon
-                    )}
-                  </span>
-                  <span className="payment-app-name">{app.name}</span>
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
+        <PaymentAppsModal onClose={() => setShowPaymentApps(false)} />
       )}
+
+      {showCalendar && (
+        <CalendarModal cards={cardItems} onClose={() => setShowCalendar(false)} />
+      )}
+    </div>
+  );
+}
+
+function PaymentAppsModal({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-sheet payment-apps-sheet" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3 className="form-title">💰 Pay Your Bills</h3>
+          <button className="modal-close" onClick={onClose}>✕</button>
+        </div>
+        <p className="modal-subtitle">Quick links to popular bill payment apps</p>
+        <div className="payment-apps-grid">
+          {PAYMENT_APPS.map((app) => (
+            <a
+              key={app.name}
+              href={app.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="payment-app-card"
+            >
+            <span className="payment-app-icon">
+                {app.icon.startsWith("http") ? (
+                  <img src={app.icon} alt={app.name} className="payment-app-img" />
+                ) : (
+                  app.icon
+                )}
+              </span>
+              <span className="payment-app-name">{app.name}</span>
+            </a>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -859,6 +879,109 @@ function CardOfferDetail({ offer, onBack }: { offer: CardOfferEntry; onBack: () 
             Apply at Bank Branch
           </button>
         )}
+      </div>
+    </div>
+  );
+}
+
+function CalendarModal({ cards, onClose }: { cards: FinanceItem[]; onClose: () => void }) {
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+
+  const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+  const firstDay = new Date(selectedYear, selectedMonth, 1).getDay();
+
+  // Find unpaid expenses that have a due date in this month/year
+  const dueExpenses = loadExpenses().filter(e => {
+    if (!e.dueDate) return false;
+    if (e.status !== "unpaid" && e.status !== "bill_generated_unpaid") return false;
+    
+    // Check if the due date matches the selected month/year
+    const expDate = new Date(e.dueDate);
+    return expDate.getMonth() === selectedMonth && expDate.getFullYear() === selectedYear;
+  });
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: "400px", padding: "20px" }}>
+        <div className="modal-header">
+          <h3 className="modal-title">📅 Card Dues Calendar</h3>
+          <button className="modal-close" onClick={onClose}>✕</button>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+          <button className="btn-outline" style={{ padding: "4px 8px" }} onClick={() => {
+            if (selectedMonth === 0) { setSelectedMonth(11); setSelectedYear(y => y - 1); }
+            else { setSelectedMonth(m => m - 1); }
+          }}>◀</button>
+          <strong style={{ fontSize: "1.1rem" }}>{new Date(selectedYear, selectedMonth).toLocaleString('default', { month: 'long', year: 'numeric' })}</strong>
+          <button className="btn-outline" style={{ padding: "4px 8px" }} onClick={() => {
+            if (selectedMonth === 11) { setSelectedMonth(0); setSelectedYear(y => y + 1); }
+            else { setSelectedMonth(m => m + 1); }
+          }}>▶</button>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "4px", textAlign: "center", marginBottom: "8px" }}>
+          {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+            <div key={day} style={{ fontSize: "0.75rem", color: "var(--text3)", fontWeight: 600 }}>{day}</div>
+          ))}
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "4px" }}>
+          {Array.from({ length: firstDay }).map((_, i) => <div key={`empty-${i}`} />)}
+          {Array.from({ length: daysInMonth }).map((_, i) => {
+            const day = i + 1;
+            const dueToday = dueExpenses.filter(e => {
+              const expDate = new Date(e.dueDate!);
+              return expDate.getDate() === day;
+            });
+
+            return (
+              <div key={day} style={{
+                position: "relative",
+                aspectRatio: "1",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                background: dueToday.length > 0 ? "rgba(99, 102, 241, 0.15)" : "var(--bg)",
+                border: dueToday.length > 0 ? "1px solid var(--primary)" : "1px solid var(--border)",
+                borderRadius: "8px",
+                fontSize: "0.85rem",
+                fontWeight: dueToday.length > 0 ? "bold" : "normal",
+                color: dueToday.length > 0 ? "var(--primary)" : "var(--text)"
+              }}>
+                {day}
+                {dueToday.length > 0 && (
+                  <div style={{ display: "flex", gap: "2px", position: "absolute", bottom: "4px" }}>
+                    {dueToday.map((e, j) => (
+                      <div key={j} style={{ width: "4px", height: "4px", borderRadius: "50%", background: "var(--primary)" }} title={cards.find(c => c.id === e.cardId)?.name || "Card"} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        <div style={{ marginTop: "20px", display: "flex", flexDirection: "column", gap: "8px", maxHeight: "150px", overflowY: "auto" }}>
+          <h4 style={{ fontSize: "0.9rem", color: "var(--text2)", borderBottom: "1px solid var(--border)", paddingBottom: "4px" }}>Dues this month</h4>
+          {dueExpenses.length === 0 ? (
+            <p style={{ fontSize: "0.8rem", color: "var(--text3)" }}>No pending dues for this month.</p>
+          ) : (
+            dueExpenses.map(e => {
+              const card = cards.find(c => c.id === e.cardId);
+              const expDate = new Date(e.dueDate!);
+              const suffix = ['11','12','13'].includes(expDate.getDate().toString()) ? 'th' : expDate.getDate().toString().endsWith('1') ? 'st' : expDate.getDate().toString().endsWith('2') ? 'nd' : expDate.getDate().toString().endsWith('3') ? 'rd' : 'th';
+              
+              return (
+                <div key={e.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.85rem", padding: "6px 8px", background: "var(--bg)", borderRadius: "6px" }}>
+                  <span>{card ? card.name : "Unknown Card"} <span style={{ opacity: 0.6 }}>({e.description})</span></span>
+                  <strong style={{ color: "var(--primary)" }}>Due on {expDate.getDate()}{suffix}</strong>
+                </div>
+              );
+            })
+          )}
+        </div>
       </div>
     </div>
   );

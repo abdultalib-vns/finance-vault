@@ -232,7 +232,9 @@ export default function AuthScreen({ onUnlock }: Props) {
   return (
     <div className="auth-screen">
       <div className="auth-card">
-        <div className="auth-logo">💰</div>
+        <div className="auth-logo" style={{ background: "transparent", display: "flex", justifyContent: "center" }}>
+          <img src="/icon-512.png" alt="FinAura" style={{ width: "80px", height: "80px", borderRadius: "20px" }} />
+        </div>
         <h1 className="auth-title">FinAura</h1>
 
         {/* ── NEW USER: Enter PIN ── */}
@@ -241,6 +243,7 @@ export default function AuthScreen({ onUnlock }: Props) {
             <p className="auth-subtitle">Create your Master PIN to secure your data</p>
             <form className="auth-form" onSubmit={handleNewUserSubmit}>
               <input ref={pinRef} type="password" inputMode="numeric" maxLength={20}
+                autoComplete="new-password" data-lpignore="true"
                 className="pin-input" placeholder="Enter PIN" autoFocus
                 value={pin} onChange={(e) => { setPin(e.target.value); setError(""); }} />
               {error && <p className="auth-error">{error}</p>}
@@ -256,6 +259,7 @@ export default function AuthScreen({ onUnlock }: Props) {
             <p className="auth-subtitle">Confirm your Master PIN</p>
             <form className="auth-form" onSubmit={handleNewUserSubmit}>
               <input ref={pinRef} type="password" inputMode="numeric" maxLength={20}
+                autoComplete="new-password" data-lpignore="true"
                 className="pin-input" placeholder="Confirm PIN" autoFocus
                 value={confirmPin} onChange={(e) => { setConfirmPin(e.target.value); setError(""); }} />
               {error && <p className="auth-error">{error}</p>}
@@ -304,6 +308,7 @@ export default function AuthScreen({ onUnlock }: Props) {
             <p className="auth-subtitle">Enter your Master PIN to continue</p>
             <form className="auth-form" onSubmit={handleUnlockSubmit}>
               <input ref={pinRef} type="password" inputMode="numeric" maxLength={20}
+                autoComplete="new-password" data-lpignore="true"
                 className="pin-input" placeholder="Enter PIN" autoFocus
                 value={pin} onChange={(e) => { setPin(e.target.value); setError(""); }} />
               {error && <p className="auth-error">{error}</p>}
@@ -324,7 +329,7 @@ export default function AuthScreen({ onUnlock }: Props) {
               <>
                 <div className="auth-divider"><span>or</span></div>
                 <button type="button" className="btn-bio" onClick={handleBiometric} disabled={bioLoading}>
-                  {bioLoading ? "Authenticating…" : "🔐 Sign in with Biometric"}
+                  {bioLoading ? "Authenticating…" : "🔐 Sign in with Face ID / Biometric"}
                 </button>
               </>
             )}
@@ -354,7 +359,8 @@ export default function AuthScreen({ onUnlock }: Props) {
             <p className="auth-subtitle">Create a new Master PIN</p>
             <form className="auth-form" onSubmit={handleRecoverNewPin}>
               <input ref={pinRef} type="password" inputMode="numeric" maxLength={20}
-                className="pin-input" placeholder="New PIN" autoFocus
+                autoComplete="new-password" data-lpignore="true"
+                className="pin-input" placeholder="Enter New PIN" autoFocus
                 value={newPin} onChange={(e) => { setNewPin(e.target.value); setError(""); }} />
               {error && <p className="auth-error">{error}</p>}
               <button type="submit" className="btn-primary auth-btn">Next</button>
@@ -368,7 +374,8 @@ export default function AuthScreen({ onUnlock }: Props) {
             <p className="auth-subtitle">Confirm your new Master PIN</p>
             <form className="auth-form" onSubmit={handleRecoverConfirm}>
               <input ref={pinRef} type="password" inputMode="numeric" maxLength={20}
-                className="pin-input" placeholder="Confirm new PIN" autoFocus
+                autoComplete="new-password" data-lpignore="true"
+                className="pin-input" placeholder="Confirm New PIN" autoFocus
                 value={confirmNewPin} onChange={(e) => { setConfirmNewPin(e.target.value); setError(""); }} />
               {error && <p className="auth-error">{error}</p>}
               <button type="submit" className="btn-primary auth-btn">Save New PIN</button>
