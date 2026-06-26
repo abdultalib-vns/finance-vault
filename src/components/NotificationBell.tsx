@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { loadActivePopupAd, loadAdminConfigFromServer, trackEvent } from "../admin/adminStorage";
 import { PopupAd } from "../admin/adminTypes";
+import { Bell, Info, Gift, AlertTriangle, X } from "lucide-react";
 
 const AD_PERMANENT_KEY = "popup_ad_never_show_";
 
@@ -9,10 +10,10 @@ const TYPE_COLORS: Record<string, string> = {
   promo: "#7c3aed",
   warning: "#d97706",
 };
-const TYPE_ICONS: Record<string, string> = {
-  info: "ℹ️",
-  promo: "🎁",
-  warning: "⚠️",
+const TYPE_ICONS: Record<string, React.ReactNode> = {
+  info: <Info size={16} />,
+  promo: <Gift size={16} />,
+  warning: <AlertTriangle size={16} />,
 };
 
 export default function NotificationBell() {
@@ -70,7 +71,7 @@ export default function NotificationBell() {
         aria-label="Notifications"
         title="Notifications"
       >
-        🔔
+        <Bell size={20} />
         {/* Red dot — show if not permanently dismissed */}
         {!isPermanentlyDismissed && (
           <span className="notif-bell-dot" style={{ background: color }} />
@@ -81,12 +82,12 @@ export default function NotificationBell() {
         <div className="notif-dropdown" style={{ "--notif-color": color } as React.CSSProperties}>
           <div className="notif-dropdown-header">
             <span className="notif-dropdown-label">Notification</span>
-            <button className="notif-dropdown-x" onClick={() => setOpen(false)}>✕</button>
+            <button className="notif-dropdown-x" onClick={() => setOpen(false)}><X size={16} /></button>
           </div>
 
           <div className="notif-dropdown-body">
             <div className="notif-dropdown-icon-row">
-              <span className="notif-dropdown-icon-wrap" style={{ background: color + "1a" }}>
+              <span className="notif-dropdown-icon-wrap" style={{ background: color + "1a", color }}>
                 {TYPE_ICONS[ad.type]}
               </span>
               <div>

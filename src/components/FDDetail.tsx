@@ -1,3 +1,5 @@
+import React from "react";
+import { LayoutDashboard, ArrowLeft, Calendar } from "lucide-react";
 import { FinanceItem } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
 
@@ -38,7 +40,7 @@ export default function FDDetail({ fd, currency, onBack }: Props) {
   return (
     <div className="screen">
       <header className="detail-header">
-        <button className="back-btn" onClick={onBack}>← Back</button>
+        <button className="back-btn" onClick={onBack}><ArrowLeft size={16} /> Back</button>
         <div className="detail-header-info">
           <h2 className="detail-title">{fd.name}</h2>
           <span className="detail-subtitle">Fixed Deposit</span>
@@ -65,8 +67,8 @@ export default function FDDetail({ fd, currency, onBack }: Props) {
       <div className="content">
         {/* Detail chips */}
         <div className="fd-info-row">
-          {r > 0 && <span className="fd-info-chip">📊 {r}% p.a. (Simple Interest)</span>}
-          {fd.startDate    && <span className="fd-info-chip">📅 Started: {fmtDate(fd.startDate)}</span>}
+          {r > 0 && <span className="fd-info-chip"><LayoutDashboard size={20} /> {r}% p.a. (Simple Interest)</span>}
+          {fd.startDate    && <span className="fd-info-chip"><Calendar size={16} /> Started: {fmtDate(fd.startDate)}</span>}
           {fd.maturityDate && <span className="fd-info-chip">🏁 Matures: {fmtDate(fd.maturityDate)}</span>}
         </div>
 

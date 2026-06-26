@@ -1,3 +1,4 @@
+import { Search, Check, ArrowLeft, Ban, CheckCircle, Calendar, Receipt } from "lucide-react";
 import { useState, useMemo } from "react";
 import { FinanceItem, CardExpense, CardBill, ExpenseStatus } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
@@ -224,7 +225,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
     return (
       <div className="screen">
         <header className="detail-header">
-          <button className="back-btn" onClick={() => setEditingExpense(null)}>← Back</button>
+          <button className="back-btn" onClick={() => setEditingExpense(null)}><ArrowLeft size={16} /> Back</button>
           <div className="detail-header-info">
             <h2 className="detail-title">Edit Expense</h2>
           </div>
@@ -246,7 +247,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
     <div className="screen">
       {/* Header */}
       <header className="detail-header">
-        <button className="back-btn" onClick={onBack}>← Back</button>
+        <button className="back-btn" onClick={onBack}><ArrowLeft size={16} /> Back</button>
         <div className="detail-header-info">
           <h2 className="detail-title">{card.name}</h2>
           {card.lastFour && (
@@ -296,7 +297,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
             {/* Month Filter */}
             {availableMonths.length > 0 && !showForm && (
               <div className="form-group">
-                <label>📅 Month</label>
+                <label><Calendar size={16} /> Month</label>
                 <select className="select-input" value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
                   <option value="all">All Months</option>
                   {availableMonths.map((m) => (
@@ -318,7 +319,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
                       disabled={limitReached}
                       title={limitReached ? "Credit limit reached — pay outstanding dues first" : ""}
                     >
-                      {limitReached ? "🚫 Limit Reached" : "+ Add Expense"}
+                      {limitReached ? "<Ban size={20} /> Limit Reached" : "+ Add Expense"}
                     </button>
                     {limitReached && (
                       <p className="limit-reached-hint">Pay your outstanding dues to add more expenses.</p>
@@ -328,7 +329,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
               })()}
               {hasUnpaid && !showForm && !selectMode && (
                 <button className="btn-outline generate-bill-btn" onClick={() => generateBill()}>
-                  🧾 Generate Full Bill ({unpaidExpenses.length})
+                  <Receipt size={20} /> Generate Full Bill ({unpaidExpenses.length})
                 </button>
               )}
               {hasUnpaid && !showForm && !selectMode && (
@@ -343,7 +344,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
                     disabled={selectedForBill.size === 0}
                     onClick={() => generateBill([...selectedForBill])}
                   >
-                    🧾 Generate Bill ({selectedForBill.size} selected)
+                    <Receipt size={20} /> Generate Bill ({selectedForBill.size} selected)
                   </button>
                   <button className="btn-secondary" onClick={() => { setSelectMode(false); setSelectedForBill(new Set()); }}>
                     Cancel
@@ -372,7 +373,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
                     className={`filter-chip ${filter === f ? "active" : ""}`}
                     onClick={() => setFilter(f)}
                   >
-                    {f === "all" ? "All" : f === "unpaid" ? "⏳ Unpaid" : f === "paid" ? "✅ Paid" : "🧾 Billed"}
+                    {f === "all" ? "All" : f === "unpaid" ? "⏳ Unpaid" : f === "paid" ? "<CheckCircle size={20} /> Paid" : "<Receipt size={20} /> Billed"}
                   </button>
                 ))}
               </div>
@@ -381,7 +382,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
             {/* Expense List */}
             {filtered.length === 0 ? (
               <div className="empty-state">
-                <p className="empty-icon">{expenses.length === 0 ? "🧾" : "🔍"}</p>
+                <p className="empty-icon">{expenses.length === 0 ? "<Receipt size={20} />" : "<Search size={16} />"}</p>
                 <p className="empty-text">
                   {expenses.length === 0 ? "No expenses yet" : `No ${filter} expenses`}
                 </p>
@@ -484,7 +485,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
                                 : { background: "#fee2e2", color: "#ef4444" }
                             }
                           >
-                            {bill.status === "paid" ? "✓ Paid" : "⚠ Unpaid"}
+                            {bill.status === "paid" ? "<Check size={16} /> Paid" : "⚠ Unpaid"}
                           </span>
                         </div>
                         <span className="bill-total">{formatAmount(bill.totalAmount, currency)}</span>
@@ -505,7 +506,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
 
                       {bill.status === "unpaid" && (
                         <button className="btn-primary pay-bill-btn" onClick={() => payBill(bill.id)}>
-                          ✅ Mark Bill as Paid
+                          <CheckCircle size={20} /> Mark Bill as Paid
                         </button>
                       )}
 

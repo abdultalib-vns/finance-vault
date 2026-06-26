@@ -1,3 +1,4 @@
+import { Gift } from "lucide-react";
 import { useState } from "react";
 import { CashbackEntry } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
@@ -59,7 +60,7 @@ export default function Cashback({ currency }: Props) {
   return (
     <div className="screen">
       <header className="page-header">
-        <h2 className="header-title">🎁 Cashback Tracker</h2>
+        <h2 className="header-title"><Gift size={20} /> Cashback Tracker</h2>
       </header>
 
       <div className="cashback-hero">
@@ -122,7 +123,7 @@ export default function Cashback({ currency }: Props) {
 
         {entries.length === 0 ? (
           <div className="empty-state">
-            <p className="empty-icon">🎁</p>
+            <p className="empty-icon"><Gift size={20} /></p>
             <p className="empty-text">No cashback logged yet.</p>
             <p className="empty-sub">Track cashback from credit cards, apps, and offers.</p>
           </div>

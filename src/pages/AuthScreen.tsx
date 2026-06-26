@@ -1,3 +1,4 @@
+import { Lock, AlertTriangle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { hashPin } from "../lib/crypto";
 import {
@@ -249,7 +250,7 @@ export default function AuthScreen({ onUnlock }: Props) {
               {error && <p className="auth-error">{error}</p>}
               <button type="submit" className="btn-primary auth-btn">Next</button>
             </form>
-            <p className="auth-warning">⚠️ Your PIN encrypts all data. If lost, data cannot be recovered without your security answer.</p>
+            <p className="auth-warning"><AlertTriangle size={20} /> Your PIN encrypts all data. If lost, data cannot be recovered without your security answer.</p>
           </>
         )}
 
@@ -329,11 +330,11 @@ export default function AuthScreen({ onUnlock }: Props) {
               <>
                 <div className="auth-divider"><span>or</span></div>
                 <button type="button" className="btn-bio" onClick={handleBiometric} disabled={bioLoading}>
-                  {bioLoading ? "Authenticating…" : "🔐 Sign in with Biometric"}
+                  {bioLoading ? "Authenticating…" : "<Lock size={20} /> Sign in with Biometric"}
                 </button>
               </>
             )}
-            <p className="auth-warning">⚠️ Your PIN encrypts all data.</p>
+            <p className="auth-warning"><AlertTriangle size={20} /> Your PIN encrypts all data.</p>
           </>
         )}
 

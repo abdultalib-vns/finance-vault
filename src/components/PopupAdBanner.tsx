@@ -1,3 +1,4 @@
+import { Gift, Info, AlertTriangle, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { loadActivePopupAd, trackEvent, loadAdminConfigFromServer } from "../admin/adminStorage";
 import { PopupAd } from "../admin/adminTypes";
@@ -11,9 +12,9 @@ const TYPE_COLORS: Record<string, string> = {
   warning: "#d97706",
 };
 const TYPE_ICONS: Record<string, string> = {
-  info: "ℹ️",
-  promo: "🎁",
-  warning: "⚠️",
+  info: "<Info size={20} />",
+  promo: "<Gift size={20} />",
+  warning: "<AlertTriangle size={20} />",
 };
 
 export default function PopupAdBanner() {
@@ -86,7 +87,7 @@ export default function PopupAdBanner() {
             <div className="popup-ad-type-label">{typeLabel}</div>
             <div className="popup-ad-title">{ad.title}</div>
           </div>
-          <button className="popup-ad-close" onClick={dismiss} aria-label="Close">✕</button>
+          <button className="popup-ad-close" onClick={dismiss} aria-label="Close"><X size={16} /></button>
         </div>
         <p className="popup-ad-message">{ad.message}</p>
         <label className="popup-ad-donotshow-row">

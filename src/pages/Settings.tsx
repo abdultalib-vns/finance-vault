@@ -1,3 +1,4 @@
+import { LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { hashPin } from "../lib/crypto";
 import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses } from "../lib/storage";
@@ -87,12 +88,12 @@ export default function Settings({
     onMasterKeyChange(newPin);
     setNewPin("");
     setConfirmPin("");
-    setPinMsg("✅ PIN changed! All data re-encrypted.");
+    setPinMsg("<CheckCircle size={20} /> PIN changed! All data re-encrypted.");
 
     if (isBiometricEnrolled()) {
       disableBiometric();
       setBioEnabled(false);
-      setBioMsg("⚠️ Biometric login was disabled because the PIN changed. Re-enable it below.");
+      setBioMsg("<AlertTriangle size={20} /> Biometric login was disabled because the PIN changed. Re-enable it below.");
     }
   }
 
@@ -114,10 +115,10 @@ export default function Settings({
     try {
       await enrollBiometric(masterKey);
       setBioEnabled(true);
-      setBioMsg("✅ Biometric login enabled!");
+      setBioMsg("<CheckCircle size={20} /> Biometric login enabled!");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Could not enable biometric login.";
-      setBioMsg(`⚠️ ${msg}`);
+      setBioMsg(`<AlertTriangle size={20} /> ${msg}`);
     } finally {
       setBioLoading(false);
     }
@@ -140,7 +141,7 @@ export default function Settings({
     try {
       await exportVault(ioPin);
       setIoLoading(true);
-      setIoMsg("✅ Backup downloaded successfully.");
+      setIoMsg("<CheckCircle size={20} /> Backup downloaded successfully.");
       setShowExportPin(false);
       setIoPin("");
     } catch (err) {
@@ -167,7 +168,7 @@ export default function Settings({
     try {
       await importVault(pendingFile, ioPin);
       onReload();
-      setIoMsg(`✅ Imported successfully!`);
+      setIoMsg(`<CheckCircle size={20} /> Imported successfully!`);
       setShowImportPin(false);
       setPendingFile(null);
       setIoPin("");
@@ -228,7 +229,7 @@ export default function Settings({
         body: JSON.stringify({ title: fbTitle.trim(), description: fbDesc.trim() }),
       });
       if (!resp.ok) throw new Error("Server error");
-      setFbMsg("✅ Thank you! Your feedback has been submitted.");
+      setFbMsg("<CheckCircle size={20} /> Thank you! Your feedback has been submitted.");
       setFbTitle("");
       setFbDesc("");
     } catch {
@@ -276,8 +277,8 @@ export default function Settings({
           <h3 className="settings-section-title">Appearance</h3>
           <p className="settings-label">Theme</p>
           <div className="theme-toggle">
-            <button type="button" className={`theme-btn ${theme === "light" ? "active" : ""}`} onClick={() => onThemeChange("light")}>☀️ Light</button>
-            <button type="button" className={`theme-btn ${theme === "dark" ? "active" : ""}`} onClick={() => onThemeChange("dark")}>🌙 Dark</button>
+            <button type="button" className={`theme-btn ${theme === "light" ? "active" : ""}`} onClick={() => onThemeChange("light")}><Sun size={16} /> Light</button>
+            <button type="button" className={`theme-btn ${theme === "dark" ? "active" : ""}`} onClick={() => onThemeChange("dark")}><Moon size={16} /> Dark</button>
           </div>
         </div>
 
@@ -292,7 +293,7 @@ export default function Settings({
         <div className="settings-section">
           <h3 className="settings-section-title">📦 Backup & Restore</h3>
           <p className="settings-hint">Export all your data as an encrypted backup file. Import it on another device using the same PIN.</p>
-          {ioMsg && <p className={`settings-msg ${ioMsg.startsWith("✅") ? "success" : "error"}`}>{ioMsg}</p>}
+          {ioMsg && <p className={`settings-msg ${ioMsg.startsWith("<CheckCircle size={20} />") ? "success" : "error"}`}>{ioMsg}</p>}
           {!showImportPin && (
             <>
               {!showExportPin ? (
@@ -339,25 +340,25 @@ export default function Settings({
             <p className="settings-label">Change Master PIN</p>
             <input type="password" inputMode="numeric" placeholder="New PIN (min 4 digits)" value={newPin} onChange={(e) => setNewPin(e.target.value)} className="settings-input" />
             <input type="password" inputMode="numeric" placeholder="Confirm New PIN" value={confirmPin} onChange={(e) => setConfirmPin(e.target.value)} className="settings-input" />
-            {pinMsg && <p className={`settings-msg ${pinMsg.startsWith("✅") ? "success" : "error"}`}>{pinMsg}</p>}
+            {pinMsg && <p className={`settings-msg ${pinMsg.startsWith("<CheckCircle size={20} />") ? "success" : "error"}`}>{pinMsg}</p>}
             <button type="submit" className="btn-primary">Update PIN</button>
           </form>
         </div>
 
         <div className="settings-section">
-          <h3 className="settings-section-title">🔐 Biometric Login</h3>
+          <h3 className="settings-section-title"><Lock size={20} /> Biometric Login</h3>
           {!bioSupported ? (
             <p className="settings-hint">Biometric login is not available on this device.</p>
           ) : bioEnabled ? (
             <>
-              <p className="settings-hint">✅ Enabled — Sign in with Touch ID, Face ID, or fingerprint.</p>
-              {bioMsg && <p className={`settings-msg ${bioMsg.startsWith("✅") ? "success" : "error"}`}>{bioMsg}</p>}
+              <p className="settings-hint"><CheckCircle size={20} /> Enabled — Sign in with Touch ID, Face ID, or fingerprint.</p>
+              {bioMsg && <p className={`settings-msg ${bioMsg.startsWith("<CheckCircle size={20} />") ? "success" : "error"}`}>{bioMsg}</p>}
               <button type="button" className="btn-outline" onClick={handleDisableBio}>Disable Biometric Login</button>
             </>
           ) : (
             <>
               <p className="settings-hint">Use Touch ID, Face ID, or Fingerprint instead of typing your PIN every time.</p>
-              {bioMsg && <p className={`settings-msg ${bioMsg.startsWith("✅") ? "success" : "error"}`}>{bioMsg}</p>}
+              {bioMsg && <p className={`settings-msg ${bioMsg.startsWith("<CheckCircle size={20} />") ? "success" : "error"}`}>{bioMsg}</p>}
               <button type="button" className="btn-primary" onClick={handleEnableBio} disabled={bioLoading}>{bioLoading ? "Setting up…" : "Enable Biometric Login"}</button>
             </>
           )}
@@ -376,7 +377,7 @@ export default function Settings({
             <option value={0}>Never</option>
           </select>
           <p className="settings-hint">The app locks automatically after this much inactivity.</p>
-          <button type="button" className="btn-danger lock-btn" onClick={onLock} style={{ marginTop: 12 }}>🚪 Logout</button>
+          <button type="button" className="btn-danger lock-btn" onClick={onLock} style={{ marginTop: 12 }}><LogOut size={20} /> Logout</button>
         </div>
 
         <div className="settings-section">
@@ -392,26 +393,26 @@ export default function Settings({
         </div>
 
         <div className="settings-section">
-          <h3 className="settings-section-title">📊 App Statistics</h3>
+          <h3 className="settings-section-title"><LayoutDashboard size={20} /> App Statistics</h3>
           <div className="stats-grid">
-            {stats.bank > 0 && <div className="stat-chip">🏦 {stats.bank} Bank</div>}
-            {stats.card > 0 && <div className="stat-chip">💳 {stats.card} Card</div>}
+            {stats.bank > 0 && <div className="stat-chip"><Building2 size={20} /> {stats.bank} Bank</div>}
+            {stats.card > 0 && <div className="stat-chip"><CreditCard size={20} /> {stats.card} Card</div>}
             {stats.paylater > 0 && <div className="stat-chip">🔄 {stats.paylater} PayLater</div>}
             {stats.fd > 0 && <div className="stat-chip">📈 {stats.fd} FD</div>}
-            {stats.rd > 0 && <div className="stat-chip">📅 {stats.rd} RD</div>}
-            {stats.mf > 0 && <div className="stat-chip">📊 {stats.mf} MF</div>}
+            {stats.rd > 0 && <div className="stat-chip"><Calendar size={16} /> {stats.rd} RD</div>}
+            {stats.mf > 0 && <div className="stat-chip"><LayoutDashboard size={20} /> {stats.mf} MF</div>}
             {stats.other > 0 && <div className="stat-chip">📋 {stats.other} Other</div>}
-            {stats.expenses > 0 && <div className="stat-chip">🧾 {stats.expenses} Expenses</div>}
-            {stats.cashbacks > 0 && <div className="stat-chip">🎁 {stats.cashbacks} Cashbacks</div>}
-            {stats.bankExpenses > 0 && <div className="stat-chip">💸 {stats.bankExpenses} Txns</div>}
+            {stats.expenses > 0 && <div className="stat-chip"><Receipt size={20} /> {stats.expenses} Expenses</div>}
+            {stats.cashbacks > 0 && <div className="stat-chip"><Gift size={20} /> {stats.cashbacks} Cashbacks</div>}
+            {stats.bankExpenses > 0 && <div className="stat-chip"><DollarSign size={20} /> {stats.bankExpenses} Txns</div>}
           </div>
           <p className="settings-hint" style={{ marginTop: 8 }}>Storage used: ~{approxStorageKB()}</p>
         </div>
 
         <div className="settings-section danger-zone">
-          <h3 className="settings-section-title danger-title">⚠️ Danger Zone</h3>
+          <h3 className="settings-section-title danger-title"><AlertTriangle size={20} /> Danger Zone</h3>
           {!showClear ? (
-            <button type="button" className="btn-danger" onClick={requestClear}>🗑️ Clear All Data</button>
+            <button type="button" className="btn-danger" onClick={requestClear}><Trash size={16} /> Clear All Data</button>
           ) : clearStep === "pin" ? (
             <div className="confirm-block">
               <p className="confirm-text">Enter your PIN to clear all data.</p>
@@ -435,7 +436,7 @@ export default function Settings({
         </div>
 
         <div className="settings-section">
-          <h3 className="settings-section-title">💬 Feedback & Suggestions</h3>
+          <h3 className="settings-section-title"><MessageSquare size={20} /> Feedback & Suggestions</h3>
           <p className="settings-hint">Have a feature idea or found a bug? Let us know!</p>
           <form className="settings-form" onSubmit={handleFeedbackSubmit}>
             <input
@@ -454,22 +455,22 @@ export default function Settings({
               rows={4}
               maxLength={1000}
             />
-            {fbMsg && <p className={`settings-msg ${fbMsg.startsWith("✅") ? "success" : "error"}`}>{fbMsg}</p>}
+            {fbMsg && <p className={`settings-msg ${fbMsg.startsWith("<CheckCircle size={20} />") ? "success" : "error"}`}>{fbMsg}</p>}
             <button type="submit" className="btn-primary" disabled={fbLoading}>
-              {fbLoading ? "Submitting…" : "📩 Submit Feedback"}
+              {fbLoading ? "Submitting…" : "<Send size={16} /> Submit Feedback"}
             </button>
           </form>
         </div>
 
         <div className="settings-section">
-          <h3 className="settings-section-title">ℹ️ About FinAura</h3>
+          <h3 className="settings-section-title"><Info size={20} /> About FinAura</h3>
           <div className="about-block">
             <div className="about-row"><span>Version</span><strong>{APP_VERSION}</strong></div>
             <div className="about-row"><span>Storage</span><strong>100% Local (localStorage)</strong></div>
             <div className="about-row"><span>Encryption</span><strong>AES via CryptoJS</strong></div>
             <div className="about-row"><span>Network</span><strong>No data sent anywhere</strong></div>
           </div>
-          <p className="settings-info-text">🔐 All secrets are encrypted with AES using your PIN as the key. Your data never leaves your device.</p>
+          <p className="settings-info-text"><Lock size={20} /> All secrets are encrypted with AES using your PIN as the key. Your data never leaves your device.</p>
         </div>
 
         {/* Credit */}

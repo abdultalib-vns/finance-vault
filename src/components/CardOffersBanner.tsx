@@ -1,3 +1,4 @@
+import { Gift, ArrowRight, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { loadCardTemplates, loadAdminConfigFromServer } from "../admin/adminStorage";
 import { CardTemplate } from "../admin/adminTypes";
@@ -27,8 +28,8 @@ export default function CardOffersBanner() {
   return (
     <div className="card-offers-section">
       <div className="card-offers-header">
-        <h3 className="card-offers-title">🎁 Cards You Can Apply For</h3>
-        <button className="card-offers-dismiss" onClick={() => setDismissed(true)}>✕</button>
+        <h3 className="card-offers-title"><Gift size={20} /> Cards You Can Apply For</h3>
+        <button className="card-offers-dismiss" onClick={() => setDismissed(true)}><X size={16} /></button>
       </div>
       <div className="card-offers-scroll">
         {displayList.map((t) => (
@@ -46,7 +47,7 @@ export default function CardOffersBanner() {
                 style={{ color: t.color, borderColor: t.color }}
                 onClick={() => handleApply(t)}
               >
-                Apply Now →
+                Apply Now <ArrowRight size={16} />
               </button>
             </div>
           </div>

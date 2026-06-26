@@ -1,3 +1,4 @@
+import { Check, Trash } from "lucide-react";
 import { useEffect, useRef, useState, ReactNode } from "react";
 import { FinanceItem } from "../types";
 
@@ -81,7 +82,7 @@ export default function SwipeableRow({ item, onEdit, onDelete, children }: Props
           className={`swipe-btn swipe-delete ${confirmDelete ? "confirm" : ""}`}
           onClick={handleDelete}
         >
-          <span className="swipe-icon">{confirmDelete ? "✓" : "🗑️"}</span>
+          <span className="swipe-icon">{confirmDelete ? "<Check size={16} />" : "<Trash size={16} />"}</span>
           <span className="swipe-label">{confirmDelete ? "Sure?" : "Delete"}</span>
         </button>
       </div>

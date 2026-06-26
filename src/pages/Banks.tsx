@@ -1,3 +1,4 @@
+import { LayoutDashboard, Building2, CheckCircle, Calendar, ChevronRight, Plus, DollarSign, Coins } from "lucide-react";
 import { useState, useMemo } from "react";
 import { FinanceItem, BankExpense } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
@@ -89,16 +90,16 @@ export default function Banks({ masterKey, currency, items, onItemsChange, onRel
 
       <div className="main-tabs">
         <button className={`main-tab ${subTab === "overview" ? "active" : ""}`} onClick={() => setSubTab("overview")}>
-          📊 Overview
+          <LayoutDashboard size={20} /> Overview
         </button>
         <button className={`main-tab ${subTab === "accounts" ? "active" : ""}`} onClick={() => setSubTab("accounts")}>
-          🏦 Accounts
+          <Building2 size={20} /> Accounts
         </button>
         <button className={`main-tab ${subTab === "investments" ? "active" : ""}`} onClick={() => setSubTab("investments")}>
           📈 Invest
         </button>
         <button className={`main-tab ${subTab === "transactions" ? "active" : ""}`} onClick={() => setSubTab("transactions")}>
-          💸 Txns
+          <DollarSign size={20} /> Txns
         </button>
       </div>
 
@@ -186,24 +187,24 @@ function OverviewTab({ items, currency, showAmounts, onSelectFD, onSelectRD }: {
     .sort((a, b) => a.daysLeft - b.daysLeft);
 
   const breakdown = [
-    { label: "Bank", value: bankTotal, color: "#3b82f6", icon: "🏦" },
+    { label: "Bank", value: bankTotal, color: "#3b82f6", icon: "<Building2 size={20} />" },
     { label: "FD", value: fdTotal, color: "#f59e0b", icon: "📈" },
-    { label: "RD", value: rdTotal, color: "#10b981", icon: "📅" },
-    { label: "MF", value: mfTotal, color: "#06b6d4", icon: "📊" },
+    { label: "RD", value: rdTotal, color: "#10b981", icon: "<Calendar size={16} />" },
+    { label: "MF", value: mfTotal, color: "#06b6d4", icon: "<LayoutDashboard size={20} />" },
   ].filter((d) => d.value > 0);
 
   return (
     <div className="content" style={{ paddingBottom: "80px" }}>
       {/* Net Worth Card */}
       <div className="overview-hero">
-        <span className="overview-hero-label">💰 Total Net Worth</span>
+        <span className="overview-hero-label"><Coins size={20} /> Total Net Worth</span>
         <span className="overview-hero-amount">{showAmounts ? formatAmount(grandTotal, currency) : MASK}</span>
       </div>
 
       {/* Quick Stats Grid */}
       <div className="overview-stats-grid">
         <div className="overview-stat-card">
-          <span className="overview-stat-icon">🏦</span>
+          <span className="overview-stat-icon"><Building2 size={20} /></span>
           <span className="overview-stat-val">{showAmounts ? formatAmount(bankTotal, currency) : MASK}</span>
           <span className="overview-stat-lbl">Bank Balance</span>
           <span className="overview-stat-count">{banks.length} account{banks.length !== 1 ? "s" : ""}</span>
@@ -215,13 +216,13 @@ function OverviewTab({ items, currency, showAmounts, onSelectFD, onSelectRD }: {
           <span className="overview-stat-count">{fds.length} FD{fds.length !== 1 ? "s" : ""}</span>
         </div>
         <div className="overview-stat-card">
-          <span className="overview-stat-icon">📅</span>
+          <span className="overview-stat-icon"><Calendar size={16} /></span>
           <span className="overview-stat-val">{showAmounts ? formatAmount(rdTotal, currency) : MASK}</span>
           <span className="overview-stat-lbl">Recurring Deposits</span>
           <span className="overview-stat-count">{rds.length} RD{rds.length !== 1 ? "s" : ""}</span>
         </div>
         <div className="overview-stat-card">
-          <span className="overview-stat-icon">📊</span>
+          <span className="overview-stat-icon"><LayoutDashboard size={20} /></span>
           <span className="overview-stat-val">{showAmounts ? formatAmount(mfTotal, currency) : MASK}</span>
           <span className="overview-stat-lbl">Mutual Funds</span>
           <span className="overview-stat-count">{mfs.length} fund{mfs.length !== 1 ? "s" : ""}</span>
@@ -231,7 +232,7 @@ function OverviewTab({ items, currency, showAmounts, onSelectFD, onSelectRD }: {
       {/* Interest & Gains */}
       {(fdInterestEarned > 0 || mfGains !== 0) && (
         <div className="overview-gains-section">
-          <h3 className="section-title">📊 Returns & Gains</h3>
+          <h3 className="section-title"><LayoutDashboard size={20} /> Returns & Gains</h3>
           {fdInterestEarned > 0 && (
             <div className="gains-row">
               <span>📈 Est. FD Interest Earned</span>
@@ -242,7 +243,7 @@ function OverviewTab({ items, currency, showAmounts, onSelectFD, onSelectRD }: {
           )}
           {mfs.length > 0 && (
             <div className="gains-row">
-              <span>📊 MF {mfGains >= 0 ? "Gains" : "Loss"}</span>
+              <span><LayoutDashboard size={20} /> MF {mfGains >= 0 ? "Gains" : "Loss"}</span>
               <span className="gains-val" style={{ color: mfGains >= 0 ? "#10b981" : "#ef4444" }}>
                 {showAmounts ? `${mfGains >= 0 ? "+" : "−"}${formatAmount(Math.abs(mfGains), currency)}` : MASK}
               </span>
@@ -262,7 +263,7 @@ function OverviewTab({ items, currency, showAmounts, onSelectFD, onSelectRD }: {
               onClick={() => item.type === "fd" ? onSelectFD(item) : onSelectRD(item)}
             >
               <div className="upcoming-left">
-                <span className="upcoming-name">{item.type === "fd" ? "📈" : "📅"} {item.name}</span>
+                <span className="upcoming-name">{item.type === "fd" ? "📈" : "<Calendar size={16} />"} {item.name}</span>
                 <span className="upcoming-date">Matures: {fmtDate(item.maturityDate!)}</span>
               </div>
               <div className="upcoming-right">
@@ -279,7 +280,7 @@ function OverviewTab({ items, currency, showAmounts, onSelectFD, onSelectRD }: {
       {/* Asset Breakdown Bars */}
       {breakdown.length > 0 && (
         <div className="overview-breakdown">
-          <h3 className="section-title">📊 Asset Breakdown</h3>
+          <h3 className="section-title"><LayoutDashboard size={20} /> Asset Breakdown</h3>
           {breakdown.map((d) => (
             <div key={d.label} className="asset-bar-row">
               <span className="asset-bar-label">{d.icon} {d.label}</span>
@@ -294,7 +295,7 @@ function OverviewTab({ items, currency, showAmounts, onSelectFD, onSelectRD }: {
 
       {items.length === 0 && (
         <div className="empty-state">
-          <p className="empty-icon">🏦</p>
+          <p className="empty-icon"><Building2 size={20} /></p>
           <p className="empty-text">No accounts yet.</p>
           <p className="empty-sub">Switch to Accounts tab to add your first account.</p>
         </div>
@@ -351,14 +352,14 @@ function AccountsTab({ items, masterKey, currency, onAddItem, onEdit, onDelete, 
           </div>
         )}
 
-        <SimpleSection title="Bank Accounts" icon="🏦" items={banks}
+        <SimpleSection title="Bank Accounts" icon="<Building2 size={20} />" items={banks}
           masterKey={masterKey} currency={currency} onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
         <SimpleSection title="Other" icon="📋" items={others}
           masterKey={masterKey} currency={currency} onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
 
         {banks.length === 0 && others.length === 0 && (
           <div className="empty-state">
-            <p className="empty-icon">🏦</p>
+            <p className="empty-icon"><Building2 size={20} /></p>
             <p className="empty-text">No bank accounts yet.</p>
             <p className="empty-sub">Tap + to add your first account.</p>
           </div>
@@ -424,11 +425,11 @@ function InvestmentsTab({ items, currency, masterKey, onAddItem, onSelectFD, onS
             currency={currency} onSelect={onSelectFD} onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
         )}
         {rds.length > 0 && (
-          <RDSection title="Recurring Deposits" icon="📅" items={rds}
+          <RDSection title="Recurring Deposits" icon="<Calendar size={16} />" items={rds}
             currency={currency} onSelect={onSelectRD} onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
         )}
         {mfs.length > 0 && (
-          <MFSection title="Mutual Funds" icon="📊" items={mfs}
+          <MFSection title="Mutual Funds" icon="<LayoutDashboard size={20} />" items={mfs}
             currency={currency} onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
         )}
 
@@ -534,7 +535,7 @@ function FDSection({ title, icon, items, currency, onSelect, onEdit, onDelete, s
                   )}
                   {daysLeft !== null && (
                     <span className="chip" style={{ background: isMatured ? "#d1fae5" : "#ede9fe", color: isMatured ? "#065f46" : "#5b21b6" }}>
-                      {isMatured ? "✅ Matured" : `${daysLeft}d left`}
+                      {isMatured ? "<CheckCircle size={20} /> Matured" : `${daysLeft}d left`}
                     </span>
                   )}
                 </div>
@@ -546,7 +547,7 @@ function FDSection({ title, icon, items, currency, onSelect, onEdit, onDelete, s
               </div>
               <div className="card-row-right">
                 <p className="card-row-balance">{showAmounts ? formatAmount(item.balance, currency) : MASK}</p>
-                <span className="card-row-chevron">›</span>
+                <span className="card-row-chevron"><ChevronRight size={16} /></span>
               </div>
             </div>
           </SwipeableRow>
@@ -603,7 +604,7 @@ function RDSection({ title, icon, items, currency, onSelect, onEdit, onDelete, s
               </div>
               <div className="card-row-right">
                 <p className="card-row-balance">{showAmounts ? formatAmount(item.balance, currency) : MASK}</p>
-                <span className="card-row-chevron">›</span>
+                <span className="card-row-chevron"><ChevronRight size={16} /></span>
               </div>
             </div>
           </SwipeableRow>
@@ -738,7 +739,7 @@ function TransactionsTab({ banks, currency, allItems, onItemsChange, onReload, s
     return (
       <PullToRefresh onRefresh={onReload ?? (() => {})} className="content">
         <div className="empty-state">
-          <p className="empty-icon">🏦</p>
+          <p className="empty-icon"><Building2 size={20} /></p>
           <p className="empty-text">Add a bank account first</p>
           <p className="empty-sub">Switch to Accounts tab to add accounts.</p>
         </div>
@@ -777,7 +778,7 @@ function TransactionsTab({ banks, currency, allItems, onItemsChange, onReload, s
         {expenses.length > 0 && !showForm && (
           <>
             <div className="form-group">
-              <label>📅 Month</label>
+              <label><Calendar size={16} /> Month</label>
               <select className="select-input" value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
                 <option value="all">All Months</option>
                 {availableMonths.map((m) => (
@@ -795,7 +796,7 @@ function TransactionsTab({ banks, currency, allItems, onItemsChange, onReload, s
             <div className="filter-chips">
               {(["all", "debit", "credit"] as const).map((f) => (
                 <button type="button" key={f} className={`filter-chip ${filterType === f ? "active" : ""}`} onClick={() => setFilterType(f)}>
-                  {f === "all" ? "All" : f === "debit" ? "➖ Debit" : "➕ Credit"}
+                  {f === "all" ? "All" : f === "debit" ? "➖ Debit" : "<Plus size={16} /> Credit"}
                 </button>
               ))}
             </div>
@@ -804,7 +805,7 @@ function TransactionsTab({ banks, currency, allItems, onItemsChange, onReload, s
 
         {filtered.length === 0 ? (
           <div className="empty-state">
-            <p className="empty-icon">💸</p>
+            <p className="empty-icon"><DollarSign size={20} /></p>
             <p className="empty-text">{expenses.length === 0 ? "No transactions yet" : "No matches"}</p>
             {expenses.length === 0 && <p className="empty-sub">Tap + Add Bank Transaction to start tracking</p>}
           </div>

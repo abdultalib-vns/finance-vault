@@ -1,3 +1,4 @@
+import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignLeft, Calendar, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { FinanceItem } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
@@ -191,11 +192,11 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
     <div className="screen">
       <header className="dashboard-header">
         <div className="header-top">
-          <h2 className="header-title">📊 Dashboard</h2>
+          <h2 className="header-title"><LayoutDashboard size={20} /> Dashboard</h2>
           <div className="header-actions">
             <span className="header-count">{items.length} item{items.length !== 1 ? "s" : ""}</span>
             <NotificationBell />
-            <button type="button" className="btn-logout" onClick={onLock} aria-label="Logout" title="Logout">🚪</button>
+            <button type="button" className="btn-logout" onClick={onLock} aria-label="Logout" title="Logout"><LogOut size={20} /></button>
           </div>
         </div>
         <div className="summary-grid">
@@ -215,9 +216,9 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
           <div className="chart-section">
             {/* Chart Type Switcher */}
             <div className="chart-type-switcher">
-              <button className={`chart-type-btn ${chartType === "donut" ? "active" : ""}`} onClick={() => setChartType("donut")} title="Donut Chart">🍩</button>
-              <button className={`chart-type-btn ${chartType === "bar" ? "active" : ""}`} onClick={() => setChartType("bar")} title="Bar Chart">📊</button>
-              <button className={`chart-type-btn ${chartType === "horizontal" ? "active" : ""}`} onClick={() => setChartType("horizontal")} title="Horizontal Bars">📏</button>
+              <button className={`chart-type-btn ${chartType === "donut" ? "active" : ""}`} onClick={() => setChartType("donut")} title="Donut Chart"><PieChart size={16} /></button>
+              <button className={`chart-type-btn ${chartType === "bar" ? "active" : ""}`} onClick={() => setChartType("bar")} title="Bar Chart"><LayoutDashboard size={20} /></button>
+              <button className={`chart-type-btn ${chartType === "horizontal" ? "active" : ""}`} onClick={() => setChartType("horizontal")} title="Horizontal Bars"><AlignLeft size={16} /></button>
             </div>
 
             {chartType === "donut" && (
@@ -293,35 +294,35 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
         <div className="monthly-overview">
           {/* Month Navigator */}
           <div className="month-nav-bar">
-            <button className="month-nav-btn" onClick={prevMonth}>‹</button>
-            <span className="month-nav-label">📅 {selMonthLabel}</span>
-            <button className="month-nav-btn" onClick={nextMonth} disabled={selectedMonth >= currentMonth}>›</button>
+            <button className="month-nav-btn" onClick={prevMonth}><ChevronLeft size={16} /></button>
+            <span className="month-nav-label"><Calendar size={16} /> {selMonthLabel}</span>
+            <button className="month-nav-btn" onClick={nextMonth} disabled={selectedMonth >= currentMonth}><ChevronRight size={16} /></button>
           </div>
 
           {/* Bank Activity */}
           <div className="monthly-row">
             <div className="monthly-stat-card">
-              <span className="monthly-stat-icon">🏦</span>
+              <span className="monthly-stat-icon"><Building2 size={20} /></span>
               <div className="monthly-stat-body">
                 <span className="monthly-stat-lbl">Closing Bank Balance</span>
                 <span className="monthly-stat-val">{formatAmount(closingBankBalance, currency)}</span>
                 <span className="monthly-stat-sub">
-                  <span className="credit-text">▲ {formatAmount(monthCredits, currency)}</span>
+                  <span className="credit-text"><ArrowUp size={12} /> {formatAmount(monthCredits, currency)}</span>
                   {" · "}
-                  <span className="debit-text">▼ {formatAmount(monthDebits, currency)}</span>
+                  <span className="debit-text"><ArrowDown size={12} /> {formatAmount(monthDebits, currency)}</span>
                 </span>
               </div>
             </div>
 
             <div className="monthly-stat-card">
-              <span className="monthly-stat-icon">💳</span>
+              <span className="monthly-stat-icon"><CreditCard size={20} /></span>
               <div className="monthly-stat-body">
                 <span className="monthly-stat-lbl">Dues This Month</span>
                 <span className="monthly-stat-val">{formatAmount(dueThisMonthTotal, currency)}</span>
                 <span className="monthly-stat-sub">
                   {carriedInDues > 0
                     ? <span className="carried-text">+{formatAmount(carriedInDues, currency)} carried in</span>
-                    : <span className="paid-text">✓ {formatAmount(dueThisMonthPaid, currency)} paid</span>
+                    : <span className="paid-text"><Check size={16} /> {formatAmount(dueThisMonthPaid, currency)} paid</span>
                   }
                 </span>
               </div>
@@ -339,9 +340,9 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
               <span className="mbd-val credit-text">{formatAmount(dueThisMonthPaid, currency)}</span>
             </div>
             <div className={`monthly-breakdown-row ${carryOutDues > 0 ? "carry-row" : ""}`}>
-              <span className="mbd-label">➡ Carrying to next month</span>
+              <span className="mbd-label"><ArrowRight size={12} /> Carrying to next month</span>
               <span className={`mbd-val ${carryOutDues > 0 ? "debit-text" : "credit-text"}`}>
-                {carryOutDues > 0 ? formatAmount(carryOutDues, currency) : "Nothing — all cleared ✓"}
+                {carryOutDues > 0 ? formatAmount(carryOutDues, currency) : "Nothing — all cleared <Check size={16} />"}
               </span>
             </div>
           </div>
@@ -353,7 +354,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
 
         {items.length === 0 ? (
           <div className="empty-state">
-            <p className="empty-icon">🏦</p>
+            <p className="empty-icon"><Building2 size={20} /></p>
             <p className="empty-text">No entries yet.</p>
             <p className="empty-sub">Tap + to add bank accounts, cards, FDs, RDs, or mutual funds.</p>
           </div>

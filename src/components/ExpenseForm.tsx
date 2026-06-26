@@ -1,3 +1,4 @@
+import { Ban, CheckCircle, AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import { CardExpense } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
@@ -74,7 +75,7 @@ export default function ExpenseForm({ cardId, currency, onAdd, onCancel, initial
       {error && <p className="form-error">{error}</p>}
       {wouldExceedLimit && remainingLimit !== undefined && (
         <div className="expense-limit-warning expense-limit-exceeded">
-          <span>🚫</span>
+          <span><Ban size={20} /></span>
           <div>
             <strong>Credit limit exceeded</strong>
             <span>
@@ -86,7 +87,7 @@ export default function ExpenseForm({ cardId, currency, onAdd, onCancel, initial
       )}
       {showLimitWarning && (
         <div className="expense-limit-warning">
-          <span>⚠️</span>
+          <span><AlertTriangle size={20} /></span>
           <div>
             <strong>Near credit limit</strong>
             <span>This will use {utilizationPct.toFixed(0)}% of your {formatAmount(creditLimit!, currency)} limit.</span>
@@ -161,7 +162,7 @@ export default function ExpenseForm({ cardId, currency, onAdd, onCancel, initial
               className={`type-tab ${status === "paid" ? "active" : ""}`}
               onClick={() => setStatus("paid")}
             >
-              ✅ Paid
+              <CheckCircle size={20} /> Paid
             </button>
           </div>
         </div>

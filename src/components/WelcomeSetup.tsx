@@ -1,3 +1,4 @@
+import { Banknote, Search, Check, ArrowLeft, ArrowRight, Palette, Sun, Moon, Lock, Ban, CheckCircle, Rocket } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getDynamicCurrencies, getCurrency } from "../lib/currency";
 import { saveCurrency, saveTheme, loadTheme } from "../lib/storage";
@@ -106,7 +107,7 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
           {stepLabels.map((label, i) => (
             <div key={i} className={`welcome-progress-step ${i <= stepIndex ? "active" : ""} ${i === stepIndex ? "current" : ""}`}>
               <div className="welcome-progress-dot">
-                {i < stepIndex ? "✓" : i + 1}
+                {i < stepIndex ? "<Check size={16} />" : i + 1}
               </div>
               <span className="welcome-progress-label">{label}</span>
             </div>
@@ -120,7 +121,7 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
         {step === "currency" && (
           <div className="welcome-step">
             <div className="welcome-step-header">
-              <span className="welcome-step-icon">💱</span>
+              <span className="welcome-step-icon"><Banknote size={20} /></span>
               <div>
                 <h3>Select your Currency</h3>
                 <p>This is used across all your accounts and cards</p>
@@ -129,7 +130,7 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
             </div>
 
             <div className="welcome-search-wrap">
-              <span className="welcome-search-icon">🔍</span>
+              <span className="welcome-search-icon"><Search size={16} /></span>
               <input
                 type="text"
                 className="welcome-search"
@@ -152,7 +153,7 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
                     <span className="welcome-currency-code">{c.code}</span>
                     <span className="welcome-currency-name">{c.name}</span>
                   </div>
-                  {selectedCurrency === c.code && <span className="welcome-currency-check">✓</span>}
+                  {selectedCurrency === c.code && <span className="welcome-currency-check"><Check size={16} /></span>}
                 </button>
               ))}
               {displayedCurrencies.length === 0 && (
@@ -168,7 +169,7 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
                   onClick={() => setCurrencyPage((p) => Math.max(0, p - 1))}
                   disabled={currencyPage === 0}
                 >
-                  ←
+                  <ArrowLeft size={16} />
                 </button>
                 <div className="welcome-page-dots">
                   {Array.from({ length: totalPages }).map((_, i) => (
@@ -184,13 +185,13 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
                   onClick={() => setCurrencyPage((p) => Math.min(totalPages - 1, p + 1))}
                   disabled={currencyPage === totalPages - 1}
                 >
-                  →
+                  <ArrowRight size={16} />
                 </button>
               </div>
             )}
 
             <button className="welcome-btn-primary" onClick={handleCurrencyNext}>
-              Continue →
+              Continue <ArrowRight size={16} />
             </button>
           </div>
         )}
@@ -199,7 +200,7 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
         {step === "theme" && (
           <div className="welcome-step">
             <div className="welcome-step-header">
-              <span className="welcome-step-icon">🎨</span>
+              <span className="welcome-step-icon"><Palette size={20} /></span>
               <div>
                 <h3>Choose your Theme</h3>
                 <p>You can change this anytime in Settings</p>
@@ -220,8 +221,8 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
                   </div>
                   <div className="wtp-nav" />
                 </div>
-                <span className="welcome-theme-label">☀️ Light Mode</span>
-                {selectedTheme === "light" && <span className="welcome-theme-check">✓</span>}
+                <span className="welcome-theme-label"><Sun size={16} /> Light Mode</span>
+                {selectedTheme === "light" && <span className="welcome-theme-check"><Check size={16} /></span>}
               </button>
 
               <button
@@ -236,14 +237,14 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
                   </div>
                   <div className="wtp-nav" />
                 </div>
-                <span className="welcome-theme-label">🌙 Dark Mode</span>
-                {selectedTheme === "dark" && <span className="welcome-theme-check">✓</span>}
+                <span className="welcome-theme-label"><Moon size={16} /> Dark Mode</span>
+                {selectedTheme === "dark" && <span className="welcome-theme-check"><Check size={16} /></span>}
               </button>
             </div>
 
             <div className="welcome-btn-row">
-              <button className="welcome-btn-secondary" onClick={() => setStep("currency")}>← Back</button>
-              <button className="welcome-btn-primary" onClick={handleThemeNext}>Continue →</button>
+              <button className="welcome-btn-secondary" onClick={() => setStep("currency")}><ArrowLeft size={16} /> Back</button>
+              <button className="welcome-btn-primary" onClick={handleThemeNext}>Continue <ArrowRight size={16} /></button>
             </div>
           </div>
         )}
@@ -252,7 +253,7 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
         {step === "biometric" && (
           <div className="welcome-step">
             <div className="welcome-step-header">
-              <span className="welcome-step-icon">🔐</span>
+              <span className="welcome-step-icon"><Lock size={20} /></span>
               <div>
                 <h3>Enable Biometric Login</h3>
                 <p>Use fingerprint or Face ID for quick access</p>
@@ -263,14 +264,14 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
             <div className="welcome-bio-section">
               {!bioSupported && (
                 <div className="welcome-bio-unavailable">
-                  <span className="welcome-bio-unavail-icon">🚫</span>
+                  <span className="welcome-bio-unavail-icon"><Ban size={20} /></span>
                   <p>Biometric authentication is not available on this device or browser.</p>
                 </div>
               )}
 
               {bioSupported && !bioSuccess && (
                 <div className="welcome-bio-available">
-                  <div className="welcome-bio-fingerprint">🔐</div>
+                  <div className="welcome-bio-fingerprint"><Lock size={20} /></div>
                   <p>Secure your vault with biometric authentication for faster, more convenient access.</p>
                   {bioError && <p className="welcome-bio-error">{bioError}</p>}
                   <button
@@ -285,18 +286,18 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
 
               {bioSupported && bioSuccess && (
                 <div className="welcome-bio-success">
-                  <div className="welcome-bio-success-icon">✅</div>
+                  <div className="welcome-bio-success-icon"><CheckCircle size={20} /></div>
                   <p>Biometric login has been enabled successfully!</p>
                 </div>
               )}
             </div>
 
             <div className="welcome-btn-row">
-              <button className="welcome-btn-secondary" onClick={() => setStep("theme")}>← Back</button>
+              <button className="welcome-btn-secondary" onClick={() => setStep("theme")}><ArrowLeft size={16} /> Back</button>
               <button className="welcome-btn-primary welcome-btn-finish" onClick={handleFinish}>
                 {bioSuccess || !bioSupported || isBiometricEnrolled()
-                  ? "Get Started 🚀"
-                  : "Skip & Get Started 🚀"}
+                  ? "Get Started <Rocket size={16} />"
+                  : "Skip & Get Started <Rocket size={16} />"}
               </button>
             </div>
           </div>

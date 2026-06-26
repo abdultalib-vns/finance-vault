@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { CreditCard, Gift, ArrowRight, CheckCircle, Calendar, ChevronLeft, ChevronRight, AlertTriangle, X, Coins, Receipt, Sparkles, Building2 } from "lucide-react";
 import { FinanceItem, CardExpense, ExpenseStatus, PaymentApp } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
 import { loadExpenses, saveExpenses, saveItems, saveCashbacks, loadCashbacks } from "../lib/storage";
@@ -87,7 +88,7 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
               title="Due Dates Calendar"
               style={{ fontSize: "1.2rem" }}
             >
-              📅
+              <Calendar size={16} />
             </button>
             <button
               type="button"
@@ -96,7 +97,7 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
               title="Payment Apps"
               style={{ fontSize: "1.2rem" }}
             >
-              💰
+              <Coins size={20} />
             </button>
             <button
               type="button"
@@ -112,10 +113,10 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
 
       <div className="main-tabs">
         <button className={`main-tab ${subTab === "balance" ? "active" : ""}`} onClick={() => setSubTab("balance")}>
-          💳 Card Balance
+          <CreditCard size={20} /> Card Balance
         </button>
         <button className={`main-tab ${subTab === "expenses" ? "active" : ""}`} onClick={() => setSubTab("expenses")}>
-          🧾 Card Expenses
+          <Receipt size={20} /> Card Expenses
         </button>
         <button className={`main-tab ${subTab === "newcard" ? "active" : ""}`} onClick={() => setSubTab("newcard")}>
           🆕 Get a Card
@@ -172,8 +173,8 @@ function PaymentAppsModal({ onClose }: { onClose: () => void }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-sheet payment-apps-sheet" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h3 className="form-title">💰 Pay Your Bills</h3>
-          <button className="modal-close" onClick={onClose}>✕</button>
+          <h3 className="form-title"><Coins size={20} /> Pay Your Bills</h3>
+          <button className="modal-close" onClick={onClose}><X size={16} /></button>
         </div>
         <p className="modal-subtitle">Quick links to popular bill payment apps</p>
         <div className="payment-apps-grid">
@@ -261,7 +262,7 @@ function BalanceView({ items, currency, onSelect, masterKey, onAddCard, onEdit, 
           </div>
         )}
 
-        <CardSection title="Credit / Debit Cards" icon="💳" items={cards}
+        <CardSection title="Credit / Debit Cards" icon="<CreditCard size={20} />" items={cards}
           currency={currency} expenses={expenses} onSelect={onSelect}
           onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
         <CardSection title="Pay Later Services" icon="🔄" items={payLater}
@@ -270,7 +271,7 @@ function BalanceView({ items, currency, onSelect, masterKey, onAddCard, onEdit, 
 
         {items.length === 0 && (
           <div className="empty-state">
-            <p className="empty-icon">💳</p>
+            <p className="empty-icon"><CreditCard size={20} /></p>
             <p className="empty-text">No cards yet.</p>
             <p className="empty-sub">Tap + to add your first card.</p>
           </div>
@@ -338,7 +339,7 @@ function CardSection({ title, icon, items, currency, expenses, onSelect, onEdit,
                 )}
                 <div className="card-row-chips">
                   {isNearLimit && (
-                    <span className="chip chip-warn">⚠️ {utilizationPct.toFixed(0)}% used</span>
+                    <span className="chip chip-warn"><AlertTriangle size={20} /> {utilizationPct.toFixed(0)}% used</span>
                   )}
                   {showAmounts ? (
                     outstanding > 0 ? (
@@ -357,7 +358,7 @@ function CardSection({ title, icon, items, currency, expenses, onSelect, onEdit,
                 </div>
               </div>
               <div className="card-row-right">
-                <span className="card-row-chevron">›</span>
+                <span className="card-row-chevron"><ChevronRight size={16} /></span>
               </div>
             </div>
           </SwipeableRow>
@@ -455,7 +456,7 @@ function ExpensesView({ cards, currency, onSelectCard, onReload, showAmounts }: 
     return (
       <PullToRefresh onRefresh={onReload ?? (() => {})} className="content">
         <div className="empty-state">
-          <p className="empty-icon">💳</p>
+          <p className="empty-icon"><CreditCard size={20} /></p>
           <p className="empty-text">Add a card first</p>
           <p className="empty-sub">Switch to Card Balance tab to add cards.</p>
         </div>
@@ -508,7 +509,7 @@ function ExpensesView({ cards, currency, onSelectCard, onReload, showAmounts }: 
               return (
                 <>
                   {pickedLimitReached && (
-                    <p className="limit-reached-hint">⚠️ {pickedCard?.name} has reached its credit limit. Pay dues first.</p>
+                    <p className="limit-reached-hint"><AlertTriangle size={20} /> {pickedCard?.name} has reached its credit limit. Pay dues first.</p>
                   )}
                   <div className="form-actions">
                     <button
@@ -551,7 +552,7 @@ function ExpensesView({ cards, currency, onSelectCard, onReload, showAmounts }: 
         {expenses.length > 0 && !showForm && !cardChosen && (
           <>
             <div className="form-group">
-              <label>📅 Month</label>
+              <label><Calendar size={16} /> Month</label>
               <select className="select-input" value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
                 <option value="all">All Months</option>
                 {availableMonths.map((m) => (
@@ -569,7 +570,7 @@ function ExpensesView({ cards, currency, onSelectCard, onReload, showAmounts }: 
             <div className="filter-chips">
               {(["all", "unpaid", "paid", "bill_generated_unpaid", "bill_generated"] as const).map((f) => (
                 <button type="button" key={f} className={`filter-chip ${filterStatus === f ? "active" : ""}`} onClick={() => setFilterStatus(f)}>
-                  {f === "all" ? "All" : f === "unpaid" ? "⏳ Unpaid" : f === "paid" ? "✅ Paid" : f === "bill_generated_unpaid" ? "🧾 Bill Due" : "💜 Billed Paid"}
+                  {f === "all" ? "All" : f === "unpaid" ? "⏳ Unpaid" : f === "paid" ? "<CheckCircle size={20} /> Paid" : f === "bill_generated_unpaid" ? "<Receipt size={20} /> Bill Due" : "💜 Billed Paid"}
                 </button>
               ))}
             </div>
@@ -578,7 +579,7 @@ function ExpensesView({ cards, currency, onSelectCard, onReload, showAmounts }: 
 
         {filtered.length === 0 && !showForm && !cardChosen ? (
           <div className="empty-state">
-            <p className="empty-icon">🧾</p>
+            <p className="empty-icon"><Receipt size={20} /></p>
             <p className="empty-text">{expenses.length === 0 ? "No expenses yet" : "No matches"}</p>
             {expenses.length === 0 && <p className="empty-sub">Tap + Add Card Expense to start tracking</p>}
           </div>
@@ -703,7 +704,7 @@ function NewCardView({ targetCardId }: { targetCardId?: string | null }) {
       {featuredCards.length > 0 && (
         <div className="card-offers-section" style={{ marginBottom: 12 }}>
           <div className="card-offers-header">
-            <h3 className="card-offers-title">🎁 Featured Cards</h3>
+            <h3 className="card-offers-title"><Gift size={20} /> Featured Cards</h3>
           </div>
           <div className="card-offers-scroll">
             {featuredCards.map((offer) => (
@@ -720,7 +721,7 @@ function NewCardView({ targetCardId }: { targetCardId?: string | null }) {
                 <div className="card-offer-body">
                   <span className="card-offer-fee">{offer.annualFee === "Free" ? "Free" : `Fee: ${offer.annualFee}`}</span>
                   <p className="card-offer-benefits">{offer.benefits.slice(0, 60)}{offer.benefits.length > 60 ? "…" : ""}</p>
-                  <span className="card-offer-tap-hint">Tap for details →</span>
+                  <span className="card-offer-tap-hint">Tap for details <ArrowRight size={16} /></span>
                 </div>
               </button>
             ))}
@@ -779,7 +780,7 @@ function CardOfferDetail({ offer, onBack }: { offer: CardOfferEntry; onBack: () 
     <div className="card-offer-detail-screen">
       {/* Header */}
       <div className="card-offer-detail-header" style={{ background: offer.color }}>
-        <button className="card-offer-detail-back" onClick={onBack} aria-label="Back">‹</button>
+        <button className="card-offer-detail-back" onClick={onBack} aria-label="Back"><ChevronLeft size={16} /></button>
         <div className="card-offer-detail-header-content">
           <div className="card-offer-detail-bank">{offer.bank}</div>
           <div className="card-offer-detail-name">{offer.name}</div>
@@ -867,7 +868,7 @@ function CardOfferDetail({ offer, onBack }: { offer: CardOfferEntry; onBack: () 
 
         {!offer.awesomeFeatures && (
           <div className="card-offer-detail-section">
-            <h3 className="card-offer-detail-section-title">✨ Benefits & Features</h3>
+            <h3 className="card-offer-detail-section-title"><Sparkles size={16} /> Benefits & Features</h3>
             <ul className="card-offer-benefits-list">
               {benefitLines.map((b, i) => (
                 <li key={i} className="card-offer-benefit-item">
@@ -888,7 +889,7 @@ function CardOfferDetail({ offer, onBack }: { offer: CardOfferEntry; onBack: () 
             style={{ background: offer.color }}
             onClick={handleApply}
           >
-            Apply Now →
+            Apply Now <ArrowRight size={16} />
           </button>
         ) : (
           <button className="card-offer-detail-apply-btn card-offer-detail-apply-disabled" disabled>
@@ -921,8 +922,8 @@ function CalendarModal({ cards, onClose }: { cards: FinanceItem[]; onClose: () =
     <div className="modal-overlay" onClick={onClose} style={{ alignItems: "center" }}>
       <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: "400px", width: "90%", padding: "20px", background: "var(--surface)", borderRadius: "16px", border: "1px solid var(--border)" }}>
         <div className="modal-header">
-          <h3 className="modal-title">📅 Card Dues Calendar</h3>
-          <button className="modal-close" onClick={onClose}>✕</button>
+          <h3 className="modal-title"><Calendar size={16} /> Card Dues Calendar</h3>
+          <button className="modal-close" onClick={onClose}><X size={16} /></button>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
           <button className="btn-outline" style={{ padding: "4px 8px" }} onClick={() => {

@@ -1,4 +1,6 @@
 import { NavTab } from "../types";
+import { LayoutDashboard, CreditCard, Building2, Gift, Settings } from "lucide-react";
+import React from "react";
 
 interface Props {
   active: NavTab;
@@ -6,12 +8,12 @@ interface Props {
 }
 
 export default function BottomNav({ active, onChange }: Props) {
-  const tabs: { key: NavTab; label: string; icon: string }[] = [
-    { key: "dashboard", label: "Dashboard", icon: "📊" },
-    { key: "cards",     label: "Cards",     icon: "💳" },
-    { key: "banks",     label: "Banks",     icon: "🏦" },
-    { key: "cashback",  label: "Cashback",  icon: "🎁" },
-    { key: "settings",  label: "Settings",  icon: "⚙️" },
+  const tabs: { key: NavTab; label: string; icon: React.ReactNode }[] = [
+    { key: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
+    { key: "cards",     label: "Cards",     icon: <CreditCard size={20} /> },
+    { key: "banks",     label: "Banks",     icon: <Building2 size={20} /> },
+    { key: "cashback",  label: "Cashback",  icon: <Gift size={20} /> },
+    { key: "settings",  label: "Settings",  icon: <Settings size={20} /> },
   ];
 
   return (

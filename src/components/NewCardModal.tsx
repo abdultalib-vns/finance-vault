@@ -1,3 +1,4 @@
+import { CreditCard, X } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { loadCardTemplates, loadAdminConfigFromServer } from "../admin/adminStorage";
 import { CardTemplate } from "../admin/adminTypes";
@@ -81,7 +82,7 @@ export default function NewCardModal({ onShowMore }: NewCardModalProps) {
             cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10 
           }}
         >
-          ✕
+          <X size={16} />
         </button>
 
         {currentCard.imageUrl ? (
@@ -94,7 +95,7 @@ export default function NewCardModal({ onShowMore }: NewCardModalProps) {
           </div>
         ) : (
           <div style={{ width: "100%", height: "160px", background: currentCard.color || "var(--primary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ fontSize: "3rem" }}>💳</span>
+            <span style={{ fontSize: "3rem" }}><CreditCard size={20} /></span>
           </div>
         )}
 

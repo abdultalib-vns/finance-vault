@@ -1,3 +1,4 @@
+import { LayoutDashboard, Check, ArrowLeft, ArrowRight, Calendar } from "lucide-react";
 import { useState, useMemo } from "react";
 import { FinanceItem, RDInstallment } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
@@ -35,7 +36,7 @@ export default function RDDetail({ rd, currency, onBack, onBalanceUpdate }: Prop
   const all = loadRDInstallments();
   const existing = all.filter((r) => r.rdId === rd.id);
 
-  // Build month list from start→maturity, or just show last 24 months if no dates
+  // Build month list from start<ArrowRight size={16} />maturity, or just show last 24 months if no dates
   const months = useMemo(() => {
     if (rd.startDate && rd.maturityDate) {
       const sm = rd.startDate.slice(0, 7);
@@ -99,7 +100,7 @@ export default function RDDetail({ rd, currency, onBack, onBalanceUpdate }: Prop
   return (
     <div className="screen">
       <header className="detail-header">
-        <button className="back-btn" onClick={onBack}>← Back</button>
+        <button className="back-btn" onClick={onBack}><ArrowLeft size={16} /> Back</button>
         <div className="detail-header-info">
           <h2 className="detail-title">{rd.name}</h2>
           <span className="detail-subtitle">Recurring Deposit</span>
@@ -127,8 +128,8 @@ export default function RDDetail({ rd, currency, onBack, onBalanceUpdate }: Prop
       <div className="content">
         {/* Info chips */}
         <div className="fd-info-row">
-          {rd.monthlyAmount && <span className="fd-info-chip">📅 {formatAmount(rd.monthlyAmount, currency)}/mo</span>}
-          {rd.interestRate  && <span className="fd-info-chip">📊 {rd.interestRate}% p.a.</span>}
+          {rd.monthlyAmount && <span className="fd-info-chip"><Calendar size={16} /> {formatAmount(rd.monthlyAmount, currency)}/mo</span>}
+          {rd.interestRate  && <span className="fd-info-chip"><LayoutDashboard size={20} /> {rd.interestRate}% p.a.</span>}
           {rd.startDate     && <span className="fd-info-chip">Start: {fmtDate(rd.startDate)}</span>}
           {rd.maturityDate  && <span className="fd-info-chip">Matures: {fmtDate(rd.maturityDate)}</span>}
           <span className="fd-info-chip">{paidCount}/{totalMonths} months paid</span>
@@ -160,7 +161,7 @@ export default function RDDetail({ rd, currency, onBack, onBalanceUpdate }: Prop
                   className={`rd-toggle-btn ${inst.paid ? "paid" : "unpaid"}`}
                   onClick={() => toggle(inst.month)}
                 >
-                  {inst.paid ? "✓ Paid" : isPast ? "⚠ Overdue" : "Mark Paid"}
+                  {inst.paid ? "<Check size={16} /> Paid" : isPast ? "⚠ Overdue" : "Mark Paid"}
                 </button>
               </li>
             );

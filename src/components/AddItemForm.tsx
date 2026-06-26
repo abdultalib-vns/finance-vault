@@ -1,3 +1,4 @@
+import { LayoutDashboard, CreditCard, Building2, Calendar } from "lucide-react";
 import { useState } from "react";
 import { FinanceItem } from "../types";
 import { encryptData, decryptData } from "../lib/crypto";
@@ -22,11 +23,11 @@ interface Props {
 }
 
 const TYPE_OPTIONS: { key: ItemType; icon: string; label: string }[] = [
-  { key: "bank",     icon: "🏦", label: "Bank" },
-  { key: "card",     icon: "💳", label: "Card" },
+  { key: "bank",     icon: "<Building2 size={20} />", label: "Bank" },
+  { key: "card",     icon: "<CreditCard size={20} />", label: "Card" },
   { key: "fd",       icon: "📈", label: "FD" },
-  { key: "rd",       icon: "📅", label: "RD" },
-  { key: "mf",       icon: "📊", label: "Mutual Fund" },
+  { key: "rd",       icon: "<Calendar size={16} />", label: "RD" },
+  { key: "mf",       icon: "<LayoutDashboard size={20} />", label: "Mutual Fund" },
   { key: "paylater", icon: "🔄", label: "Pay Later" },
   { key: "other",    icon: "📋", label: "Other" },
 ];
