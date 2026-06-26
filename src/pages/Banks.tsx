@@ -527,7 +527,7 @@ function FDSection({ title, icon, items, currency, onSelect, onEdit, onDelete, s
                     <span className="chip" style={{ background: "#fef3c7", color: "#92400e" }}>{item.interestRate}% p.a.</span>
                   )}
                   {daysLeft !== null && (
-                    <span className="chip" className={`chip ${isMatured ? "chip-free" : "chip-premium"}`}>
+                    <span className={`chip ${isMatured ? "chip-free" : "chip-premium"}`}>
                       {isMatured ? <><CheckCircle size={16} /> Matured</> : `${daysLeft}d left`}
                     </span>
                   )}

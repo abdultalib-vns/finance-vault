@@ -349,7 +349,7 @@ function CardSection({ title, icon, items, currency, expenses, onSelect, onEdit,
                     ) : null
                   ) : (
                     cardExp.length > 0 && (
-                      <span className="chip" className="chip chip-muted">Tap <Eye size={14} style={{display:"inline", verticalAlign:"middle"}}/> to reveal</span>
+                      <span className="chip chip-muted">Tap <Eye size={14} style={{display:"inline", verticalAlign:"middle"}}/> to reveal</span>
                     )
                   )}
                   {showAmounts && totalCashback > 0 && (
