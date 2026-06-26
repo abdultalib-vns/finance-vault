@@ -91,7 +91,7 @@ body {
   font-family: 'Inter', sans-serif;
   background: linear-gradient(-45deg, #f8f9fa, #e2e8f0, #f1f5f9, #f8fafc);
   background-size: 400% 400%;
-  animation: gradientBG 15s ease infinite;
+  /* animation: gradientBG 15s ease infinite; (disabled to prevent GPU static) */
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
@@ -100,7 +100,7 @@ body {
 :root.dark-mode body {
   background: linear-gradient(-45deg, #0f172a, #1e293b, #0b1120, #172554);
   background-size: 400% 400%;
-  animation: gradientBG 15s ease infinite;
+  /* animation: gradientBG 15s ease infinite; (disabled to prevent GPU static) */
 }
 
 button {
