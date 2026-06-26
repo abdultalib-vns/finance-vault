@@ -61,6 +61,8 @@ function MainApp() {
   const idleTimerRef = useRef<number | null>(null);
   const [globalConfig, setGlobalConfig] = useState<GlobalAppConfig>(() => loadGlobalConfig());
   const sessionIdRef = useRef<string | null>(null);
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+  const initialConfigVersion = useRef(globalConfig.configVersion || 1);
 
   const handleSplashDone = useCallback(() => setShowSplash(false), []);
 
@@ -68,10 +70,20 @@ function MainApp() {
   useEffect(() => {
     // Fetch latest admin config from server so all devices stay in sync,
     // then re-apply the theme and config in case it changed.
-    loadAdminConfigFromServer().then(() => {
-      applyAdminTheme(loadAdminTheme());
-      setGlobalConfig(loadGlobalConfig());
-    });
+    const syncConfig = () => {
+      loadAdminConfigFromServer().then(() => {
+        applyAdminTheme(loadAdminTheme());
+        const newConfig = loadGlobalConfig();
+        setGlobalConfig(newConfig);
+        if (newConfig.configVersion && newConfig.configVersion > initialConfigVersion.current) {
+          setUpdateAvailable(true);
+        }
+      });
+    };
+    
+    syncConfig();
+    const interval = setInterval(syncConfig, 15000); // Check every 15s
+    return () => clearInterval(interval);
   }, []);
 
   const setTheme = (newTheme: "light" | "dark") => {
@@ -149,10 +161,9 @@ function MainApp() {
 
   if (globalConfig.maintenanceMode) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg)', padding: 20, textAlign: 'center' }}>
-        <span style={{ fontSize: '4rem', marginBottom: 20 }}>🚧</span>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Under Maintenance</h1>
-        <p style={{ color: 'var(--text2)', maxWidth: 400, lineHeight: 1.5 }}>{globalConfig.maintenanceMessage}</p>
+      <div className="maintenance-screen">
+        <h2>🛠️ Maintenance</h2>
+        <p>{globalConfig.maintenanceMessage}</p>
       </div>
     );
   }
@@ -175,7 +186,13 @@ function MainApp() {
   }
 
   return (
-    <div className="app-shell" style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+    <div className="app-shell" style={{ display: 'flex', flexDirection: 'column', height: '100dvh', overflow: 'hidden' }}>
+      {updateAvailable && (
+        <div className="update-banner">
+          App configuration has been updated. 
+          <button onClick={() => window.location.reload()}>Refresh to Apply</button>
+        </div>
+      )}
       {globalConfig.showGlobalBanner && (
         <div style={{ background: 'var(--primary)', color: '#fff', padding: '10px 16px', textAlign: 'center', fontSize: '0.85rem', fontWeight: 600, flexShrink: 0, zIndex: 9999 }}>
           {globalConfig.globalBannerText}

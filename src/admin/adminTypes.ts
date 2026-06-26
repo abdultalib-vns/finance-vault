@@ -28,6 +28,7 @@ export interface GlobalAppConfig {
   showGlobalBanner: boolean;
   globalBannerText: string;
   minAppVersion: string;
+  configVersion?: number;
 }
 
 export interface CustomCurrency {

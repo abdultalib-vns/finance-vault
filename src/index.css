@@ -2281,7 +2281,7 @@ html, body {
 .new-card-row:hover .new-card-row-img { transform: rotate(0deg) scale(1.05); }
 
 /* ── Card Offer Detail Screen ─────────────────────────────────────────────── */
-.card-offer-detail-screen { background: var(--bg); min-height: 100vh; padding-bottom: 160px; }
+.card-offer-detail-screen { background: var(--bg); min-height: 100dvh; padding-bottom: 160px; }
 .card-offer-detail-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
 .card-offer-detail-list li { position: relative; padding-left: 20px; font-size: 0.9rem; color: var(--text); line-height: 1.4; }
 .card-offer-detail-list li::before { content: "•"; position: absolute; left: 4px; color: var(--primary); font-size: 1.2rem; top: -2px; }
@@ -5530,4 +5530,31 @@ html, body {
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 16px;
   margin-bottom: 24px;
+}
+
+.update-banner {
+  background: #3b82f6;
+  color: #fff;
+  padding: 12px 16px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 9999;
+}
+.update-banner button {
+  background: #fff;
+  color: #3b82f6;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+.update-banner button:hover {
+  opacity: 0.9;
 }

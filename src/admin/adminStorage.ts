@@ -4,8 +4,21 @@ import { generateId } from "../lib/utils";
 
 const API_CONFIG = "/api/admin/config";
 
+const ADMIN_GLOBAL_CONFIG_KEY = "admin_global_config";
+
 /** Push shared config sections to the server. Alerts if Vercel KV fails. */
 function pushToServer(payload: { cardTemplates?: CardTemplate[]; popupAds?: PopupAd[]; themeSettings?: AdminThemeSettings; globalConfig?: GlobalAppConfig; customCurrencies?: CustomCurrency[] }): void {
+  // Always attach/update the configVersion when an admin pushes changes.
+  const globalConf = loadGlobalConfig();
+  globalConf.configVersion = (globalConf.configVersion || 1) + 1;
+  localStorage.setItem(ADMIN_GLOBAL_CONFIG_KEY, JSON.stringify(globalConf));
+  
+  if (!payload.globalConfig) {
+    payload.globalConfig = globalConf;
+  } else {
+    payload.globalConfig.configVersion = globalConf.configVersion;
+  }
+
   fetch(API_CONFIG, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -68,7 +81,6 @@ const ADMIN_SESSIONS_KEY   = "admin_analytics_sessions";
 const ADMIN_EVENTS_KEY     = "admin_analytics_events";
 const ADMIN_THEME_KEY      = "admin_theme_settings";
 const ADMIN_ACTIVE_KEY     = "admin_active_heartbeat";
-const ADMIN_GLOBAL_CONFIG_KEY = "admin_global_config";
 const ADMIN_CURRENCIES_KEY = "admin_custom_currencies";
 
 // ── Admin PIN ────────────────────────────────────────────────────
@@ -370,6 +382,7 @@ export function loadGlobalConfig(): GlobalAppConfig {
     showGlobalBanner: false,
     globalBannerText: "Welcome to FinAura!",
     minAppVersion: "1.0.0",
+    configVersion: 1,
   };
 }
 
