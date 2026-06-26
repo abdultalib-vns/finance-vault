@@ -107,7 +107,7 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
           {stepLabels.map((label, i) => (
             <div key={i} className={`welcome-progress-step ${i <= stepIndex ? "active" : ""} ${i === stepIndex ? "current" : ""}`}>
               <div className="welcome-progress-dot">
-                {i < stepIndex ? "<Check size={16} />" : i + 1}
+                {i < stepIndex ? <Check size={16} /> : i + 1}
               </div>
               <span className="welcome-progress-label">{label}</span>
             </div>
@@ -296,8 +296,8 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
               <button className="welcome-btn-secondary" onClick={() => setStep("theme")}><ArrowLeft size={16} /> Back</button>
               <button className="welcome-btn-primary welcome-btn-finish" onClick={handleFinish}>
                 {bioSuccess || !bioSupported || isBiometricEnrolled()
-                  ? "Get Started <Rocket size={16} />"
-                  : "Skip & Get Started <Rocket size={16} />"}
+                  ? <>Get Started <Rocket size={16} /></>
+                  : <>Skip & Get Started <Rocket size={16} /></>}
               </button>
             </div>
           </div>

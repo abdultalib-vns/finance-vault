@@ -161,7 +161,7 @@ export default function RDDetail({ rd, currency, onBack, onBalanceUpdate }: Prop
                   className={`rd-toggle-btn ${inst.paid ? "paid" : "unpaid"}`}
                   onClick={() => toggle(inst.month)}
                 >
-                  {inst.paid ? "<Check size={16} /> Paid" : isPast ? <><AlertTriangle size={16} /> Overdue</> : "Mark Paid"}
+                  {inst.paid ? <><Check size={16} /> Paid</> : isPast ? <><AlertTriangle size={16} /> Overdue</> : "Mark Paid"}
                 </button>
               </li>
             );
