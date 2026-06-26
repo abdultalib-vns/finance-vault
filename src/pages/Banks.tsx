@@ -1,4 +1,4 @@
-import { LayoutDashboard, Building2, CheckCircle, Calendar, ChevronRight, Plus, DollarSign, Coins, TrendingUp, Minus, EyeOff, Eye, ClipboardList } from "lucide-react";
+import { LayoutDashboard, Building2, CheckCircle, Calendar, ChevronRight, Plus, DollarSign, Coins, TrendingUp, Minus, EyeOff, Eye, ClipboardList, Clock } from "lucide-react";
 import React, { useState, useMemo } from "react";
 import { FinanceItem, BankExpense } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
@@ -96,7 +96,7 @@ export default function Banks({ masterKey, currency, items, onItemsChange, onRel
           <Building2 size={20} /> Accounts
         </button>
         <button className={`main-tab ${subTab === "investments" ? "active" : ""}`} onClick={() => setSubTab("investments")}>
-          📈 Invest
+          <TrendingUp size={20} /> Invest
         </button>
         <button className={`main-tab ${subTab === "transactions" ? "active" : ""}`} onClick={() => setSubTab("transactions")}>
           <DollarSign size={20} /> Txns
@@ -255,7 +255,7 @@ function OverviewTab({ items, currency, showAmounts, onSelectFD, onSelectRD }: {
       {/* Upcoming Maturities */}
       {upcomingMaturities.length > 0 && (
         <div className="upcoming-section">
-          <h3 className="section-title">⏰ Upcoming Maturities</h3>
+          <h3 className="section-title"><Clock size={20} /> Upcoming Maturities</h3>
           {upcomingMaturities.map((item) => (
             <div
               key={item.id}

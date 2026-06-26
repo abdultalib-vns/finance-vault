@@ -532,7 +532,7 @@ function ExpensesView({ cards, currency, onSelectCard, onReload, showAmounts }: 
         {showForm && pickerCardId && (
           <div className="expense-form-wrap">
             <div className="chosen-card-badge">
-              📌 {cardMap.get(pickerCardId)?.name ?? "Card"}
+              <CreditCard size={16} /> {cardMap.get(pickerCardId)?.name ?? "Card"}
               {cardMap.get(pickerCardId)?.lastFour ? ` (••${cardMap.get(pickerCardId)?.lastFour})` : ""}
             </div>
             <ExpenseForm
