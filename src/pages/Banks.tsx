@@ -1,5 +1,5 @@
-import { LayoutDashboard, Building2, CheckCircle, Calendar, ChevronRight, Plus, DollarSign, Coins } from "lucide-react";
-import { useState, useMemo } from "react";
+import { LayoutDashboard, Building2, CheckCircle, Calendar, ChevronRight, Plus, DollarSign, Coins, TrendingUp } from "lucide-react";
+import React, { useState, useMemo } from "react";
 import { FinanceItem, BankExpense } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
 import { decryptData } from "../lib/crypto";
@@ -187,10 +187,10 @@ function OverviewTab({ items, currency, showAmounts, onSelectFD, onSelectRD }: {
     .sort((a, b) => a.daysLeft - b.daysLeft);
 
   const breakdown = [
-    { label: "Bank", value: bankTotal, color: "#3b82f6", icon: "<Building2 size={20} />" },
-    { label: "FD", value: fdTotal, color: "#f59e0b", icon: "📈" },
-    { label: "RD", value: rdTotal, color: "#10b981", icon: "<Calendar size={16} />" },
-    { label: "MF", value: mfTotal, color: "#06b6d4", icon: "<LayoutDashboard size={20} />" },
+    { label: "Bank", value: bankTotal, color: "#3b82f6", icon: <Building2 size={20} /> },
+    { label: "FD", value: fdTotal, color: "#f59e0b", icon: <TrendingUp size={16} /> },
+    { label: "RD", value: rdTotal, color: "#10b981", icon: <Calendar size={16} /> },
+    { label: "MF", value: mfTotal, color: "#06b6d4", icon: <LayoutDashboard size={20} /> },
   ].filter((d) => d.value > 0);
 
   return (
@@ -263,7 +263,7 @@ function OverviewTab({ items, currency, showAmounts, onSelectFD, onSelectRD }: {
               onClick={() => item.type === "fd" ? onSelectFD(item) : onSelectRD(item)}
             >
               <div className="upcoming-left">
-                <span className="upcoming-name">{item.type === "fd" ? "📈" : "<Calendar size={16} />"} {item.name}</span>
+                <span className="upcoming-name">{item.type === "fd" ? <TrendingUp size={16} /> : <Calendar size={16} />} {item.name}</span>
                 <span className="upcoming-date">Matures: {fmtDate(item.maturityDate!)}</span>
               </div>
               <div className="upcoming-right">
@@ -352,7 +352,7 @@ function AccountsTab({ items, masterKey, currency, onAddItem, onEdit, onDelete, 
           </div>
         )}
 
-        <SimpleSection title="Bank Accounts" icon="<Building2 size={20} />" items={banks}
+        <SimpleSection title="Bank Accounts" icon={<Building2 size={20} />} items={banks}
           masterKey={masterKey} currency={currency} onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
         <SimpleSection title="Other" icon="📋" items={others}
           masterKey={masterKey} currency={currency} onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
@@ -425,11 +425,11 @@ function InvestmentsTab({ items, currency, masterKey, onAddItem, onSelectFD, onS
             currency={currency} onSelect={onSelectFD} onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
         )}
         {rds.length > 0 && (
-          <RDSection title="Recurring Deposits" icon="<Calendar size={16} />" items={rds}
+          <RDSection title="Recurring Deposits" icon={<Calendar size={16} />} items={rds}
             currency={currency} onSelect={onSelectRD} onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
         )}
         {mfs.length > 0 && (
-          <MFSection title="Mutual Funds" icon="<LayoutDashboard size={20} />" items={mfs}
+          <MFSection title="Mutual Funds" icon={<LayoutDashboard size={20} />} items={mfs}
             currency={currency} onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
         )}
 
@@ -445,10 +445,7 @@ function InvestmentsTab({ items, currency, masterKey, onAddItem, onSelectFD, onS
   );
 }
 
-function SimpleSection({ title, icon, items, masterKey, currency, onEdit, onDelete, showAmounts }: {
-  title: string; icon: string; items: FinanceItem[]; masterKey: string; currency: Currency;
-  onEdit: (item: FinanceItem) => void; onDelete: (id: string) => void; showAmounts: boolean;
-}) {
+function SimpleSection({ title, icon, items, masterKey, currency, onEdit, onDelete, showAmounts }: { title: React.ReactNode; icon: React.ReactNode; items: FinanceItem[]; masterKey: string; currency: Currency; onEdit: (i: FinanceItem) => void; onDelete: (id: string) => void; showAmounts: boolean }) {
   if (items.length === 0) return null;
   const total = items.reduce((s, i) => s + i.balance, 0);
   return (
@@ -500,11 +497,7 @@ function BankRowContent({ item, masterKey, currency, showAmounts }: {
   );
 }
 
-function FDSection({ title, icon, items, currency, onSelect, onEdit, onDelete, showAmounts }: {
-  title: string; icon: string; items: FinanceItem[]; currency: Currency;
-  onSelect: (item: FinanceItem) => void;
-  onEdit: (item: FinanceItem) => void; onDelete: (id: string) => void; showAmounts: boolean;
-}) {
+function FDSection({ title, icon, items, currency, onSelect, onEdit, onDelete, showAmounts }: { title: string; icon: React.ReactNode; items: FinanceItem[]; currency: Currency; onSelect: (item: FinanceItem) => void; onEdit: (item: FinanceItem) => void; onDelete: (id: string) => void; showAmounts: boolean }) {
   const total = items.reduce((s, i) => s + i.balance, 0);
   return (
     <div className="cards-section">
@@ -535,7 +528,7 @@ function FDSection({ title, icon, items, currency, onSelect, onEdit, onDelete, s
                   )}
                   {daysLeft !== null && (
                     <span className="chip" style={{ background: isMatured ? "#d1fae5" : "#ede9fe", color: isMatured ? "#065f46" : "#5b21b6" }}>
-                      {isMatured ? "<CheckCircle size={20} /> Matured" : `${daysLeft}d left`}
+                      {isMatured ? <><CheckCircle size={16} /> Matured</> : `${daysLeft}d left`}
                     </span>
                   )}
                 </div>
@@ -557,11 +550,7 @@ function FDSection({ title, icon, items, currency, onSelect, onEdit, onDelete, s
   );
 }
 
-function RDSection({ title, icon, items, currency, onSelect, onEdit, onDelete, showAmounts }: {
-  title: string; icon: string; items: FinanceItem[]; currency: Currency;
-  onSelect: (item: FinanceItem) => void;
-  onEdit: (item: FinanceItem) => void; onDelete: (id: string) => void; showAmounts: boolean;
-}) {
+function RDSection({ title, icon, items, currency, onSelect, onEdit, onDelete, showAmounts }: { title: string; icon: React.ReactNode; items: FinanceItem[]; currency: Currency; onSelect: (item: FinanceItem) => void; onEdit: (item: FinanceItem) => void; onDelete: (id: string) => void; showAmounts: boolean }) {
   const total = items.reduce((s, i) => s + i.balance, 0);
   return (
     <div className="cards-section">
@@ -614,10 +603,7 @@ function RDSection({ title, icon, items, currency, onSelect, onEdit, onDelete, s
   );
 }
 
-function MFSection({ title, icon, items, currency, onEdit, onDelete, showAmounts }: {
-  title: string; icon: string; items: FinanceItem[]; currency: Currency;
-  onEdit: (item: FinanceItem) => void; onDelete: (id: string) => void; showAmounts: boolean;
-}) {
+function MFSection({ title, icon, items, currency, onEdit, onDelete, showAmounts }: { title: string; icon: React.ReactNode; items: FinanceItem[]; currency: Currency; onEdit: (item: FinanceItem) => void; onDelete: (id: string) => void; showAmounts: boolean }) {
   const total = items.reduce((s, i) => s + i.balance, 0);
   return (
     <div className="cards-section">
@@ -796,7 +782,7 @@ function TransactionsTab({ banks, currency, allItems, onItemsChange, onReload, s
             <div className="filter-chips">
               {(["all", "debit", "credit"] as const).map((f) => (
                 <button type="button" key={f} className={`filter-chip ${filterType === f ? "active" : ""}`} onClick={() => setFilterType(f)}>
-                  {f === "all" ? "All" : f === "debit" ? "➖ Debit" : "<Plus size={16} /> Credit"}
+                  {f === "all" ? "All" : f === "debit" ? "➖ Debit" : <><Plus size={16} /> Credit</>}
                 </button>
               ))}
             </div>

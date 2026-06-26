@@ -330,7 +330,7 @@ export default function AuthScreen({ onUnlock }: Props) {
               <>
                 <div className="auth-divider"><span>or</span></div>
                 <button type="button" className="btn-bio" onClick={handleBiometric} disabled={bioLoading}>
-                  {bioLoading ? "Authenticating…" : "<Lock size={20} /> Sign in with Biometric"}
+                  {bioLoading ? "Authenticating…" : <><Lock size={20} /> Sign in with Biometric</>}
                 </button>
               </>
             )}

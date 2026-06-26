@@ -1,5 +1,5 @@
-import { LayoutDashboard, CreditCard, Building2, Calendar } from "lucide-react";
-import { useState } from "react";
+import { LayoutDashboard, CreditCard, Building2, Calendar, TrendingUp, RefreshCw, ClipboardList } from "lucide-react";
+import React, { useState } from "react";
 import { FinanceItem } from "../types";
 import { encryptData, decryptData } from "../lib/crypto";
 import { Currency, formatAmount } from "../lib/currency";
@@ -22,14 +22,14 @@ interface Props {
   onCancel?: () => void;
 }
 
-const TYPE_OPTIONS: { key: ItemType; icon: string; label: string }[] = [
-  { key: "bank",     icon: "<Building2 size={20} />", label: "Bank" },
-  { key: "card",     icon: "<CreditCard size={20} />", label: "Card" },
-  { key: "fd",       icon: "📈", label: "FD" },
-  { key: "rd",       icon: "<Calendar size={16} />", label: "RD" },
-  { key: "mf",       icon: "<LayoutDashboard size={20} />", label: "Mutual Fund" },
-  { key: "paylater", icon: "🔄", label: "Pay Later" },
-  { key: "other",    icon: "📋", label: "Other" },
+const TYPE_OPTIONS: { key: ItemType; icon: React.ReactNode; label: string }[] = [
+  { key: "bank",     icon: <Building2 size={20} />, label: "Bank" },
+  { key: "card",     icon: <CreditCard size={20} />, label: "Card" },
+  { key: "fd",       icon: <TrendingUp size={16} />, label: "FD" },
+  { key: "rd",       icon: <Calendar size={16} />, label: "RD" },
+  { key: "mf",       icon: <LayoutDashboard size={20} />, label: "Mutual Fund" },
+  { key: "paylater", icon: <RefreshCw size={16} />, label: "Pay Later" },
+  { key: "other",    icon: <ClipboardList size={16} />, label: "Other" },
 ];
 
 export default function AddItemForm({

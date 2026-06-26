@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect } from "react";
-import { CreditCard, Gift, ArrowRight, CheckCircle, Calendar, ChevronLeft, ChevronRight, AlertTriangle, X, Coins, Receipt, Sparkles, Building2 } from "lucide-react";
+import React, { useState, useMemo, useEffect } from "react";
+import { CreditCard, Gift, ArrowRight, CheckCircle, Calendar, ChevronLeft, ChevronRight, AlertTriangle, X, Coins, Receipt, Sparkles, Building2, TrendingUp, RefreshCw, ClipboardList, Gem, Star } from "lucide-react";
 import { FinanceItem, CardExpense, ExpenseStatus, PaymentApp } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
 import { loadExpenses, saveExpenses, saveItems, saveCashbacks, loadCashbacks } from "../lib/storage";
@@ -262,7 +262,7 @@ function BalanceView({ items, currency, onSelect, masterKey, onAddCard, onEdit, 
           </div>
         )}
 
-        <CardSection title="Credit / Debit Cards" icon="<CreditCard size={20} />" items={cards}
+        <CardSection title="Credit / Debit Cards" icon={<CreditCard size={20} />} items={cards}
           currency={currency} expenses={expenses} onSelect={onSelect}
           onEdit={onEdit} onDelete={onDelete} showAmounts={showAmounts} />
         <CardSection title="Pay Later Services" icon="🔄" items={payLater}
@@ -282,7 +282,7 @@ function BalanceView({ items, currency, onSelect, masterKey, onAddCard, onEdit, 
 }
 
 function CardSection({ title, icon, items, currency, expenses, onSelect, onEdit, onDelete, showAmounts }: {
-  title: string; icon: string; items: FinanceItem[]; currency: Currency;
+  title: string; icon: React.ReactNode; items: FinanceItem[]; currency: Currency;
   expenses: CardExpense[]; onSelect: (item: FinanceItem) => void;
   onEdit: (item: FinanceItem) => void; onDelete: (id: string) => void;
   showAmounts: boolean;
@@ -570,7 +570,7 @@ function ExpensesView({ cards, currency, onSelectCard, onReload, showAmounts }: 
             <div className="filter-chips">
               {(["all", "unpaid", "paid", "bill_generated_unpaid", "bill_generated"] as const).map((f) => (
                 <button type="button" key={f} className={`filter-chip ${filterStatus === f ? "active" : ""}`} onClick={() => setFilterStatus(f)}>
-                  {f === "all" ? "All" : f === "unpaid" ? "⏳ Unpaid" : f === "paid" ? "<CheckCircle size={20} /> Paid" : f === "bill_generated_unpaid" ? "<Receipt size={20} /> Bill Due" : "💜 Billed Paid"}
+                  {f === "all" ? "All" : f === "unpaid" ? "⏳ Unpaid" : f === "paid" ? <><CheckCircle size={20} /> Paid</> : f === "bill_generated_unpaid" ? <><Receipt size={20} /> Bill Due</> : "💜 Billed Paid"}
                 </button>
               ))}
             </div>
@@ -732,7 +732,7 @@ function NewCardView({ targetCardId }: { targetCardId?: string | null }) {
       <div className="filter-chips">
         {(["all", "free", "paid"] as const).map((f) => (
           <button key={f} className={`filter-chip ${filterType === f ? "active" : ""}`} onClick={() => setFilterType(f)}>
-            {f === "all" ? "All Cards" : f === "free" ? "🆓 Free" : "💎 Premium"}
+            {f === "all" ? "All Cards" : f === "free" ? <><CheckCircle size={16} /> Free</> : <><Gem size={16} /> Premium</>}
           </button>
         ))}
       </div>

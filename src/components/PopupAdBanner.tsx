@@ -11,10 +11,10 @@ const TYPE_COLORS: Record<string, string> = {
   promo: "#7c3aed",
   warning: "#d97706",
 };
-const TYPE_ICONS: Record<string, string> = {
-  info: "<Info size={20} />",
-  promo: "<Gift size={20} />",
-  warning: "<AlertTriangle size={20} />",
+const TYPE_ICONS: Record<PopupAd["type"], React.ReactNode> = {
+  info: <Info size={20} />,
+  promo: <Gift size={20} />,
+  warning: <AlertTriangle size={20} />,
 };
 
 export default function PopupAdBanner() {

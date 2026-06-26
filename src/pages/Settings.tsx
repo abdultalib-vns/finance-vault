@@ -1,4 +1,4 @@
-import { LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt } from "lucide-react";
+import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { hashPin } from "../lib/crypto";
 import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses } from "../lib/storage";
@@ -145,7 +145,7 @@ export default function Settings({
       setShowExportPin(false);
       setIoPin("");
     } catch (err) {
-      setIoMsg(`❌ ${err instanceof Error ? err.message : "Export failed."}`);
+      setIoMsg(`<XCircle size={16} /> ${err instanceof Error ? err.message : "Export failed."}`);
     } finally {
       setIoLoading(false);
     }
@@ -173,7 +173,7 @@ export default function Settings({
       setPendingFile(null);
       setIoPin("");
     } catch (err) {
-      setIoMsg(`❌ ${err instanceof Error ? err.message : "Import failed."}`);
+      setIoMsg(`<XCircle size={16} /> ${err instanceof Error ? err.message : "Import failed."}`);
     } finally {
       setIoLoading(false);
     }
@@ -195,7 +195,7 @@ export default function Settings({
       await enrollBiometric(masterKey);
       handleClearAll();
     } catch (err) {
-      setClearMsg(`❌ ${err instanceof Error ? err.message : "Biometric verification failed."}`);
+      setClearMsg(`<XCircle size={16} /> ${err instanceof Error ? err.message : "Biometric verification failed."}`);
     }
   }
 
@@ -205,7 +205,7 @@ export default function Settings({
       return;
     }
     if (hashPin(clearPin) !== hashPin(masterKey)) {
-      setClearMsg("❌ Incorrect PIN.");
+      setClearMsg("<XCircle size={16} /> Incorrect PIN.");
       return;
     }
     handleClearAll();
@@ -233,7 +233,7 @@ export default function Settings({
       setFbTitle("");
       setFbDesc("");
     } catch {
-      setFbMsg("❌ Could not submit feedback. Please try again later.");
+      setFbMsg("<XCircle size={16} /> Could not submit feedback. Please try again later.");
     } finally {
       setFbLoading(false);
     }
@@ -291,14 +291,14 @@ export default function Settings({
         </div>
 
         <div className="settings-section">
-          <h3 className="settings-section-title">📦 Backup & Restore</h3>
+          <h3 className="settings-section-title"><Archive size={20} /> Backup & Restore</h3>
           <p className="settings-hint">Export all your data as an encrypted backup file. Import it on another device using the same PIN.</p>
           {ioMsg && <p className={`settings-msg ${ioMsg.startsWith("<CheckCircle size={20} />") ? "success" : "error"}`}>{ioMsg}</p>}
           {!showImportPin && (
             <>
               {!showExportPin ? (
                 <button type="button" className="btn-primary" onClick={() => { setShowExportPin(true); setIoPin(""); setIoMsg(""); }}>
-                  📤 Export Backup
+                  <Upload size={16} /> Export Backup
                 </button>
               ) : (
                 <div className="io-pin-block">
@@ -317,7 +317,7 @@ export default function Settings({
               <input type="file" ref={importFileRef} accept=".fvbackup,.json" style={{ display: "none" }} onChange={handleFileChange} />
               {!showImportPin ? (
                 <button type="button" className="btn-outline" style={{ marginTop: 8 }} onClick={() => { setIoMsg(""); importFileRef.current?.click(); }}>
-                  📥 Import Backup
+                  <Download size={16} /> Import Backup
                 </button>
               ) : (
                 <div className="io-pin-block">
@@ -335,7 +335,7 @@ export default function Settings({
         </div>
 
         <div className="settings-section">
-          <h3 className="settings-section-title">🔑 Security</h3>
+          <h3 className="settings-section-title"><Key size={20} /> Security</h3>
           <form className="settings-form" onSubmit={handleChangePin}>
             <p className="settings-label">Change Master PIN</p>
             <input type="password" inputMode="numeric" placeholder="New PIN (min 4 digits)" value={newPin} onChange={(e) => setNewPin(e.target.value)} className="settings-input" />
@@ -365,7 +365,7 @@ export default function Settings({
         </div>
 
         <div className="settings-section">
-          <h3 className="settings-section-title">⏱ Session</h3>
+          <h3 className="settings-section-title"><Timer size={20} /> Session</h3>
           <p className="settings-label">Auto-logout when idle</p>
           <select className="settings-select" value={idleMinutes} onChange={(e) => { const m = parseInt(e.target.value, 10); saveIdleTimeout(m); onIdleMinutesChange(m); }}>
             <option value={1}>1 minute</option>
@@ -381,11 +381,11 @@ export default function Settings({
         </div>
 
         <div className="settings-section">
-          <h3 className="settings-section-title">📲 Install App</h3>
+          <h3 className="settings-section-title"><Smartphone size={20} /> Install App</h3>
           {pwaPrompt ? (
             <>
               <p className="settings-hint">Install FinAura on your home screen for a native app experience.</p>
-              <button type="button" className="btn-primary" onClick={handleInstallPwa}>📲 Install on Home Screen</button>
+              <button type="button" className="btn-primary" onClick={handleInstallPwa}><Smartphone size={16} /> Install on Home Screen</button>
             </>
           ) : (
             <p className="settings-hint">Open your browser menu and tap "Add to Home Screen" or "Install App".</p>
@@ -457,7 +457,7 @@ export default function Settings({
             />
             {fbMsg && <p className={`settings-msg ${fbMsg.startsWith("<CheckCircle size={20} />") ? "success" : "error"}`}>{fbMsg}</p>}
             <button type="submit" className="btn-primary" disabled={fbLoading}>
-              {fbLoading ? "Submitting…" : "<Send size={16} /> Submit Feedback"}
+              {fbLoading ? "Submitting…" : <><Send size={16} /> Submit Feedback</>}
             </button>
           </form>
         </div>

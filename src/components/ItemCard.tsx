@@ -1,5 +1,5 @@
-import { LayoutDashboard, CreditCard, Building2, Check, ArrowLeft, Calendar, Trash } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { LayoutDashboard, CreditCard, Building2, Check, ArrowLeft, Calendar, Trash, TrendingUp, RefreshCw, ClipboardList } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 import { FinanceItem } from "../types";
 import { decryptData } from "../lib/crypto";
 import { Currency, formatAmount } from "../lib/currency";
@@ -12,14 +12,14 @@ interface Props {
   onEdit: (item: FinanceItem) => void;
 }
 
-const TYPE_META: Record<FinanceItem["type"], { label: string; color: string; icon: string }> = {
-  bank:     { label: "Bank",        color: "#3b82f6", icon: "<Building2 size={20} />" },
-  card:     { label: "Card",        color: "#8b5cf6", icon: "<CreditCard size={20} />" },
-  fd:       { label: "Fixed Dep.",  color: "#f59e0b", icon: "📈" },
-  rd:       { label: "Recurring",   color: "#10b981", icon: "<Calendar size={16} />" },
-  mf:       { label: "Mutual Fund", color: "#06b6d4", icon: "<LayoutDashboard size={20} />" },
-  paylater: { label: "Pay Later",   color: "#ef4444", icon: "🔄" },
-  other:    { label: "Other",       color: "#6b7280", icon: "📋" },
+const TYPE_META: Record<FinanceItem["type"], { label: string; color: string; icon: React.ReactNode }> = {
+  bank:     { label: "Bank",        color: "#3b82f6", icon: <Building2 size={20} /> },
+  card:     { label: "Card",        color: "#8b5cf6", icon: <CreditCard size={20} /> },
+  fd:       { label: "Fixed Dep.",  color: "#f59e0b", icon: <TrendingUp size={16} /> },
+  rd:       { label: "Recurring",   color: "#10b981", icon: <Calendar size={16} /> },
+  mf:       { label: "Mutual Fund", color: "#06b6d4", icon: <LayoutDashboard size={20} /> },
+  paylater: { label: "Pay Later",   color: "#ef4444", icon: <RefreshCw size={16} /> },
+  other:    { label: "Other",       color: "#6b7280", icon: <ClipboardList size={16} /> },
 };
 
 const REVEAL_W = 140;
@@ -96,7 +96,7 @@ export default function ItemCard({ item, masterKey, currency, onDelete, onEdit }
           className={`swipe-btn swipe-delete ${confirmDelete ? "confirm" : ""}`}
           onClick={handleDelete}
         >
-          <span className="swipe-icon">{confirmDelete ? "<Check size={16} />" : "<Trash size={16} />"}</span>
+          <span className="swipe-icon">{confirmDelete ? <Check size={16} /> : <Trash size={16} />}</span>
           <span className="swipe-label">{confirmDelete ? "Sure?" : "Delete"}</span>
         </button>
       </div>
