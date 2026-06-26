@@ -60,18 +60,18 @@ export async function exportVault(pin: string): Promise<void> {
       
       return; // Successfully saved via API
     } catch (err) {
-      console.warn("Directory picker failed or was cancelled. Falling back to default download.", err);
-      // Fallback executes below
+      console.warn("Directory picker failed or was cancelled.", err);
     }
+  } else {
+      alert("Note: Automatic folder creation (FinAura/) is not supported on this device/browser. The file will be saved to your default Downloads folder.");
   }
 
   // Fallback: Traditional download (for mobile browsers or if picker was cancelled)
-  // Note: Web browsers do not allow specifying a subfolder natively here, so it will go to the default Downloads.
   const blob = new Blob([json], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = fileName;
+  a.download = `FinAura/${fileName}`; // Attempt relative path (most browsers will flatten to FinAura_FinAura-backup...)
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
