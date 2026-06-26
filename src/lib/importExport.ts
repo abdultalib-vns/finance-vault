@@ -23,7 +23,7 @@ export function verifyPin(pin: string): boolean {
   return hashPin(pin) === hash;
 }
 
-export function exportVault(pin: string): void {
+export async function exportVault(pin: string): Promise<void> {
   if (!verifyPin(pin)) throw new Error("Incorrect PIN.");
   const backup: VaultBackup = {
     version: 1,
@@ -36,12 +36,42 @@ export function exportVault(pin: string): void {
     bankExpenses: loadBankExpenses(),
   };
   const json = JSON.stringify(backup, null, 2);
+  const date = new Date().toISOString().slice(0, 10);
+  const fileName = `FinAura-backup-${date}.fvbackup`;
+
+  // Try using the modern File System Access API (supported on desktop Chrome/Edge)
+  if ('showDirectoryPicker' in window) {
+    try {
+      // Request user to pick a base directory (e.g., Downloads)
+      const dirHandle = await (window as any).showDirectoryPicker({
+        mode: 'readwrite'
+      });
+      
+      // Get or create the 'FinAura' folder inside the chosen directory
+      const finAuraDir = await dirHandle.getDirectoryHandle('FinAura', { create: true });
+      
+      // Create the backup file inside the 'FinAura' folder
+      const fileHandle = await finAuraDir.getFileHandle(fileName, { create: true });
+      
+      // Write the backup data
+      const writable = await fileHandle.createWritable();
+      await writable.write(json);
+      await writable.close();
+      
+      return; // Successfully saved via API
+    } catch (err) {
+      console.warn("Directory picker failed or was cancelled. Falling back to default download.", err);
+      // Fallback executes below
+    }
+  }
+
+  // Fallback: Traditional download (for mobile browsers or if picker was cancelled)
+  // Note: Web browsers do not allow specifying a subfolder natively here, so it will go to the default Downloads.
   const blob = new Blob([json], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  const date = new Date().toISOString().slice(0, 10);
-  a.download = `FinAura-backup-${date}.fvbackup`;
+  a.download = fileName;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

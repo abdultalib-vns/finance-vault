@@ -1,0 +1,583 @@
+{
+  "url": "https://www.axio.co.in/",
+  "title": "axio",
+  "description": "Explore axio’s flexible payment solutions like Amazon Pay Later, Tata Pay Later, and axio Pay Later. Plus, take control of your finances with our Personal Finance Manager and Budgeting Tools. Manage your money smarter.",
+  "scrapedAt": "2026-06-26T04:48:17.259Z",
+  "colors": {
+    "bg": "#ffffff",
+    "bgSecondary": "#f8fafc",
+    "text": "#000000",
+    "textSecondary": "#697586",
+    "primary": "#2d62ff",
+    "secondary": "#539600",
+    "border": "#262626",
+    "palette": [
+      {
+        "hex": "#262626",
+        "role": "block",
+        "count": 1,
+        "area": 3747360,
+        "contrast": "light"
+      },
+      {
+        "hex": "#f8fafc",
+        "role": "section",
+        "count": 1,
+        "area": 1766016,
+        "contrast": "dark"
+      },
+      {
+        "hex": "#1a1a1a",
+        "role": "block",
+        "count": 1,
+        "area": 1038080,
+        "contrast": "light"
+      },
+      {
+        "hex": "#000000",
+        "role": "button",
+        "count": 1,
+        "area": 35173,
+        "contrast": "light"
+      },
+      {
+        "hex": "#d8e1ce",
+        "role": "button",
+        "count": 1,
+        "area": 26410,
+        "contrast": "dark"
+      },
+      {
+        "hex": "#daf180",
+        "role": "button",
+        "count": 1,
+        "area": 3547,
+        "contrast": "dark"
+      },
+      {
+        "hex": "#2d62ff",
+        "role": "text-accent",
+        "count": 1,
+        "area": 1800,
+        "contrast": "light"
+      },
+      {
+        "hex": "#202939",
+        "role": "text-accent",
+        "count": 1,
+        "area": 1350,
+        "contrast": "light"
+      },
+      {
+        "hex": "#376400",
+        "role": "text-accent",
+        "count": 1,
+        "area": 1050,
+        "contrast": "light"
+      },
+      {
+        "hex": "#697586",
+        "role": "text-accent",
+        "count": 1,
+        "area": 550,
+        "contrast": "light"
+      },
+      {
+        "hex": "#539600",
+        "role": "text-accent",
+        "count": 1,
+        "area": 400,
+        "contrast": "light"
+      },
+      {
+        "hex": "#6ec800",
+        "role": "text-accent",
+        "count": 1,
+        "area": 50,
+        "contrast": "dark"
+      }
+    ]
+  },
+  "typography": {
+    "headingFont": {
+      "family": "Onest, sans-serif",
+      "cleanFamily": "Onest",
+      "weights": [
+        "700"
+      ],
+      "usedFor": "heading",
+      "fallback": "sans-serif"
+    },
+    "bodyFont": {
+      "family": "Onest, sans-serif",
+      "cleanFamily": "Onest",
+      "weights": [
+        "400"
+      ],
+      "usedFor": "body",
+      "fallback": "sans-serif"
+    },
+    "fontSizes": [
+      64,
+      57.6,
+      56,
+      48,
+      36,
+      25,
+      24,
+      20,
+      18,
+      16
+    ],
+    "lineHeights": [],
+    "details": [
+      {
+        "role": "H1",
+        "size": 64,
+        "weight": "700",
+        "lineHeight": "70.4px",
+        "letterSpacing": "-0.64px",
+        "font": "Onest"
+      },
+      {
+        "role": "H2",
+        "size": 57.6,
+        "weight": "700",
+        "lineHeight": "69.12px",
+        "letterSpacing": "-0.64px",
+        "font": "Onest"
+      },
+      {
+        "role": "H3",
+        "size": 48,
+        "weight": "500",
+        "lineHeight": "57.6px",
+        "letterSpacing": "-0.64px",
+        "font": "Onest"
+      },
+      {
+        "role": "H4",
+        "size": 36,
+        "weight": "700",
+        "lineHeight": "50.4px",
+        "letterSpacing": "-0.64px",
+        "font": "Onest"
+      },
+      {
+        "role": "Body",
+        "size": 20,
+        "weight": "400",
+        "lineHeight": "30px",
+        "letterSpacing": "normal",
+        "font": "Plus Jakarta Sans"
+      }
+    ]
+  },
+  "spacing": {
+    "base": 8,
+    "common": [
+      {
+        "value": 8,
+        "count": 35,
+        "role": "element"
+      },
+      {
+        "value": 25,
+        "count": 28,
+        "role": "card"
+      },
+      {
+        "value": 20,
+        "count": 19,
+        "role": "element"
+      },
+      {
+        "value": 16,
+        "count": 14,
+        "role": "element"
+      },
+      {
+        "value": 64,
+        "count": 9,
+        "role": "section"
+      },
+      {
+        "value": 128,
+        "count": 9,
+        "role": "section"
+      },
+      {
+        "value": 24,
+        "count": 6,
+        "role": "card"
+      },
+      {
+        "value": 32,
+        "count": 6,
+        "role": "card"
+      }
+    ]
+  },
+  "borderRadius": [
+    {
+      "value": 50,
+      "count": 50,
+      "role": "card"
+    },
+    {
+      "value": 20,
+      "count": 28,
+      "role": "card"
+    },
+    {
+      "value": 32,
+      "count": 13,
+      "role": "card"
+    },
+    {
+      "value": 16,
+      "count": 8,
+      "role": "card"
+    },
+    {
+      "value": 128,
+      "count": 7,
+      "role": "pill"
+    },
+    {
+      "value": 36,
+      "count": 3,
+      "role": "card"
+    }
+  ],
+  "shadows": [
+    {
+      "value": "rgba(61, 65, 73, 0.5) 0px 0px 1px 0px inset, rgba(37, 39, 43, 0.8) 0px 0px 3px 0px inset, rgba(45, 47, 54, 0.8) 0px 0px 4px 0px inset",
+      "count": 28,
+      "level": "low"
+    }
+  ],
+  "components": {
+    "primaryButton": {
+      "bg": "#ffffff",
+      "border": "",
+      "borderRadius": 128,
+      "color": "#376400",
+      "fontSize": 18,
+      "fontWeight": "600",
+      "paddingH": 28,
+      "paddingV": 20,
+      "variant": "pill"
+    },
+    "secondaryButton": {
+      "bg": "#000000",
+      "border": "",
+      "borderRadius": 128,
+      "color": "#ffffff",
+      "fontSize": 18,
+      "fontWeight": "600",
+      "paddingH": 28,
+      "paddingV": 20,
+      "variant": "pill"
+    },
+    "buttons": [
+      {
+        "bg": "transparent",
+        "border": "",
+        "borderRadius": 0,
+        "color": "#ffffff",
+        "fontSize": 16,
+        "fontWeight": "500",
+        "paddingH": 20,
+        "paddingV": 20,
+        "variant": "ghost"
+      },
+      {
+        "bg": "transparent",
+        "border": "",
+        "borderRadius": 0,
+        "color": "#539600",
+        "fontSize": 16,
+        "fontWeight": "700",
+        "paddingH": 20,
+        "paddingV": 20,
+        "variant": "ghost"
+      },
+      {
+        "bg": "#ffffff",
+        "border": "",
+        "borderRadius": 128,
+        "color": "#376400",
+        "fontSize": 18,
+        "fontWeight": "600",
+        "paddingH": 28,
+        "paddingV": 20,
+        "variant": "pill"
+      },
+      {
+        "bg": "#ffffff",
+        "border": "",
+        "borderRadius": 32,
+        "color": "#376400",
+        "fontSize": 18,
+        "fontWeight": "600",
+        "paddingH": 20,
+        "paddingV": 8,
+        "variant": "filled"
+      },
+      {
+        "bg": "#000000",
+        "border": "",
+        "borderRadius": 128,
+        "color": "#ffffff",
+        "fontSize": 18,
+        "fontWeight": "600",
+        "paddingH": 28,
+        "paddingV": 20,
+        "variant": "pill"
+      },
+      {
+        "bg": "transparent",
+        "border": "",
+        "borderRadius": 0,
+        "color": "#000000",
+        "fontSize": 16,
+        "fontWeight": "700",
+        "paddingH": 0,
+        "paddingV": 0,
+        "variant": "ghost"
+      }
+    ],
+    "card": {
+      "bg": "#262626",
+      "borderRadius": 64,
+      "padding": 40,
+      "shadow": "none"
+    }
+  },
+  "fontFaces": [
+    {
+      "family": "FigtreeVF",
+      "src": "chrome-extension://majdfhpaihoncoakbjgbdhglocklcgno/fonts/FigtreeVF.woff2",
+      "style": "",
+      "weight": "100 1000"
+    }
+  ],
+  "cssCustomProperties": [
+    {
+      "name": "--link-color--link-primary",
+      "value": "var(--base-color-brand--blue)",
+      "category": "other"
+    },
+    {
+      "name": "--background-color--background-primary",
+      "value": "var(--base-color-neutral--black)",
+      "category": "other"
+    },
+    {
+      "name": "--text-color--text-alternate",
+      "value": "var(--base-color-neutral--white)",
+      "category": "typography"
+    },
+    {
+      "name": "--text-color--text-secondary",
+      "value": "var(--base-color-neutral--neutral-darker)",
+      "category": "typography"
+    },
+    {
+      "name": "--background-color--background-success",
+      "value": "var(--base-color-system--success-green)",
+      "category": "other"
+    },
+    {
+      "name": "--text-color--text-success",
+      "value": "var(--base-color-system--success-green-dark)",
+      "category": "typography"
+    },
+    {
+      "name": "--border-color--border-primary",
+      "value": "var(--base-color-neutral--neutral-lightest)",
+      "category": "other"
+    },
+    {
+      "name": "--background-color--background-alternate",
+      "value": "var(--base-color-neutral--white)",
+      "category": "other"
+    },
+    {
+      "name": "--background-color--background-secondary",
+      "value": "var(--base-color-brand--blue)",
+      "category": "other"
+    },
+    {
+      "name": "--background-color--background-tertiary",
+      "value": "var(--base-color-brand--pink)",
+      "category": "other"
+    },
+    {
+      "name": "--background-color--background-error",
+      "value": "var(--base-color-system--error-red)",
+      "category": "other"
+    },
+    {
+      "name": "--text-color--text-error",
+      "value": "var(--base-color-system--error-red-dark)",
+      "category": "typography"
+    },
+    {
+      "name": "--border-color--border-alternate",
+      "value": "var(--base-color-neutral--neutral-darker)",
+      "category": "other"
+    },
+    {
+      "name": "--background-color--background-warning",
+      "value": "var(--base-color-system--warning-yellow)",
+      "category": "other"
+    },
+    {
+      "name": "--text-color--text-warning",
+      "value": "var(--base-color-system--warning-yellow-dark)",
+      "category": "typography"
+    },
+    {
+      "name": "--text-color--text-primary",
+      "value": "var(--base-color-neutral--black)",
+      "category": "typography"
+    },
+    {
+      "name": "--base-color-neutral--white",
+      "value": "#fff",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-neutral--black",
+      "value": "#000",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-brand--blue-dark",
+      "value": "#080331",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-brand--blue",
+      "value": "#2d62ff",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-brand--blue-light",
+      "value": "#d9e5ff",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-brand--pink-light",
+      "value": "#ffaefe",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-brand--pink",
+      "value": "#dd23bb",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-brand--pink-dark",
+      "value": "#3c043b",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-neutral--neutral-lightest",
+      "value": "#eee",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-neutral--neutral-lighter",
+      "value": "#ccc",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-neutral--neutral-light",
+      "value": "#aaa",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-neutral--neutral",
+      "value": "#666",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-neutral--neutral-dark",
+      "value": "#444",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-neutral--neutral-darker",
+      "value": "#222",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-neutral--neutral-darkest",
+      "value": "#111",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-system--success-green",
+      "value": "#cef5ca",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-system--success-green-dark",
+      "value": "#114e0b",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-system--warning-yellow",
+      "value": "#fcf8d8",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-system--warning-yellow-dark",
+      "value": "#5e5515",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-system--error-red",
+      "value": "#f8e4e4",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-system--error-red-dark",
+      "value": "#3b0b0b",
+      "category": "color"
+    },
+    {
+      "name": "--base-color-system--focus-state",
+      "value": "#2d62ff",
+      "category": "color"
+    },
+    {
+      "name": "--border-color--border-secondary",
+      "value": "var(--base-color-brand--blue)",
+      "category": "other"
+    },
+    {
+      "name": "--link-color--link-secondary",
+      "value": "var(--base-color-neutral--black)",
+      "category": "other"
+    },
+    {
+      "name": "--link-color--link-alternate",
+      "value": "var(--base-color-neutral--white)",
+      "category": "other"
+    }
+  ],
+  "tags": [
+    "light",
+    "rounded",
+    "colorful",
+    "sans-serif"
+  ],
+  "mood": "Friendly, approachable design with rounded shapes and generous whitespace.",
+  "heroHeadline": "Shop easy.",
+  "heroSubtitle": "",
+  "isJapanese": false
+}

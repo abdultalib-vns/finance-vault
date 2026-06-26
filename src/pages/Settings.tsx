@@ -138,7 +138,7 @@ export default function Settings({
     setIoMsg("");
     setIoLoading(true);
     try {
-      exportVault(ioPin);
+      await exportVault(ioPin);
       setIoMsg("✅ Backup downloaded successfully.");
       setShowExportPin(false);
       setIoPin("");
