@@ -7,15 +7,17 @@ const API_CONFIG = "/api/admin/config";
 const ADMIN_GLOBAL_CONFIG_KEY = "admin_global_config";
 
 /** Push shared config sections to the server. Alerts if Vercel KV fails. */
-function pushToServer(payload: { cardTemplates?: CardTemplate[]; popupAds?: PopupAd[]; themeSettings?: AdminThemeSettings; globalConfig?: GlobalAppConfig; customCurrencies?: CustomCurrency[] }): void {
-  // Always attach/update the configVersion when an admin pushes changes.
+function pushToServer(payload: { cardTemplates?: CardTemplate[]; popupAds?: PopupAd[]; themeSettings?: AdminThemeSettings; globalConfig?: GlobalAppConfig; customCurrencies?: CustomCurrency[] }, skipVersionBump: boolean = false): void {
   const globalConf = loadGlobalConfig();
-  globalConf.configVersion = (globalConf.configVersion || 1) + 1;
-  localStorage.setItem(ADMIN_GLOBAL_CONFIG_KEY, JSON.stringify(globalConf));
+  
+  if (!skipVersionBump) {
+    globalConf.configVersion = (globalConf.configVersion || 1) + 1;
+    localStorage.setItem(ADMIN_GLOBAL_CONFIG_KEY, JSON.stringify(globalConf));
+  }
   
   if (!payload.globalConfig) {
     payload.globalConfig = globalConf;
-  } else {
+  } else if (!skipVersionBump) {
     payload.globalConfig.configVersion = globalConf.configVersion;
   }
 
@@ -162,7 +164,7 @@ export function seedDefaultCardTemplates(): void {
 
 export function saveCardTemplates(templates: CardTemplate[]): void {
   localStorage.setItem(ADMIN_CARDS_KEY, JSON.stringify(templates));
-  pushToServer({ cardTemplates: templates });
+  pushToServer({ cardTemplates: templates }, true);
 }
 
 export function loadCardTemplates(): CardTemplate[] {
