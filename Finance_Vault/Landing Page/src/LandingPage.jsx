@@ -4,32 +4,41 @@ import {
   Banknote, CreditCard, LineChart, Bitcoin, Home, Car, PiggyBank, MoreHorizontal,
   PieChart, Globe, Folder, Bell, Moon, FileText,
   ChevronDown, Apple, Play, Star, CheckCircle, Github, Twitter, Linkedin,
-  ArrowRight, Sparkles, Lock, ChevronRight, Settings
+  ArrowRight, Sparkles, Lock, ChevronRight, Settings, MessageSquare, Zap, Target
 } from 'lucide-react';
 
 export default function LandingPage() {
-  const stats = [
-    { value: '1M+', label: 'Active Users' },
-    { value: '5M+', label: 'Downloads' },
-    { value: '100%', label: 'Secure' },
-    { value: '4.8/5', label: '10k+ Reviews' }
-  ];
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-white text-black font-sans selection:bg-[#2d62ff]/20 overflow-x-hidden">
+    <div className="min-h-screen bg-[#0A0A0A] text-[#F5F5F5] font-sans selection:bg-white/10 overflow-x-hidden">
       
-      {/* 1. Navigation / Header */}
-      <nav className="fixed top-0 w-full z-50 backdrop-blur-xl bg-white/80 border-b border-[#262626]/10 transition-all">
-        <div className="container mx-auto px-6 h-20 flex justify-between items-center max-w-7xl">
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-[#2d62ff] flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
-              <Shield className="w-5 h-5 text-white" strokeWidth={2.5} />
+      {/* 1. Navigation */}
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-[#0A0A0A]/80 backdrop-blur-xl border-b border-[rgba(255,255,255,0.06)] py-4' : 'bg-transparent py-6'}`}>
+        <div className="container mx-auto px-6 flex justify-between items-center max-w-[1440px]">
+          <div className="flex items-center gap-3 cursor-pointer">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-b from-[#E3E5E8] to-[#A8A8A8] flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+              <div className="w-[30px] h-[30px] rounded-full bg-[#111111] flex items-center justify-center">
+                 <Shield className="w-4 h-4 text-[#E3E5E8]" strokeWidth={2} />
+              </div>
             </div>
-            <span className="text-2xl font-bold text-black tracking-tight">FinAura</span>
+            <span className="text-xl font-medium tracking-tight">FinAura</span>
+          </div>
+          <div className="hidden md:flex items-center gap-8 text-[15px] font-medium text-[#A8A8A8]">
+            <a href="#features" className="hover:text-[#F5F5F5] transition-colors">Features</a>
+            <a href="#security" className="hover:text-[#F5F5F5] transition-colors">Security</a>
+            <a href="#pricing" className="hover:text-[#F5F5F5] transition-colors">Pricing</a>
+            <a href="#about" className="hover:text-[#F5F5F5] transition-colors">About</a>
           </div>
           <div className="flex items-center gap-6">
-            <button className="hidden md:block text-base font-semibold text-gray-600 hover:text-[#2d62ff] transition-colors">Sign In</button>
-            <button className="h-12 px-6 rounded-[128px] bg-black hover:bg-gray-800 text-white text-base font-semibold transition-all hover:scale-105 active:scale-95 shadow-sm">
+            <button className="hidden md:block text-[15px] font-medium text-[#A8A8A8] hover:text-[#F5F5F5] transition-colors">Login</button>
+            <button className="h-10 px-5 rounded-full bg-[#E3E5E8] text-[#0A0A0A] text-[15px] font-semibold transition-all hover:bg-white hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(227,229,232,0.15)]">
               Get Started
             </button>
           </div>
@@ -37,383 +46,361 @@ export default function LandingPage() {
       </nav>
 
       {/* 2. Hero Section */}
-      <section className="relative pt-40 pb-20 lg:pt-52 lg:pb-32 bg-[#f8fafc] rounded-b-[64px] shadow-[0_10px_40px_-10px_rgba(45,98,255,0.05)]">
-        <div className="container mx-auto px-6 relative z-10 max-w-7xl flex flex-col items-center text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#2d62ff]/20 bg-white shadow-sm mb-10">
-            <Sparkles className="w-4 h-4 text-[#2d62ff]" />
-            <span className="text-sm font-bold text-[#2d62ff]">The Ultimate Personal Finance App</span>
+      <section className="relative pt-40 pb-20 lg:pt-52 lg:pb-32 max-w-[1440px] mx-auto px-6 flex flex-col lg:flex-row items-center gap-16">
+        <div className="flex-1 relative z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[rgba(255,255,255,0.06)] bg-[#111111] mb-8">
+            <Sparkles className="w-3.5 h-3.5 text-[#A8A8A8]" />
+            <span className="text-xs font-medium text-[#A8A8A8] uppercase tracking-wider">FinAura 2.0 is here</span>
           </div>
           
-          <h1 className="text-[4rem] md:text-[5.5rem] lg:text-[6.5rem] font-bold text-black mb-8 tracking-tighter leading-[1]">
-            Shop easy.<br />
-            <span className="text-[#2d62ff]">
-              Locked & Secured.
-            </span>
+          <h1 className="text-[4rem] md:text-[5rem] lg:text-[72px] font-medium tracking-tighter leading-[1.05] mb-8 text-transparent bg-clip-text bg-gradient-to-b from-[#F5F5F5] to-[#A8A8A8]">
+            Own Your<br />Financial Future.
           </h1>
           
-          <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-            The most comprehensive personal finance app that keeps your financial life completely secure, private, and always under your control.
+          <p className="text-lg md:text-[18px] text-[#A8A8A8] mb-12 max-w-xl leading-relaxed font-light">
+            An AI-powered personal finance platform that helps you track spending, automate budgeting, optimize investments, eliminate unnecessary expenses, and build lasting wealth—all in one beautifully engineered experience.
           </p>
           
-          <div className="flex flex-col sm:flex-row justify-center gap-6 mb-24 w-full sm:w-auto">
-            <button className="group flex items-center justify-center gap-3 h-16 px-10 rounded-[128px] bg-[#2d62ff] text-white text-lg font-semibold hover:bg-blue-700 transition-all shadow-[0_10px_30px_-10px_rgba(45,98,255,0.5)] hover:shadow-[0_15px_40px_-10px_rgba(45,98,255,0.6)] hover:-translate-y-1">
-              <Apple className="w-6 h-6" />
-              Download for iOS
+          <div className="flex flex-col sm:flex-row gap-4 mb-16 w-full sm:w-auto">
+            <button className="group flex items-center justify-center h-14 px-8 rounded-full bg-[#E3E5E8] text-[#0A0A0A] text-[15px] font-medium hover:bg-white transition-all shadow-[0_0_30px_rgba(255,255,255,0.1)]">
+              Get Started
             </button>
-            <button className="group flex items-center justify-center gap-3 h-16 px-10 rounded-[128px] bg-white border-2 border-[#262626] text-black text-lg font-semibold hover:bg-gray-50 transition-all hover:-translate-y-1">
-              <Play className="w-6 h-6 text-black" />
-              Download for Android
+            <button className="group flex items-center justify-center gap-2 h-14 px-8 rounded-full bg-[#111111] border border-[rgba(255,255,255,0.06)] text-[#F5F5F5] text-[15px] font-medium hover:bg-[#171717] transition-all">
+              <Play className="w-4 h-4" />
+              Watch Demo
             </button>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-12 gap-y-10 pt-12 border-t border-[#262626]/10 w-full max-w-4xl">
-            {stats.map((stat, i) => (
-              <div key={i} className="flex flex-col items-center">
-                <div className="text-4xl font-bold text-black tracking-tight mb-2">{stat.value}</div>
-                <div className="text-base font-medium text-gray-500">{stat.label}</div>
-              </div>
-            ))}
           </div>
         </div>
-      </section>
 
-      {/* 3. Mobile Experience Highlight */}
-      <section className="py-24 relative bg-white">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="rounded-[64px] border border-[#262626]/10 bg-[#f8fafc] p-8 md:p-16 lg:p-20 shadow-[var(--shadow-chromatic)] relative overflow-hidden flex flex-col lg:flex-row items-center gap-16">
-            
-            {/* Subtle Inner Glow */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#2d62ff]/5 rounded-full blur-[100px] translate-x-1/3 -translate-y-1/3"></div>
-            
-            <div className="flex-1 relative z-10">
-              <h2 className="text-[3.5rem] md:text-[4rem] font-bold text-black mb-6 tracking-tighter leading-[1.1]">
-                Designed for Mobile,<br />
-                <span className="text-gray-400">Perfected for You.</span>
-              </h2>
-              <p className="text-xl text-gray-600 mb-10 leading-relaxed max-w-lg">
-                The ultimate mobile-first experience. Everything you need to manage your money, beautifully crafted right in your pocket.
-              </p>
-              
-              <ul className="space-y-4">
-                {[
-                  'Intuitive & beautiful interface',
-                  'Light & Dark mode support',
-                  'Biometric authentication',
-                  '128-bit bank-grade encryption',
-                  'Real-time sync across devices'
-                ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[#2d62ff]/10 text-[#2d62ff]">
-                      <CheckCircle className="w-4 h-4" />
-                    </div>
-                    <span className="text-black font-medium">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            
-            <div className="relative z-10 flex-1 flex justify-center lg:justify-end">
-              {/* Phone Mockup Wrapper */}
-              <div className="relative w-[300px] h-[620px] bg-white rounded-[50px] border-[12px] border-[#f8fafc] shadow-[0_20px_50px_rgba(45,98,255,0.15)] overflow-hidden ring-1 ring-[#262626]/5 shadow-[inset_0_0_20px_rgba(0,0,0,0.05)] rotate-[-2deg] hover:rotate-0 transition-transform duration-700 ease-out">
-                 
-                 {/* Dynamic Island / Notch */}
-                 <div className="absolute top-3 left-1/2 -translate-x-1/2 w-28 h-7 bg-[#262626] rounded-full z-20"></div>
-                 
-                 <div className="h-full w-full bg-white flex flex-col pt-16 pb-8 px-6 relative">
-                    
-                    {/* Header */}
-                    <div className="flex justify-between items-center mb-8">
-                      <div className="w-10 h-10 rounded-full bg-[#f8fafc] border border-[#262626]/5"></div>
-                      <div className="w-10 h-10 rounded-full bg-[#f8fafc] border border-[#262626]/5"></div>
-                    </div>
-
-                    <div className="mb-8">
-                      <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Total Balance</p>
-                      <h3 className="text-[2rem] font-bold text-black tracking-tight">$24,500<span className="text-gray-400">.00</span></h3>
-                    </div>
-                    
-                    {/* Chart Mockup */}
-                    <div className="h-32 mb-10 flex items-end justify-between gap-3">
-                       <div className="w-full bg-[#2d62ff]/10 h-[40%] rounded-md"></div>
-                       <div className="w-full bg-[#2d62ff]/20 h-[60%] rounded-md"></div>
-                       <div className="w-full bg-[#2d62ff]/30 h-[80%] rounded-md relative">
-                         <div className="absolute -top-7 left-1/2 -translate-x-1/2 text-xs font-bold text-[#2d62ff] bg-white px-2 py-1 rounded-md shadow-sm">+$2.4k</div>
-                       </div>
-                       <div className="w-full bg-[#2d62ff]/60 h-[70%] rounded-md"></div>
-                       <div className="w-full bg-[#2d62ff] h-[100%] rounded-md"></div>
-                    </div>
-                    
-                    {/* Transactions */}
-                    <div className="space-y-4">
-                      <div className="p-4 rounded-[24px] bg-[#f8fafc] border border-[#262626]/5 flex justify-between items-center shadow-sm">
-                        <div className="flex items-center gap-4">
-                           <div className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center"><Home className="w-5 h-5 text-[#2d62ff]" /></div>
-                           <div>
-                             <p className="font-bold text-black text-sm">Rent</p>
-                             <p className="text-xs font-medium text-gray-500">Today</p>
-                           </div>
-                        </div>
-                        <p className="font-bold text-black text-sm">-$1,200</p>
-                      </div>
-                      <div className="p-4 rounded-[24px] bg-[#f8fafc] border border-[#262626]/5 flex justify-between items-center shadow-sm">
-                        <div className="flex items-center gap-4">
-                           <div className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center"><Banknote className="w-5 h-5 text-[#2d62ff]" /></div>
-                           <div>
-                             <p className="font-bold text-black text-sm">Groceries</p>
-                             <p className="text-xs font-medium text-gray-500">Yesterday</p>
-                           </div>
-                        </div>
-                        <p className="font-bold text-black text-sm">-$150</p>
-                      </div>
-                    </div>
-
-                    {/* Bottom Nav Mockup */}
-                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[85%] h-16 bg-white/90 backdrop-blur-md border border-[#262626]/10 shadow-lg rounded-[128px] flex justify-around items-center px-4">
-                      <div className="w-10 h-10 rounded-full bg-[#2d62ff]/10 flex items-center justify-center"><Home className="w-4 h-4 text-[#2d62ff]" /></div>
-                      <div className="w-10 h-10 rounded-full bg-transparent flex items-center justify-center"><PieChart className="w-4 h-4 text-gray-400" /></div>
-                      <div className="w-10 h-10 rounded-full bg-transparent flex items-center justify-center"><CreditCard className="w-4 h-4 text-gray-400" /></div>
-                      <div className="w-10 h-10 rounded-full bg-transparent flex items-center justify-center"><Settings className="w-4 h-4 text-gray-400" /></div>
+        {/* Hero Mockup */}
+        <div className="flex-1 relative w-full max-w-[600px] perspective-[2000px]">
+           <div className="absolute inset-0 bg-gradient-to-tr from-[#E3E5E8]/5 to-transparent blur-[120px] rounded-full"></div>
+           <div className="relative w-full aspect-[4/3] bg-[#111111] rounded-[24px] border border-[rgba(255,255,255,0.06)] shadow-[0_30px_100px_-20px_rgba(0,0,0,1)] p-6 transform rotate-y-[-10deg] rotate-x-[5deg] hover:rotate-y-[-5deg] transition-transform duration-1000 ease-out flex flex-col gap-4 overflow-hidden">
+              {/* Dashboard Header */}
+              <div className="flex justify-between items-center mb-4">
+                 <div className="flex gap-3 items-center">
+                    <div className="w-10 h-10 rounded-full bg-[#171717] border border-[rgba(255,255,255,0.04)]"></div>
+                    <div>
+                       <div className="h-3 w-24 bg-[#171717] rounded-full mb-2"></div>
+                       <div className="h-2 w-16 bg-[#171717] rounded-full"></div>
                     </div>
                  </div>
+                 <div className="w-8 h-8 rounded-full bg-[#171717] border border-[rgba(255,255,255,0.04)]"></div>
               </div>
-            </div>
-            
+              {/* Main Chart */}
+              <div className="h-40 bg-[#171717] rounded-[16px] border border-[rgba(255,255,255,0.02)] p-4 relative overflow-hidden flex items-end gap-2">
+                 <div className="absolute top-4 left-4 h-4 w-32 bg-[#262626] rounded-full"></div>
+                 {[40, 55, 45, 70, 65, 80, 95].map((h, i) => (
+                    <div key={i} className="flex-1 bg-gradient-to-t from-[#E3E5E8]/20 to-[#E3E5E8]/5 rounded-t-md" style={{ height: `${h}%` }}></div>
+                 ))}
+              </div>
+              {/* Cards */}
+              <div className="flex gap-4">
+                 <div className="flex-1 h-24 bg-[#171717] rounded-[16px] border border-[rgba(255,255,255,0.02)] p-4 flex flex-col justify-between">
+                    <div className="h-3 w-16 bg-[#262626] rounded-full"></div>
+                    <div className="h-5 w-24 bg-[#E3E5E8]/20 rounded-full"></div>
+                 </div>
+                 <div className="flex-1 h-24 bg-[#171717] rounded-[16px] border border-[rgba(255,255,255,0.02)] p-4 flex flex-col justify-between">
+                    <div className="h-3 w-20 bg-[#262626] rounded-full"></div>
+                    <div className="h-5 w-20 bg-[#E3E5E8]/20 rounded-full"></div>
+                 </div>
+              </div>
+           </div>
+        </div>
+      </section>
+
+      {/* 3. Trust Section */}
+      <section className="py-12 border-y border-[rgba(255,255,255,0.04)] bg-[#0A0A0A]">
+        <div className="container mx-auto px-6 max-w-[1240px] text-center text-[#7B7B7B] text-[13px] font-medium tracking-widest uppercase">
+          <p className="mb-8">Trusted by thousands of professionals</p>
+          <div className="flex flex-wrap justify-center gap-12 md:gap-24 opacity-50 grayscale">
+             {/* Abstract minimalist logos */}
+             <div className="flex items-center gap-2"><div className="w-6 h-6 border-2 border-current rounded-sm"></div><span>ACME CORP</span></div>
+             <div className="flex items-center gap-2"><div className="w-6 h-6 border-2 border-current rounded-full"></div><span>GLOBEX</span></div>
+             <div className="flex items-center gap-2"><div className="w-6 h-6 border-2 border-current transform rotate-45"></div><span>SOYLENT</span></div>
+             <div className="flex items-center gap-2"><div className="w-6 h-6 border-2 border-current rounded-tl-full rounded-br-full"></div><span>INITECH</span></div>
           </div>
         </div>
       </section>
 
-      {/* 4. Security & Privacy Features Grid */}
-      <section className="py-24 relative bg-[#f8fafc]">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="text-center mb-20 max-w-2xl mx-auto">
-            <h2 className="text-[3rem] font-bold text-black mb-6 tracking-tighter">Built for Privacy & Security</h2>
-            <p className="text-xl text-gray-600">Your financial data is yours alone. We employ bank-grade security to ensure it stays exactly that way.</p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {/* 4. Feature Grid */}
+      <section id="features" className="py-32 max-w-[1240px] mx-auto px-6">
+         <div className="text-center mb-24 max-w-2xl mx-auto">
+            <h2 className="text-[36px] font-medium tracking-tight mb-6">Engineered for Wealth</h2>
+            <p className="text-[18px] text-[#A8A8A8] font-light">A suite of precision tools designed to give you absolute clarity and control over your net worth.</p>
+         </div>
+
+         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { icon: <Shield />, title: 'Military-Grade Encryption', desc: 'Your data is protected with AES-256 encryption both in transit and at rest.' },
-              { icon: <Smartphone />, title: '100% Local Storage', desc: 'Choose to keep your data completely offline on your device for maximum privacy.' },
-              { icon: <EyeOff />, title: 'No Data Mining', desc: 'We never sell or share your data. You are the customer, not the product.' },
-              { icon: <Fingerprint />, title: 'Biometric Protection', desc: 'Lock your vault with FaceID, TouchID or device passcode.' },
-              { icon: <CloudOff />, title: 'Fully Offline Mode', desc: 'Works completely offline. No internet connection required to view or edit data.' },
-              { icon: <Box />, title: 'Comprehensive Backups', desc: 'Automatic encrypted backups to your preferred cloud storage provider.' }
+               { icon: <Zap />, title: 'AI Spending Intelligence', desc: 'Auto-categorizes transactions with 99.9% accuracy and identifies hidden patterns.' },
+               { icon: <Target />, title: 'Smart Budget Automation', desc: 'Dynamic budgets that adapt to your income changes and unexpected expenses.' },
+               { icon: <LineChart />, title: 'Investment Insights', desc: 'Track your portfolio performance in real-time across all brokerages.' },
+               { icon: <EyeOff />, title: 'Subscription Detection', desc: 'Automatically finds and helps you cancel forgotten recurring charges.' },
+               { icon: <Box />, title: 'Financial Goals', desc: 'Visualize your path to financial independence with predictive forecasting.' },
+               { icon: <Lock />, title: 'Secure Vault', desc: 'Bank-level encryption ensures your data remains perfectly private.' }
             ].map((f, i) => (
-              <div key={i} className="group p-10 rounded-[50px] bg-white border border-[#262626]/5 hover:border-[#2d62ff]/20 transition-all shadow-[var(--shadow-low)] hover:shadow-[var(--shadow-chromatic)] hover:-translate-y-1">
-                <div className="w-16 h-16 bg-[#f8fafc] rounded-[24px] flex items-center justify-center mb-6 text-[#2d62ff] group-hover:bg-[#2d62ff] group-hover:text-white transition-colors">
-                  {f.icon}
-                </div>
-                <h3 className="text-2xl font-bold text-black mb-3">{f.title}</h3>
-                <p className="text-base text-gray-600 leading-relaxed">{f.desc}</p>
-              </div>
+               <div key={i} className="group p-8 rounded-[24px] bg-[#111111] border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.15)] transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+                  <div className="w-12 h-12 rounded-full bg-[#171717] border border-[rgba(255,255,255,0.04)] flex items-center justify-center mb-8 text-[#E3E5E8] group-hover:scale-110 transition-transform duration-500">
+                     {f.icon}
+                  </div>
+                  <h3 className="text-[20px] font-medium mb-3 text-[#F5F5F5]">{f.title}</h3>
+                  <p className="text-[15px] text-[#A8A8A8] leading-relaxed font-light">{f.desc}</p>
+               </div>
             ))}
-          </div>
-        </div>
+         </div>
       </section>
 
-      {/* 5. Asset Tracking Grid (Bento Style) */}
-      <section className="py-24 relative bg-white border-t border-[#262626]/5">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-            <div className="max-w-2xl">
-              <h2 className="text-[3rem] md:text-[3.5rem] font-bold text-black mb-6 tracking-tighter leading-[1]">Track Every Asset</h2>
-              <p className="text-xl text-gray-600">From cash to crypto, real estate to retirement funds, track it all in one unified dashboard.</p>
+      {/* 5. Product Showcase (Alternating) */}
+      <section className="py-32 max-w-[1440px] mx-auto px-6 flex flex-col gap-32">
+         {/* Feature 1 */}
+         <div className="flex flex-col lg:flex-row items-center gap-16 max-w-[1240px] mx-auto">
+            <div className="flex-1 lg:pr-12">
+               <h2 className="text-[36px] font-medium tracking-tight mb-6 text-[#F5F5F5]">Smart Budgeting. <br/><span className="text-[#A8A8A8]">Redefined.</span></h2>
+               <p className="text-[18px] text-[#A8A8A8] leading-relaxed font-light mb-8">
+                  Stop looking in the rearview mirror. Our predictive budgeting engine forecasts your end-of-month balance before the month even begins, letting you make adjustments in real-time.
+               </p>
+               <ul className="space-y-4">
+                  {['Dynamic allocation rules', 'Zero-based budgeting support', 'Predictive cashflow alerts'].map((item, i) => (
+                     <li key={i} className="flex items-center gap-3 text-[15px] text-[#A8A8A8]">
+                        <CheckCircle className="w-5 h-5 text-[#E3E5E8]" strokeWidth={1.5} />
+                        {item}
+                     </li>
+                  ))}
+               </ul>
             </div>
-            <button className="hidden md:flex items-center gap-2 text-base font-bold text-black bg-white hover:bg-gray-50 border-2 border-[#262626] px-8 py-4 rounded-[128px] transition-all hover:-translate-y-1">
-              View All Supported Assets <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
-          
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-             {[
-               { icon: <Banknote />, title: 'Bank Accounts', desc: 'Checking, savings, & CDs', span: 'col-span-2 lg:col-span-2 row-span-2 bg-[#2d62ff]/5 border-[#2d62ff]/20' },
-               { icon: <CreditCard />, title: 'Credit Cards', desc: 'Track balances and limits', span: 'col-span-1 bg-[#f8fafc]' },
-               { icon: <LineChart />, title: 'Investments', desc: 'Stocks, bonds & ETFs', span: 'col-span-1 bg-[#f8fafc]' },
-               { icon: <Bitcoin />, title: 'Cryptocurrency', desc: 'Wallets & exchanges', span: 'col-span-1 bg-[#f8fafc]' },
-               { icon: <Home />, title: 'Real Estate', desc: 'Property values & mortgages', span: 'col-span-1 bg-[#f8fafc]' },
-               { icon: <Car />, title: 'Vehicles', desc: 'Cars, boats & loans', span: 'col-span-1 lg:col-span-2 bg-[#f8fafc]' },
-               { icon: <PiggyBank />, title: 'Cash', desc: 'Physical currency', span: 'col-span-1 bg-[#f8fafc]' },
-               { icon: <MoreHorizontal />, title: 'And More...', desc: 'Custom categories', span: 'col-span-1 bg-white border-dashed border-[#262626]/20' }
-             ].map((a, i) => (
-               <div key={i} className={`p-8 md:p-10 rounded-[50px] border border-[#262626]/5 shadow-[var(--shadow-low)] flex flex-col justify-between hover:shadow-[var(--shadow-chromatic)] hover:-translate-y-1 transition-all ${a.span}`}>
-                 <div className="w-12 h-12 text-[#2d62ff] mb-10">{a.icon}</div>
-                 <div>
-                   <h3 className="text-2xl font-bold text-black mb-2">{a.title}</h3>
-                   <p className="text-base text-gray-500 font-medium">{a.desc}</p>
-                 </div>
+            <div className="flex-1 w-full bg-[#111111] border border-[rgba(255,255,255,0.06)] rounded-[24px] p-8 shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
+               <div className="w-full h-64 bg-[#171717] rounded-[16px] border border-[rgba(255,255,255,0.02)] flex flex-col gap-4 p-6 relative overflow-hidden">
+                  <div className="flex justify-between items-center mb-4">
+                     <div className="h-4 w-32 bg-[#262626] rounded-full"></div>
+                     <div className="h-4 w-16 bg-[#262626] rounded-full"></div>
+                  </div>
+                  {[70, 45, 90].map((w, i) => (
+                     <div key={i} className="w-full bg-[#0A0A0A] rounded-full h-8 overflow-hidden border border-[rgba(255,255,255,0.02)]">
+                        <div className="h-full bg-gradient-to-r from-[#7B7B7B] to-[#E3E5E8] opacity-80" style={{ width: `${w}%` }}></div>
+                     </div>
+                  ))}
                </div>
-             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 6. How It Works (Steps) */}
-      <section className="py-32 bg-[#f8fafc]">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="text-center mb-24 max-w-2xl mx-auto">
-            <h2 className="text-[3rem] md:text-[3.5rem] font-bold text-black mb-6 tracking-tighter">Get Started In Minutes</h2>
-            <p className="text-xl text-gray-600">No complex setups or bank logins required. Start tracking your net worth instantly.</p>
-          </div>
-          
-          <div className="flex flex-col md:flex-row justify-between relative gap-12 md:gap-4">
-             <div className="hidden md:block absolute top-8 left-[10%] right-[10%] h-[2px] bg-gradient-to-r from-transparent via-[#262626]/10 to-transparent"></div>
-             {[
-               { num: '01', title: 'Download the App', desc: 'Available on iOS and Android devices.' },
-               { num: '02', title: 'Create Your Vault', desc: 'Set up your secure PIN and biometrics.' },
-               { num: '03', title: 'Add Your Assets', desc: 'Manually add or import your balances.' },
-               { num: '04', title: 'Track & Grow', desc: 'Watch your net worth grow over time.' }
-             ].map((s, i) => (
-               <div key={i} className="relative z-10 flex flex-col items-center text-center flex-1">
-                 <div className="w-16 h-16 bg-white text-black font-bold text-xl rounded-full flex items-center justify-center mb-8 border-4 border-[#f8fafc] shadow-md ring-1 ring-[#262626]/5">
-                   {s.num}
-                 </div>
-                 <h3 className="text-xl font-bold text-black mb-3">{s.title}</h3>
-                 <p className="text-base font-medium text-gray-500 max-w-[200px]">{s.desc}</p>
-               </div>
-             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 7. Additional Features */}
-      <section className="py-32 relative bg-white">
-         <div className="container mx-auto px-6 max-w-7xl relative z-10">
-            <div className="mb-16">
-              <h2 className="text-[3rem] md:text-[3.5rem] font-bold text-black mb-6 tracking-tighter leading-[1]">Everything You Need & More</h2>
-              <p className="text-xl text-gray-600 max-w-2xl">Packed with powerful features to give you complete control over your finances.</p>
             </div>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-[#262626]/5 rounded-[64px] overflow-hidden border border-[#262626]/5 shadow-[var(--shadow-low)]">
-              {[
-                { icon: <PieChart className="w-6 h-6" />, title: 'Advanced Analytics', desc: 'Deep dive into your financial health with beautiful, interactive charts and graphs.' },
-                { icon: <Globe className="w-6 h-6" />, title: 'Multi-Currency', desc: 'Support for over 150 fiat currencies and major cryptocurrencies.' },
-                { icon: <Folder className="w-6 h-6" />, title: 'Custom Categories', desc: 'Organize your finances exactly how you want with unlimited custom categories.' },
-                { icon: <Bell className="w-6 h-6" />, title: 'Custom Reminders', desc: 'Set alerts for bills, subscriptions, and financial milestones.' },
-                { icon: <Moon className="w-6 h-6" />, title: 'Dark Mode', desc: 'A beautiful, OLED-optimized dark mode for late-night finance sessions.' },
-                { icon: <FileText className="w-6 h-6" />, title: 'Export & Reports', desc: 'Generate detailed PDF and CSV reports for tax season or personal review.' }
-              ].map((f, i) => (
-                <div key={i} className="bg-white p-12 hover:bg-[#f8fafc] transition-colors">
-                   <div className="w-14 h-14 bg-[#2d62ff]/5 border border-[#2d62ff]/10 text-[#2d62ff] rounded-[24px] flex items-center justify-center mb-8">{f.icon}</div>
-                   <h3 className="text-2xl font-bold text-black mb-3">{f.title}</h3>
-                   <p className="text-base font-medium text-gray-500 leading-relaxed">{f.desc}</p>
-                </div>
-              ))}
+         </div>
+
+         {/* Feature 2 */}
+         <div className="flex flex-col lg:flex-row-reverse items-center gap-16 max-w-[1240px] mx-auto">
+            <div className="flex-1 lg:pl-12">
+               <h2 className="text-[36px] font-medium tracking-tight mb-6 text-[#F5F5F5]">Absolute Clarity. <br/><span className="text-[#A8A8A8]">On every cent.</span></h2>
+               <p className="text-[18px] text-[#A8A8A8] leading-relaxed font-light mb-8">
+                  Connect all your accounts securely and watch as every transaction is perfectly categorized, tagged, and analyzed. Understand your net worth at a macroscopic or microscopic level.
+               </p>
+               <button className="flex items-center gap-2 text-[15px] font-medium text-[#F5F5F5] hover:text-[#E3E5E8] transition-colors border-b border-[rgba(255,255,255,0.2)] pb-1">
+                  Explore Analytics <ArrowRight className="w-4 h-4" />
+               </button>
+            </div>
+            <div className="flex-1 w-full bg-[#111111] border border-[rgba(255,255,255,0.06)] rounded-[24px] p-8 shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
+               <div className="w-full h-64 bg-[#171717] rounded-[16px] border border-[rgba(255,255,255,0.02)] p-6 flex items-end justify-between gap-3">
+                  {[20, 35, 25, 60, 45, 80, 65, 95].map((h, i) => (
+                     <div key={i} className="flex-1 bg-gradient-to-t from-[#E3E5E8]/20 to-[#E3E5E8]/10 rounded-t-sm" style={{ height: `${h}%` }}></div>
+                  ))}
+               </div>
             </div>
          </div>
       </section>
 
-      {/* 8. FAQ Section */}
-      <section className="py-32 bg-[#f8fafc]">
-        <div className="container mx-auto px-6 max-w-3xl">
-          <div className="text-center mb-20">
-            <h2 className="text-[3rem] font-bold text-black mb-4 tracking-tighter">Frequently Asked Questions</h2>
-            <p className="text-xl text-gray-600">Everything you need to know about FinAura Vault.</p>
-          </div>
-          
-          <div className="space-y-4">
-             {[
-               { q: 'Is my data really secure?', a: 'Yes, we use bank-grade AES-256 encryption. Your data never leaves your device unencrypted.' },
-               { q: 'Do I need to link my bank accounts?', a: 'No, FinAura Vault works completely offline. You can manually enter balances or import data.' },
-               { q: 'What happens if I lose my phone?', a: 'You can easily restore your data on a new device using your secure encrypted backup file.' },
-               { q: 'Is there a monthly subscription?', a: 'No, FinAura Vault offers a generous free tier, with optional one-time purchases for premium features.' },
-               { q: 'Can I access my data on multiple devices?', a: 'Yes, you can sync your encrypted backups via your preferred cloud provider (iCloud, Google Drive, etc).' },
-               { q: 'How do I export my data?', a: 'You can export all your data anytime in CSV or JSON format from the settings menu.' }
-             ].map((faq, i) => (
-               <details key={i} className="group rounded-[32px] border border-[#262626]/10 bg-white overflow-hidden shadow-sm hover:shadow-[var(--shadow-chromatic)] transition-shadow">
-                 <summary className="flex justify-between items-center font-bold cursor-pointer list-none p-8 text-black hover:text-[#2d62ff] transition-colors text-lg">
-                   <span>{faq.q}</span>
-                   <span className="transition-transform duration-300 group-open:rotate-180">
-                     <ChevronDown className="w-5 h-5 text-gray-400" />
-                   </span>
-                 </summary>
-                 <div className="text-base text-gray-600 px-8 pb-8 pt-0 leading-relaxed font-medium">
-                   {faq.a}
-                 </div>
-               </details>
-             ))}
-          </div>
-        </div>
+      {/* 6. AI Section */}
+      <section className="py-32 bg-[#111111] border-y border-[rgba(255,255,255,0.04)] relative overflow-hidden">
+         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#E3E5E8]/5 rounded-full blur-[150px] pointer-events-none"></div>
+         <div className="container mx-auto px-6 max-w-[1240px] relative z-10 text-center">
+            <Sparkles className="w-8 h-8 text-[#E3E5E8] mx-auto mb-8" strokeWidth={1.5} />
+            <h2 className="text-[36px] font-medium tracking-tight mb-6">Meet your new wealth advisor.</h2>
+            <p className="text-[18px] text-[#A8A8A8] font-light max-w-2xl mx-auto mb-16">
+               Ask natural language questions about your finances, get personalized saving strategies, and receive proactive alerts when your spending patterns shift.
+            </p>
+            
+            <div className="max-w-3xl mx-auto bg-[#0A0A0A] border border-[rgba(255,255,255,0.06)] rounded-[24px] p-6 text-left shadow-[0_30px_60px_rgba(0,0,0,0.8)]">
+               <div className="flex flex-col gap-6">
+                  <div className="flex gap-4 items-end justify-end">
+                     <div className="bg-[#171717] border border-[rgba(255,255,255,0.04)] px-5 py-3 rounded-2xl rounded-tr-sm text-[15px] text-[#F5F5F5]">
+                        How much did I spend on dining out last month compared to my average?
+                     </div>
+                  </div>
+                  <div className="flex gap-4 items-start">
+                     <div className="w-8 h-8 rounded-full bg-gradient-to-b from-[#E3E5E8] to-[#A8A8A8] flex items-center justify-center shrink-0">
+                        <Sparkles className="w-4 h-4 text-[#0A0A0A]" />
+                     </div>
+                     <div className="bg-[#111111] border border-[rgba(255,255,255,0.04)] px-5 py-4 rounded-2xl rounded-tl-sm text-[15px] text-[#A8A8A8] leading-relaxed">
+                        You spent <strong>$845</strong> on dining out in May, which is <strong>24% higher</strong> than your 6-month average of $680. <br/><br/>
+                        Most of the increase came from weekend dinners. If you reduce your weekend dining budget by 15%, you'll be back on track to hit your $10k savings goal by December.
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
       </section>
 
-      {/* 9. Bottom CTA Section */}
-      <section className="py-32 relative overflow-hidden bg-white">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#2d62ff]/5 rounded-[100%] blur-[100px] pointer-events-none"></div>
-        
-        <div className="container mx-auto px-6 text-center relative z-10 max-w-3xl">
-          <h2 className="text-[3.5rem] md:text-[4.5rem] font-bold text-black mb-6 tracking-tighter leading-[1]">Ready to Take Control?</h2>
-          <p className="text-xl text-gray-600 mb-12">Download FinAura Vault today and start your journey to financial peace of mind.</p>
-          
-          <div className="flex flex-col sm:flex-row justify-center gap-6 mb-8">
-            <button className="flex items-center justify-center gap-3 h-16 px-10 rounded-[128px] bg-[#2d62ff] text-white font-semibold hover:bg-blue-700 transition-all shadow-[0_10px_30px_-10px_rgba(45,98,255,0.5)] hover:shadow-[0_15px_40px_-10px_rgba(45,98,255,0.6)] hover:-translate-y-1 text-lg">
-              <Apple className="w-6 h-6" />
-              Download for iOS
-            </button>
-            <button className="flex items-center justify-center gap-3 h-16 px-10 rounded-[128px] bg-white border-2 border-[#262626] text-black font-semibold hover:bg-gray-50 transition-all hover:-translate-y-1 text-lg">
-              <Play className="w-6 h-6 text-black" />
-              Download for Android
-            </button>
-          </div>
-          <p className="text-sm text-gray-500 font-bold">No credit card required. 14-day free trial on premium features.</p>
-        </div>
+      {/* 7. Statistics Section */}
+      <section className="py-32 max-w-[1240px] mx-auto px-6">
+         <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
+            {[
+               { value: '$2.8B', label: 'Assets Managed' },
+               { value: '99.99%', label: 'Platform Uptime' },
+               { value: '4.9★', label: 'User Rating' },
+               { value: '250K+', label: 'Active Users' }
+            ].map((stat, i) => (
+               <div key={i} className="text-center">
+                  <div className="text-[48px] md:text-[64px] font-medium tracking-tighter text-[#F5F5F5] mb-2">{stat.value}</div>
+                  <div className="text-[15px] text-[#7B7B7B] uppercase tracking-widest font-medium">{stat.label}</div>
+               </div>
+            ))}
+         </div>
       </section>
 
-      {/* 10. Footer */}
-      <footer className="border-t border-[#262626]/10 bg-[#f8fafc] pt-24 pb-12">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-12 mb-20">
-            <div className="col-span-2 lg:col-span-2">
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-8 h-8 rounded-xl bg-[#2d62ff] flex items-center justify-center">
-                  <Shield className="w-4 h-4 text-white" strokeWidth={3} />
-                </div>
-                <span className="text-xl font-bold text-black tracking-tight">FinAura Vault</span>
-              </div>
-              <p className="text-base text-gray-600 leading-relaxed max-w-xs mb-8 font-medium">
-                The most secure, private, and powerful personal finance app designed for modern wealth building.
-              </p>
-              <div className="flex gap-4">
-                <a href="#" className="w-10 h-10 rounded-full bg-white border border-[#262626]/10 shadow-sm flex items-center justify-center text-gray-500 hover:text-[#2d62ff] transition-colors"><Twitter className="w-4 h-4" /></a>
-                <a href="#" className="w-10 h-10 rounded-full bg-white border border-[#262626]/10 shadow-sm flex items-center justify-center text-gray-500 hover:text-[#2d62ff] transition-colors"><Linkedin className="w-4 h-4" /></a>
-                <a href="#" className="w-10 h-10 rounded-full bg-white border border-[#262626]/10 shadow-sm flex items-center justify-center text-gray-500 hover:text-[#2d62ff] transition-colors"><Github className="w-4 h-4" /></a>
-              </div>
+      {/* 8. Security Section */}
+      <section id="security" className="py-32 bg-[#111111] border-y border-[rgba(255,255,255,0.04)]">
+         <div className="container mx-auto px-6 max-w-[1240px]">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
+               <div className="max-w-2xl">
+                  <h2 className="text-[36px] font-medium tracking-tight mb-6">Zero-Knowledge Architecture</h2>
+                  <p className="text-[18px] text-[#A8A8A8] font-light">Your financial data is yours alone. We cannot see it, mine it, or sell it. Bank-level encryption secures every bit of information.</p>
+               </div>
+               <div className="w-16 h-16 rounded-full bg-[#171717] border border-[rgba(255,255,255,0.06)] flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-[#E3E5E8]" />
+               </div>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+               {[
+                  { title: 'Private by Default', desc: 'End-to-end encryption ensures only you hold the keys to your financial data.' },
+                  { title: 'Biometric Auth', desc: 'Secure your vault locally with FaceID, TouchID, or physical security keys.' },
+                  { title: 'Offline Mode', desc: 'Fully functional without an internet connection for maximum operational security.' }
+               ].map((s, i) => (
+                  <div key={i} className="pt-8 border-t border-[rgba(255,255,255,0.06)]">
+                     <h3 className="text-[20px] font-medium mb-3 text-[#F5F5F5]">{s.title}</h3>
+                     <p className="text-[15px] text-[#A8A8A8] font-light leading-relaxed">{s.desc}</p>
+                  </div>
+               ))}
+            </div>
+         </div>
+      </section>
+
+      {/* 9. Pricing */}
+      <section id="pricing" className="py-32 max-w-[1240px] mx-auto px-6">
+         <div className="text-center mb-24 max-w-2xl mx-auto">
+            <h2 className="text-[36px] font-medium tracking-tight mb-6">Transparent Pricing</h2>
+            <p className="text-[18px] text-[#A8A8A8] font-light">Simple plans for every stage of your financial journey.</p>
+         </div>
+
+         <div className="grid md:grid-cols-3 gap-8 max-w-[1000px] mx-auto">
+            {[
+               { name: 'Free', price: '$0', desc: 'Essential tools to track your net worth.', btn: 'Get Started' },
+               { name: 'Pro', price: '$12', desc: 'Advanced analytics and AI insights.', btn: 'Start Trial', highlighted: true },
+               { name: 'Business', price: '$49', desc: 'For freelancers and small businesses.', btn: 'Contact Sales' }
+            ].map((plan, i) => (
+               <div key={i} className={`p-8 rounded-[24px] flex flex-col ${plan.highlighted ? 'bg-[#111111] border-[rgba(255,255,255,0.15)] shadow-[0_20px_40px_rgba(0,0,0,0.6)] border transform md:-translate-y-4 relative' : 'bg-transparent border border-[rgba(255,255,255,0.06)]'}`}>
+                  {plan.highlighted && <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#E3E5E8] text-[#0A0A0A] text-xs font-bold uppercase tracking-wider py-1 px-3 rounded-full">Most Popular</div>}
+                  <h3 className="text-[20px] font-medium mb-2">{plan.name}</h3>
+                  <div className="text-[48px] font-medium tracking-tighter mb-4">{plan.price}<span className="text-[18px] text-[#7B7B7B] font-light">/mo</span></div>
+                  <p className="text-[15px] text-[#A8A8A8] mb-8 flex-1 font-light">{plan.desc}</p>
+                  <button className={`w-full py-4 rounded-full text-[15px] font-medium transition-all ${plan.highlighted ? 'bg-[#E3E5E8] text-[#0A0A0A] hover:bg-white' : 'bg-[#171717] text-[#F5F5F5] hover:bg-[#262626] border border-[rgba(255,255,255,0.04)]'}`}>
+                     {plan.btn}
+                  </button>
+               </div>
+            ))}
+         </div>
+      </section>
+
+      {/* 10. FAQ */}
+      <section className="py-32 bg-[#111111] border-y border-[rgba(255,255,255,0.04)]">
+         <div className="max-w-[800px] mx-auto px-6">
+            <h2 className="text-[36px] font-medium tracking-tight mb-16 text-center">Frequently Asked Questions</h2>
+            <div className="space-y-4">
+               {[
+                  { q: 'Is my data truly private?', a: 'Yes. FinAura utilizes end-to-end zero-knowledge encryption. Your data is encrypted locally on your device before it ever reaches our servers. We literally do not have the keys to view your financial data.' },
+                  { q: 'Can I connect multiple bank accounts?', a: 'Absolutely. Pro and Business plans support unlimited connections to over 11,000 financial institutions globally via secure API integrations.' },
+                  { q: 'How does the AI advisor work?', a: 'Our AI analyzes your anonymized, encrypted spending patterns locally on your device to offer personalized insights, without ever sending raw transaction data to cloud-based LLMs.' },
+                  { q: 'Is there a free trial for Pro?', a: 'Yes, we offer a 14-day fully featured free trial of FinAura Pro. No credit card required.' }
+               ].map((faq, i) => (
+                  <details key={i} className="group border-b border-[rgba(255,255,255,0.06)] pb-6 mb-6">
+                     <summary className="flex justify-between items-center text-[18px] font-medium cursor-pointer list-none text-[#F5F5F5] hover:text-[#E3E5E8] transition-colors">
+                        <span>{faq.q}</span>
+                        <ChevronDown className="w-5 h-5 text-[#7B7B7B] group-open:rotate-180 transition-transform duration-300" />
+                     </summary>
+                     <div className="text-[15px] text-[#A8A8A8] mt-4 leading-relaxed font-light pr-12">
+                        {faq.a}
+                     </div>
+                  </details>
+               ))}
+            </div>
+         </div>
+      </section>
+
+      {/* 11. Final CTA */}
+      <section className="py-40 text-center px-6 relative overflow-hidden">
+         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#E3E5E8]/5 rounded-full blur-[100px] pointer-events-none"></div>
+         <div className="relative z-10">
+            <h2 className="text-[48px] md:text-[64px] font-medium tracking-tighter mb-8 max-w-3xl mx-auto leading-[1.1] text-transparent bg-clip-text bg-gradient-to-b from-[#F5F5F5] to-[#A8A8A8]">
+               Start Building Better<br/>Financial Habits Today.
+            </h2>
+            <button className="h-14 px-10 rounded-full bg-[#E3E5E8] text-[#0A0A0A] text-[16px] font-medium hover:bg-white transition-all shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:scale-105 active:scale-95">
+               Get Started Free
+            </button>
+         </div>
+      </section>
+
+      {/* 12. Footer */}
+      <footer className="bg-[#0A0A0A] border-t border-[rgba(255,255,255,0.06)] pt-24 pb-12">
+         <div className="container mx-auto px-6 max-w-[1240px]">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 mb-24 text-[14px]">
+               <div className="col-span-2 lg:col-span-2">
+                  <div className="flex items-center gap-3 mb-6">
+                     <div className="w-8 h-8 rounded-full bg-gradient-to-b from-[#E3E5E8] to-[#A8A8A8] flex items-center justify-center">
+                        <div className="w-[30px] h-[30px] rounded-full bg-[#111111] flex items-center justify-center">
+                           <Shield className="w-4 h-4 text-[#E3E5E8]" strokeWidth={2} />
+                        </div>
+                     </div>
+                     <span className="text-lg font-medium tracking-tight">FinAura</span>
+                  </div>
+                  <p className="text-[#A8A8A8] font-light max-w-xs leading-relaxed">
+                     The future operating system for personal wealth. Designed with precision, built for privacy.
+                  </p>
+               </div>
+               
+               <div>
+                  <h4 className="font-medium text-[#F5F5F5] mb-6">Product</h4>
+                  <ul className="space-y-4 text-[#A8A8A8] font-light">
+                     <li><a href="#" className="hover:text-[#F5F5F5] transition-colors">Features</a></li>
+                     <li><a href="#" className="hover:text-[#F5F5F5] transition-colors">Security</a></li>
+                     <li><a href="#" className="hover:text-[#F5F5F5] transition-colors">Pricing</a></li>
+                     <li><a href="#" className="hover:text-[#F5F5F5] transition-colors">Changelog</a></li>
+                  </ul>
+               </div>
+               
+               <div>
+                  <h4 className="font-medium text-[#F5F5F5] mb-6">Company</h4>
+                  <ul className="space-y-4 text-[#A8A8A8] font-light">
+                     <li><a href="#" className="hover:text-[#F5F5F5] transition-colors">About</a></li>
+                     <li><a href="#" className="hover:text-[#F5F5F5] transition-colors">Blog</a></li>
+                     <li><a href="#" className="hover:text-[#F5F5F5] transition-colors">Careers</a></li>
+                     <li><a href="#" className="hover:text-[#F5F5F5] transition-colors">Contact</a></li>
+                  </ul>
+               </div>
+               
+               <div>
+                  <h4 className="font-medium text-[#F5F5F5] mb-6">Legal</h4>
+                  <ul className="space-y-4 text-[#A8A8A8] font-light">
+                     <li><a href="#" className="hover:text-[#F5F5F5] transition-colors">Privacy</a></li>
+                     <li><a href="#" className="hover:text-[#F5F5F5] transition-colors">Terms</a></li>
+                     <li><a href="#" className="hover:text-[#F5F5F5] transition-colors">Security</a></li>
+                  </ul>
+               </div>
             </div>
             
-            <div className="col-span-1">
-              <h4 className="text-base font-bold text-black mb-6">Product</h4>
-              <ul className="space-y-4 text-sm text-gray-500 font-medium">
-                <li><a href="#" className="hover:text-[#2d62ff] transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-[#2d62ff] transition-colors">Security</a></li>
-                <li><a href="#" className="hover:text-[#2d62ff] transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-[#2d62ff] transition-colors">Updates</a></li>
-              </ul>
+            <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-[rgba(255,255,255,0.06)] text-[13px] text-[#7B7B7B]">
+               <p>© 2026 FinAura Inc. All rights reserved.</p>
+               <div className="flex gap-6 mt-4 md:mt-0">
+                  <a href="#" className="hover:text-[#F5F5F5] transition-colors"><Twitter className="w-4 h-4" /></a>
+                  <a href="#" className="hover:text-[#F5F5F5] transition-colors"><Linkedin className="w-4 h-4" /></a>
+                  <a href="#" className="hover:text-[#F5F5F5] transition-colors"><Github className="w-4 h-4" /></a>
+               </div>
             </div>
-            <div className="col-span-1">
-              <h4 className="text-base font-bold text-black mb-6">Resources</h4>
-              <ul className="space-y-4 text-sm text-gray-500 font-medium">
-                <li><a href="#" className="hover:text-[#2d62ff] transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-[#2d62ff] transition-colors">Guides</a></li>
-                <li><a href="#" className="hover:text-[#2d62ff] transition-colors">API</a></li>
-                <li><a href="#" className="hover:text-[#2d62ff] transition-colors">Status</a></li>
-              </ul>
-            </div>
-            <div className="col-span-2 md:col-span-4 lg:col-span-2">
-              <h4 className="text-base font-bold text-black mb-6">Subscribe to updates</h4>
-              <p className="text-sm text-gray-500 mb-6 font-medium">Get the latest news and feature releases.</p>
-              <div className="flex gap-3">
-                <input type="email" placeholder="Email address" className="bg-white border border-[#262626]/20 rounded-full px-5 py-3 text-base text-black w-full focus:outline-none focus:border-[#2d62ff] transition-colors shadow-sm" />
-                <button className="bg-black text-white px-6 py-3 rounded-full text-base font-bold hover:bg-gray-800 transition-colors shadow-sm">Join</button>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex flex-col md:flex-row justify-between items-center border-t border-[#262626]/10 pt-10 gap-4">
-            <span className="text-sm text-gray-500 font-bold">© 2026 FinAura Vault. All rights reserved.</span>
-            <div className="flex gap-8 text-sm text-gray-500 font-bold">
-              <a href="#" className="hover:text-[#2d62ff] transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-[#2d62ff] transition-colors">Terms of Service</a>
-            </div>
-          </div>
-        </div>
+         </div>
       </footer>
     </div>
   );

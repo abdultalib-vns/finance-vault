@@ -43,7 +43,8 @@ function pushToServer(payload: { cardTemplates?: CardTemplate[]; popupAds?: Popu
  */
 export async function loadAdminConfigFromServer(): Promise<boolean> {
   try {
-    const res = await fetch(API_CONFIG);
+    const cacheBuster = `?t=${Date.now()}`;
+    const res = await fetch(API_CONFIG + cacheBuster, { cache: "no-store" });
     if (!res.ok) return false;
     const data = await res.json() as { 
       cardTemplates?: CardTemplate[]; 

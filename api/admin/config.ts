@@ -21,6 +21,12 @@ export default async function handler(req: any, res: any) {
     try {
       // Fetch the global configuration
       const config = await kv.get(KV_KEY) || {};
+      
+      // Prevent browser and Vercel edge from caching the config
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      
       return res.status(200).json(config);
     } catch (e) {
       console.error("Vercel KV Error:", e);
