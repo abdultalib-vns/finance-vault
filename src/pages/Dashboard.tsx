@@ -342,7 +342,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
             <div className={`monthly-breakdown-row ${carryOutDues > 0 ? "carry-row" : ""}`}>
               <span className="mbd-label"><ArrowRight size={12} /> Carrying to next month</span>
               <span className={`mbd-val ${carryOutDues > 0 ? "debit-text" : "credit-text"}`}>
-                {carryOutDues > 0 ? formatAmount(carryOutDues, currency) : "Nothing — all cleared <Check size={16} />"}
+                {carryOutDues > 0 ? formatAmount(carryOutDues, currency) : <>Nothing — all cleared <Check size={16} /></>}
               </span>
             </div>
           </div>
