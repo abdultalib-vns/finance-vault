@@ -407,16 +407,16 @@ export default function Settings({
         <div className="settings-section">
           <h3 className="settings-section-title"><LayoutDashboard size={20} /> App Statistics</h3>
           <div className="stats-grid">
-            {stats.bank > 0 && <div className="stat-chip">< size={16} /> .bank} Bank</div>}
-            {stats.card > 0 && <div className="stat-chip">< size={16} /> .card} Card</div>}
-            {stats.paylater > 0 && <div className="stat-chip">< size={16} /> .paylater} PayLater</div>}
-            {stats.fd > 0 && <div className="stat-chip">< size={16} /> .fd} FD</div>}
-            {stats.rd > 0 && <div className="stat-chip">< size={16} /> .rd} RD</div>}
-            {stats.mf > 0 && <div className="stat-chip">< size={16} /> .mf} MF</div>}
-            {stats.other > 0 && <div className="stat-chip">< size={16} /> .other} Other</div>}
-            {stats.expenses > 0 && <div className="stat-chip">< size={16} /> .expenses} Expenses</div>}
-            {stats.cashbacks > 0 && <div className="stat-chip">< size={16} /> .cashbacks} Cashbacks</div>}
-            {stats.bankExpenses > 0 && <div className="stat-chip">< size={16} /> .bankExpenses} Txns</div>}
+            {stats.bank > 0 && <div className="stat-chip"><Building2 size={16} /> {stats.bank} Bank</div>}
+            {stats.card > 0 && <div className="stat-chip"><CreditCard size={16} /> {stats.card} Card</div>}
+            {stats.paylater > 0 && <div className="stat-chip"><RefreshCw size={16} /> {stats.paylater} PayLater</div>}
+            {stats.fd > 0 && <div className="stat-chip"><TrendingUp size={16} /> {stats.fd} FD</div>}
+            {stats.rd > 0 && <div className="stat-chip"><Calendar size={16} /> {stats.rd} RD</div>}
+            {stats.mf > 0 && <div className="stat-chip"><LayoutDashboard size={16} /> {stats.mf} MF</div>}
+            {stats.other > 0 && <div className="stat-chip"><ClipboardList size={16} /> {stats.other} Other</div>}
+            {stats.expenses > 0 && <div className="stat-chip"><Receipt size={16} /> {stats.expenses} Expenses</div>}
+            {stats.cashbacks > 0 && <div className="stat-chip"><Gift size={16} /> {stats.cashbacks} Cashbacks</div>}
+            {stats.bankExpenses > 0 && <div className="stat-chip"><DollarSign size={16} /> {stats.bankExpenses} Txns</div>}
           </div>
           <p className="settings-hint" style={{ marginTop: 8 }}>Storage used: ~{approxStorageKB()}</p>
         </div>
