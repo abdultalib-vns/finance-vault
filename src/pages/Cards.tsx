@@ -902,8 +902,8 @@ function CalendarModal({ cards, onClose }: { cards: FinanceItem[]; onClose: () =
   });
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: "400px", padding: "20px" }}>
+    <div className="modal-overlay" onClick={onClose} style={{ alignItems: "center" }}>
+      <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: "400px", width: "90%", padding: "20px", background: "var(--surface)", borderRadius: "16px", border: "1px solid var(--border)" }}>
         <div className="modal-header">
           <h3 className="modal-title">📅 Card Dues Calendar</h3>
           <button className="modal-close" onClick={onClose}>✕</button>
