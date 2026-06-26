@@ -2560,9 +2560,19 @@ html, body {
   padding: 4px 0 env(safe-area-inset-bottom, 0);
   flex-direction: row;
   z-index: 100;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  justify-content: flex-start;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.admin-bottom-nav::-webkit-scrollbar {
+  display: none;
 }
 .admin-bottom-nav-item {
-  flex: 1;
+  flex: 0 0 auto;
+  min-width: 76px;
   display: flex;
   flex-direction: column;
   align-items: center;
