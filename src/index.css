@@ -8,8 +8,8 @@
 
 :root {
   --bg: #f0f2f5;
-  --surface: rgba(255, 255, 255, 0.45);
-  --surface2: rgba(255, 255, 255, 0.75);
+  --surface: linear-gradient(135deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.2));
+  --surface2: linear-gradient(135deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.5));
   --primary: #2563eb;
   --primary-dark: #1d4ed8;
   --primary-light: #dbeafe;
@@ -125,8 +125,6 @@ html, body {
   background: var(--surface);
   border: var(--glass-border);
   box-shadow: var(--shadow);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
 }
 
 .app-shell {
@@ -954,8 +952,6 @@ html, body {
   align-items: stretch;
   box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
   z-index: 100;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -2253,10 +2249,8 @@ html, body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6));
   z-index: 200;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
