@@ -118,7 +118,7 @@ export default function Settings({
       setBioMsg("Success: Biometric login enabled!");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Could not enable biometric login.";
-      setBioMsg(`<AlertTriangle size={20} /> ${msg}`);
+      setBioMsg(`Error: ${msg}`);
     } finally {
       setBioLoading(false);
     }
@@ -145,7 +145,7 @@ export default function Settings({
       setShowExportPin(false);
       setIoPin("");
     } catch (err) {
-      setIoMsg(`<XCircle size={16} /> ${err instanceof Error ? err.message : "Export failed."}`);
+      setIoMsg(`Error: ${err instanceof Error ? err.message : "Export failed."}`);
     } finally {
       setIoLoading(false);
     }
@@ -168,12 +168,12 @@ export default function Settings({
     try {
       await importVault(pendingFile, ioPin);
       onReload();
-      setIoMsg(`<CheckCircle size={20} /> Imported successfully!`);
+      setIoMsg(`Success: Imported successfully!`);
       setShowImportPin(false);
       setPendingFile(null);
       setIoPin("");
     } catch (err) {
-      setIoMsg(`<XCircle size={16} /> ${err instanceof Error ? err.message : "Import failed."}`);
+      setIoMsg(`Error: ${err instanceof Error ? err.message : "Import failed."}`);
     } finally {
       setIoLoading(false);
     }
@@ -195,7 +195,7 @@ export default function Settings({
       await enrollBiometric(masterKey);
       handleClearAll();
     } catch (err) {
-      setClearMsg(`<XCircle size={16} /> ${err instanceof Error ? err.message : "Biometric verification failed."}`);
+      setClearMsg(`Error: ${err instanceof Error ? err.message : "Biometric verification failed."}`);
     }
   }
 
