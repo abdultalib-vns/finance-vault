@@ -7,12 +7,13 @@
 }
 
 :root {
-  --bg: #f0f2f5;
+  --bg: #f9fafb;
   --surface: #ffffff;
-  --surface2: #f8f9fb;
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
-  --primary-light: #dbeafe;
+  --surface2: #f3f4f6;
+  --primary: #0a0a0a;
+  --primary-dark: #000000;
+  --primary-light: #262626;
+  --primary-fg: #ffffff;
   --danger: #ef4444;
   --danger-light: #fee2e2;
   --success: #10b981;
@@ -29,20 +30,21 @@
 }
 
 :root.dark-mode {
-  --bg: #0f172a;
-  --surface: #1e293b;
-  --surface2: #334155;
-  --primary: #3b82f6;
-  --primary-dark: #1e40af;
-  --primary-light: #1e3a8a;
+  --bg: #000000;
+  --surface: #111111;
+  --surface2: #1a1a1a;
+  --primary: #ffffff;
+  --primary-dark: #f5f5f5;
+  --primary-light: #e5e5e5;
+  --primary-fg: #000000;
   --danger: #f87171;
   --danger-light: #7f1d1d;
   --success: #34d399;
   --success-light: #064e3b;
-  --text: #f1f5f9;
-  --text2: #cbd5e1;
-  --text3: #94a3b8;
-  --border: #475569;
+  --text: #f9fafb;
+  --text2: #a1a1aa;
+  --text3: #71717a;
+  --border: #27272a;
   --shadow: 0 2px 8px rgba(0,0,0,0.3);
   --shadow-lg: 0 4px 20px rgba(0,0,0,0.4);
 }
@@ -207,7 +209,7 @@ html, body {
 /* ΓöÇΓöÇ Buttons ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .btn-primary {
   background: var(--primary);
-  color: #fff;
+  color: var(--primary-fg);
   padding: 13px 20px;
   border-radius: var(--radius-sm);
   font-weight: 600;
@@ -1883,7 +1885,7 @@ html, body {
   border-radius: 50%;
   border: none;
   background: rgba(255, 255, 255, 0.18);
-  color: #fff;
+  color: var(--primary-fg);
   font-size: 1rem;
   cursor: pointer;
   display: inline-flex;
@@ -2090,7 +2092,7 @@ html, body {
 .theme-btn.active {
   border-color: var(--primary);
   background: var(--primary);
-  color: #fff;
+  color: var(--primary-fg);
 }
 
 /* ΓöÇΓöÇ 5-tab bottom nav adjustments ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
@@ -2275,7 +2277,7 @@ html, body {
 .new-card-row-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; line-height: 1.2; }
 .new-card-row-desc { font-size: 0.8rem; opacity: 0.8; margin-bottom: 12px; line-height: 1.3; }
 .new-card-row-tag { background: rgba(255, 255, 255, 0.15); font-size: 0.75rem; font-weight: 600; padding: 4px 8px; border-radius: 6px; margin-bottom: 16px; }
-.new-card-row-apply { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; align-self: flex-start; }
+.new-card-row-apply { background: var(--primary); color: var(--primary-fg); border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; align-self: flex-start; }
 .new-card-row-img-wrap { width: 90px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .new-card-row-img { width: 100%; height: auto; border-radius: 8px; transform: rotate(-5deg); transition: transform 0.2s; box-shadow: 0 8px 16px rgba(0,0,0,0.2); }
 .new-card-row:hover .new-card-row-img { transform: rotate(0deg) scale(1.05); }
@@ -2629,7 +2631,7 @@ html, body {
 /* ΓöÇΓöÇ Buttons ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .admin-btn-primary {
   background: var(--primary);
-  color: #fff;
+  color: var(--primary-fg);
   border: none;
   border-radius: 8px;
   padding: 10px 20px;
@@ -3565,7 +3567,7 @@ html, body {
   border-radius: 10px;
   border: none;
   background: var(--primary);
-  color: #fff;
+  color: var(--primary-fg);
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
@@ -4419,7 +4421,7 @@ html, body {
 
 .install-popup-actions .btn-install {
   background: var(--primary);
-  color: white;
+  color: var(--primary-fg);
 }
 
 .install-popup-actions .btn-install:hover {
@@ -4744,7 +4746,7 @@ html, body {
 
 .welcome-progress-step.active .welcome-progress-dot {
   background: var(--primary);
-  color: #fff;
+  color: var(--primary-fg);
   border-color: var(--primary);
 }
 
@@ -4909,7 +4911,7 @@ html, body {
 
 .welcome-currency-btn.active .welcome-currency-symbol {
   background: var(--primary);
-  color: #fff;
+  color: var(--primary-fg);
 }
 
 .welcome-currency-info {
@@ -5230,7 +5232,7 @@ html, body {
   padding: 14px 20px;
   border-radius: var(--radius-sm);
   background: var(--primary);
-  color: #fff;
+  color: var(--primary-fg);
   font-weight: 700;
   font-size: 0.95rem;
   border: none;
