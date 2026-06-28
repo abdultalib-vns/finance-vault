@@ -250,10 +250,17 @@ function MainApp() {
         </div>
         <BottomNav active={tab} onChange={handleTabChange} />
 
-        {tab !== "settings" && aiOpts.provider !== "none" && (
+        {tab !== "settings" && (
           <button 
             className="fab-btn ai-fab-btn" 
-            onClick={() => setShowAIAssistant(true)} 
+            onClick={() => {
+              if (aiOpts.provider === "none") {
+                alert("Please select an AI Provider (Groq, OpenRouter, or Gemini) in Settings first!");
+                handleTabChange("settings");
+              } else {
+                setShowAIAssistant(true);
+              }
+            }} 
             aria-label="Ask AI" 
             title="Ask AI"
             style={{ 
