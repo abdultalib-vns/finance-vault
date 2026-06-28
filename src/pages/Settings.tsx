@@ -11,6 +11,7 @@ import {
   isBiometricEnrolled,
   enrollBiometric,
   disableBiometric,
+  loginWithBiometric,
 } from "../lib/biometric";
 import { exportVault, importVault } from "../lib/importExport";
 import veloLaunchLogo from "../VeloLaunch.png";
@@ -148,11 +149,43 @@ export default function Settings({
       setIoMsg("Success: Backup downloaded successfully.");
       setShowExportPin(false);
       setIoPin("");
-    } catch (err) {
-      setIoMsg(`Error: ${err instanceof Error ? err.message : "Export failed."}`);
+    } catch (err: any) {
+      setIoMsg(`Error: ${err.message}`);
     } finally {
       setIoLoading(false);
     }
+  }
+
+  async function handleToggleShowAiKeys() {
+    if (showAiKeys) {
+      setShowAiKeys(false);
+      return;
+    }
+
+    if (isBiometricEnrolled()) {
+      try {
+        await loginWithBiometric();
+        setShowAiKeys(true);
+        return;
+      } catch (err) {
+        // Fallback to PIN if biometric cancelled/fails
+      }
+    }
+
+    const pin = window.prompt("Enter your vault PIN to view API keys:");
+    if (!pin) return;
+    const storedHash = localStorage.getItem("vault_pin") || hashPin(masterKey);
+    if (hashPin(pin) === storedHash) {
+      setShowAiKeys(true);
+    } else {
+      alert("Incorrect PIN");
+    }
+  }
+
+  function handleSaveAiSettings() {
+    saveAIOptions(aiOpts);
+    alert("AI API keys and models have been saved securely.");
+    setShowAiKeys(false); // Hide after saving for security
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -334,9 +367,9 @@ export default function Settings({
                   style={{ flex: 1 }}
                   placeholder="AIzaSy..." 
                   value={aiOpts.geminiKey} 
-                  onChange={(e) => { const n = { ...aiOpts, geminiKey: e.target.value }; setAiOpts(n); saveAIOptions(n); }} 
+                  onChange={(e) => { const n = { ...aiOpts, geminiKey: e.target.value }; setAiOpts(n); }} 
                 />
-                <button type="button" className="btn-outline" style={{ padding: '0 12px' }} onClick={() => setShowAiKeys(!showAiKeys)}>
+                <button type="button" className="btn-outline" style={{ padding: '0 12px' }} onClick={handleToggleShowAiKeys}>
                   {showAiKeys ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -355,9 +388,9 @@ export default function Settings({
                     style={{ flex: 1 }}
                     placeholder="sk-or-v1-..." 
                     value={aiOpts.openRouterKey} 
-                    onChange={(e) => { const n = { ...aiOpts, openRouterKey: e.target.value }; setAiOpts(n); saveAIOptions(n); }} 
+                    onChange={(e) => { const n = { ...aiOpts, openRouterKey: e.target.value }; setAiOpts(n); }} 
                   />
-                  <button type="button" className="btn-outline" style={{ padding: '0 12px' }} onClick={() => setShowAiKeys(!showAiKeys)}>
+                  <button type="button" className="btn-outline" style={{ padding: '0 12px' }} onClick={handleToggleShowAiKeys}>
                     {showAiKeys ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
@@ -370,7 +403,7 @@ export default function Settings({
                   className="settings-input" 
                   value={aiOpts.openRouterModel} 
                   placeholder="e.g. google/gemini-flash-1.5"
-                  onChange={(e) => { const n = { ...aiOpts, openRouterModel: e.target.value }; setAiOpts(n); saveAIOptions(n); }}
+                  onChange={(e) => { const n = { ...aiOpts, openRouterModel: e.target.value }; setAiOpts(n); }}
                 />
                 <datalist id="openrouter-models">
                   {OPENROUTER_MODELS.map(m => (
@@ -393,9 +426,9 @@ export default function Settings({
                     style={{ flex: 1 }}
                     placeholder="gsk_..." 
                     value={aiOpts.groqKey} 
-                    onChange={(e) => { const n = { ...aiOpts, groqKey: e.target.value }; setAiOpts(n); saveAIOptions(n); }} 
+                    onChange={(e) => { const n = { ...aiOpts, groqKey: e.target.value }; setAiOpts(n); }} 
                   />
-                  <button type="button" className="btn-outline" style={{ padding: '0 12px' }} onClick={() => setShowAiKeys(!showAiKeys)}>
+                  <button type="button" className="btn-outline" style={{ padding: '0 12px' }} onClick={handleToggleShowAiKeys}>
                     {showAiKeys ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
@@ -408,7 +441,7 @@ export default function Settings({
                   className="settings-input" 
                   value={aiOpts.groqModel} 
                   placeholder="e.g. llama-3.1-8b-instant"
-                  onChange={(e) => { const n = { ...aiOpts, groqModel: e.target.value }; setAiOpts(n); saveAIOptions(n); }}
+                  onChange={(e) => { const n = { ...aiOpts, groqModel: e.target.value }; setAiOpts(n); }}
                 />
                 <datalist id="groq-models">
                   {GROQ_MODELS.map(m => (
@@ -418,6 +451,14 @@ export default function Settings({
                 <p className="input-hint">Select a model from the list or type a custom Groq model ID.</p>
               </div>
             </>
+          )}
+
+          {aiOpts.provider !== "none" && (
+            <div style={{ marginTop: 16 }}>
+              <button type="button" className="btn-primary" style={{ width: '100%' }} onClick={handleSaveAiSettings}>
+                Save API Keys & Models
+              </button>
+            </div>
           )}
         </div>
 

@@ -5598,3 +5598,8 @@ html, body {
 .ai-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes spin { 100% { transform: rotate(360deg); } }
+
+:root.dark-mode .bottom-nav { background: rgba(26, 26, 26, 0.95) !important; border-top: 1px solid var(--border) !important; }
+:root.dark-mode .nav-btn { color: var(--text2); }
+:root.dark-mode .nav-btn.active { color: var(--accent); }
+:root.dark-mode .icon-btn { color: var(--text); }
