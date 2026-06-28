@@ -1,4 +1,4 @@
-import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignLeft, Calendar, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowRight } from "lucide-react";
+import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignLeft, Calendar, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowRight, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { FinanceItem } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
@@ -82,8 +82,8 @@ function HorizontalBarChart({ data, total }: { data: { label: string; value: num
 }
 
 export default function Dashboard({ masterKey, currency, items, onItemsChange, onLock }: Props) {
-  const [editItem, setEditItem] = useState<FinanceItem | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editItem, setEditItem] = useState<FinanceItem | null>(null);
   const [chartType, setChartType] = useState<ChartType>("donut");
   const [selectedMonth, setSelectedMonth] = useState(() => {
     const n = new Date();

@@ -1,5 +1,4 @@
-import { FinanceItem, CardExpense, CardBill, CashbackEntry, RDInstallment, BankExpense } from "../types";
-
+import { FinanceItem, CardExpense, CardBill, CashbackEntry, RDInstallment, BankExpense, AIOptions } from "../types";
 const ITEMS_KEY         = "finance_items";
 const PIN_HASH_KEY      = "finance_pin_hash";
 const CURRENCY_KEY      = "finance_currency";
@@ -12,6 +11,7 @@ const IDLE_TIMEOUT_KEY  = "finance_idle_timeout_min";
 const THEME_KEY         = "finance_theme";
 const SECURITY_Q_KEY    = "finance_security_q_idx";
 const SECURITY_A_KEY    = "finance_security_a_hash";
+const AI_OPTIONS_KEY    = "finance_ai_options";
 
 // ── Finance Items ────────────────────────────────────────────────
 export function saveItems(items: FinanceItem[]): void {
@@ -138,4 +138,26 @@ export function clearAll(): void {
    "finance_bio_cred_id", "finance_bio_enc_pin", "finance_bio_prf_salt",
    IDLE_TIMEOUT_KEY, THEME_KEY, SECURITY_Q_KEY, SECURITY_A_KEY]
     .forEach((k) => localStorage.removeItem(k));
+}
+
+// ── AI Options ───────────────────────────────────────────────────
+export function saveAIOptions(opts: AIOptions): void {
+  localStorage.setItem(AI_OPTIONS_KEY, JSON.stringify(opts));
+}
+export function loadAIOptions(): AIOptions {
+  try {
+    const raw = localStorage.getItem(AI_OPTIONS_KEY);
+    if (!raw) return { provider: "none", geminiKey: "", openRouterKey: "", openRouterModel: "google/gemini-flash-1.5", groqKey: "", groqModel: "llama-3.1-8b-instant" };
+    const parsed = JSON.parse(raw);
+    return {
+      provider: parsed.provider || "none",
+      geminiKey: parsed.geminiKey || "",
+      openRouterKey: parsed.openRouterKey || "",
+      openRouterModel: parsed.openRouterModel || "google/gemini-flash-1.5",
+      groqKey: parsed.groqKey || "",
+      groqModel: parsed.groqModel || "llama-3.1-8b-instant"
+    };
+  } catch {
+    return { provider: "none", geminiKey: "", openRouterKey: "", openRouterModel: "google/gemini-flash-1.5", groqKey: "", groqModel: "llama-3.1-8b-instant" };
+  }
 }

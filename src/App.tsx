@@ -1,4 +1,4 @@
-import { Construction,  } from "lucide-react";
+import { Construction, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import AuthScreen from "./pages/AuthScreen";
 import Dashboard from "./pages/Dashboard";
@@ -13,7 +13,10 @@ import SplashScreen from "./components/SplashScreen";
 import NewCardModal from "./components/NewCardModal";
 import WelcomeSetup, { isOnboardingDone } from "./components/WelcomeSetup";
 import AdminApp from "./admin/AdminApp";
-import { loadItems, loadCurrency, loadIdleTimeout, loadTheme, saveTheme, loadPinHash } from "./lib/storage";
+import AIAssistant from "./components/AIAssistant";
+import Lottie from "lottie-react";
+import aiAnimation from "../public/FinAura_AI_Lottie.json";
+import { loadItems, loadCurrency, loadIdleTimeout, loadTheme, saveTheme, loadPinHash, loadAIOptions, loadExpenses } from "./lib/storage";
 import { getCurrency } from "./lib/currency";
 import { FinanceItem, NavTab, Currency } from "./types";
 import { startSession, endSession, trackTabVisit, applyAdminTheme, loadAdminTheme, loadAdminConfigFromServer, seedDefaultCardTemplates, loadGlobalConfig } from "./admin/adminStorage";
@@ -66,6 +69,8 @@ function MainApp() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const initialConfigVersion = useRef(globalConfig.configVersion || 1);
   const [targetCardId, setTargetCardId] = useState<string | null>(null);
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const aiOpts = loadAIOptions();
 
   const handleSplashDone = useCallback(() => setShowSplash(false), []);
 
@@ -244,6 +249,35 @@ function MainApp() {
           )}
         </div>
         <BottomNav active={tab} onChange={handleTabChange} />
+
+        {tab !== "settings" && aiOpts.provider !== "none" && (
+          <button 
+            className="fab-btn ai-fab-btn" 
+            onClick={() => setShowAIAssistant(true)} 
+            aria-label="Ask AI" 
+            title="Ask AI"
+            style={{ 
+              left: '18px',
+              right: 'auto',
+              bottom: 'calc(var(--bottom-nav-h, 64px) + 14px)', 
+              zIndex: 55,
+              background: 'transparent',
+              boxShadow: 'none',
+              padding: 0,
+              overflow: 'visible'
+            }}
+          >
+            <Lottie animationData={aiAnimation} loop={true} style={{ width: 80, height: 80, filter: 'drop-shadow(0px 4px 12px rgba(0,0,0,0.2))' }} />
+          </button>
+        )}
+
+        {showAIAssistant && (
+          <AIAssistant 
+            aiOpts={aiOpts}
+            contextData={{ items, expenses: loadExpenses() }}
+            onClose={() => setShowAIAssistant(false)}
+          />
+        )}
       </div>
     </div>
   );

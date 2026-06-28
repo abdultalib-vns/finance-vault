@@ -1,8 +1,10 @@
-import { Ban, CheckCircle, AlertTriangle } from "lucide-react";
-import { useState } from "react";
+import { Ban, CheckCircle, AlertTriangle, Camera, Sparkles, Send } from "lucide-react";
+import { useState, useRef } from "react";
 import { CardExpense } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
 import { generateId } from "../lib/utils";
+import { loadAIOptions } from "../lib/storage";
+import { scanReceipt, parseNaturalExpense } from "../lib/ai";
 
 interface Props {
   cardId: string;
@@ -26,6 +28,11 @@ export default function ExpenseForm({ cardId, currency, onAdd, onCancel, initial
   );
   const [cashback, setCashback] = useState(initialValues ? (initialValues.cashback > 0 ? String(initialValues.cashback) : "") : "");
   const [error, setError] = useState("");
+  const [isScanning, setIsScanning] = useState(false);
+  const [naturalText, setNaturalText] = useState("");
+  const [isParsing, setIsParsing] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const aiOpts = loadAIOptions();
 
   const enteredAmt = parseFloat(amount) || 0;
   const projectedOutstanding = currentOutstanding + enteredAmt;
@@ -69,9 +76,87 @@ export default function ExpenseForm({ cardId, currency, onAdd, onCancel, initial
     onAdd(expense);
   }
 
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setIsScanning(true);
+    setError("");
+    try {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64 = reader.result as string;
+        const res = await scanReceipt(aiOpts, base64, []);
+        if (res.success && res.data) {
+          if (res.data.description) setDescription(res.data.description);
+          if (res.data.amount) setAmount(String(res.data.amount));
+          if (res.data.date) setDate(res.data.date);
+          if (res.data.cashback) setCashback(String(res.data.cashback));
+        } else {
+          setError(res.error || "Failed to parse receipt.");
+        }
+        setIsScanning(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (err: any) {
+      setError(err.message || "Failed to read image.");
+      setIsScanning(false);
+    }
+  }
+
+  async function handleNaturalSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!naturalText.trim()) return;
+    setIsParsing(true);
+    setError("");
+    const res = await parseNaturalExpense(aiOpts, naturalText, []);
+    if (res.success && res.data) {
+      if (res.data.description) setDescription(res.data.description);
+      if (res.data.amount) setAmount(String(res.data.amount));
+      if (res.data.date) setDate(res.data.date);
+      setNaturalText("");
+    } else {
+      setError(res.error || "Failed to parse text.");
+    }
+    setIsParsing(false);
+  }
+
   return (
+    <div className="expense-form-wrapper">
+      {!isEdit && aiOpts.provider !== "none" && (
+        <form className="ai-natural-entry" onSubmit={handleNaturalSubmit} style={{ marginBottom: 16, display: 'flex', gap: 8 }}>
+          <input 
+            type="text" 
+            placeholder="AI Quick Entry: e.g. Spent 500 on dinner..." 
+            value={naturalText}
+            onChange={(e) => setNaturalText(e.target.value)}
+            className="settings-input"
+            style={{ flex: 1, padding: '8px 12px' }}
+            disabled={isParsing}
+          />
+          <button type="submit" className="btn-primary" style={{ padding: '0 12px' }} disabled={isParsing || !naturalText.trim()}>
+            {isParsing ? "..." : <Send size={16} />}
+          </button>
+        </form>
+      )}
     <form className="expense-form" onSubmit={handleSubmit}>
-      <h3 className="form-title">{isEdit ? "Edit Expense" : "Add Expense"}</h3>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <h3 className="form-title" style={{ margin: 0 }}>{isEdit ? "Edit Expense" : "Add Expense"}</h3>
+        {!isEdit && aiOpts.provider !== "none" && (
+          <>
+            <input type="file" accept="image/*" style={{ display: 'none' }} ref={fileInputRef} onChange={handleFileChange} />
+            <button 
+              type="button" 
+              className="btn-outline" 
+              style={{ padding: '4px 8px', fontSize: '0.85rem' }} 
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isScanning}
+            >
+              {isScanning ? "Scanning..." : <><Camera size={14} style={{ marginRight: 4 }} /> AI Scan</>}
+            </button>
+          </>
+        )}
+      </div>
       {error && <p className="form-error">{error}</p>}
       {wouldExceedLimit && remainingLimit !== undefined && (
         <div className="expense-limit-warning expense-limit-exceeded">
@@ -173,5 +258,6 @@ export default function ExpenseForm({ cardId, currency, onAdd, onCancel, initial
         <button type="button" className="btn-secondary" onClick={onCancel}>Cancel</button>
       </div>
     </form>
+    </div>
   );
 }

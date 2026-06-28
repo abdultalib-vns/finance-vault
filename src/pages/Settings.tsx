@@ -1,9 +1,10 @@
-import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt , TrendingUp, RefreshCw, ClipboardList,  } from "lucide-react";
+import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { hashPin } from "../lib/crypto";
-import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses } from "../lib/storage";
+import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses, saveAIOptions, loadAIOptions } from "../lib/storage";
 import { encryptData, decryptData } from "../lib/crypto";
-import { FinanceItem, Currency } from "../types";
+import { FinanceItem, Currency, AIOptions } from "../types";
+import { OPENROUTER_MODELS, GROQ_MODELS } from "../lib/ai";
 import { getDynamicCurrencies, getCurrency } from "../lib/currency";
 import {
   isBiometricSupported,
@@ -59,6 +60,9 @@ export default function Settings({
   const [clearStep, setClearStep] = useState<"idle" | "pin" | "bio">("idle");
   const [clearPin, setClearPin] = useState("");
   const [clearMsg, setClearMsg] = useState("");
+
+  const [aiOpts, setAiOpts] = useState<AIOptions>(loadAIOptions());
+  const [showAiKeys, setShowAiKeys] = useState(false);
 
   useEffect(() => {
     isBiometricSupported().then(setBioSupported);
@@ -280,6 +284,141 @@ export default function Settings({
             <button type="button" className={`theme-btn ${theme === "light" ? "active" : ""}`} onClick={() => onThemeChange("light")}><Sun size={16} /> Light</button>
             <button type="button" className={`theme-btn ${theme === "dark" ? "active" : ""}`} onClick={() => onThemeChange("dark")}><Moon size={16} /> Dark</button>
           </div>
+        </div>
+
+        <div className="settings-section">
+          <h3 className="settings-section-title"><Bot size={20} /> AI Assistant Settings</h3>
+          <p className="settings-hint">Configure your AI provider to enable smart features like Receipt Scanning, Natural Language Entry, and the Vault Assistant.</p>
+          
+          <div className="form-group" style={{ marginTop: 12 }}>
+            <label className="settings-label">AI Provider</label>
+            <div className="type-tabs" style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+              <button 
+                type="button" 
+                className={`type-tab ${aiOpts.provider === "none" ? "active" : ""}`}
+                onClick={() => { const n = { ...aiOpts, provider: "none" as const }; setAiOpts(n); saveAIOptions(n); }}
+              >
+                None
+              </button>
+              <button 
+                type="button" 
+                className={`type-tab ${aiOpts.provider === "gemini" ? "active" : ""}`}
+                onClick={() => { const n = { ...aiOpts, provider: "gemini" as const }; setAiOpts(n); saveAIOptions(n); }}
+              >
+                Google Gemini
+              </button>
+              <button 
+                type="button" 
+                className={`type-tab ${aiOpts.provider === "openrouter" ? "active" : ""}`}
+                onClick={() => { const n = { ...aiOpts, provider: "openrouter" as const }; setAiOpts(n); saveAIOptions(n); }}
+              >
+                OpenRouter
+              </button>
+              <button 
+                type="button" 
+                className={`type-tab ${aiOpts.provider === "groq" ? "active" : ""}`}
+                onClick={() => { const n = { ...aiOpts, provider: "groq" as const }; setAiOpts(n); saveAIOptions(n); }}
+              >
+                Groq
+              </button>
+            </div>
+          </div>
+
+          {aiOpts.provider === "gemini" && (
+            <div className="form-group">
+              <label className="settings-label">Gemini API Key</label>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input 
+                  type={showAiKeys ? "text" : "password"} 
+                  className="settings-input" 
+                  style={{ flex: 1 }}
+                  placeholder="AIzaSy..." 
+                  value={aiOpts.geminiKey} 
+                  onChange={(e) => { const n = { ...aiOpts, geminiKey: e.target.value }; setAiOpts(n); saveAIOptions(n); }} 
+                />
+                <button type="button" className="btn-outline" style={{ padding: '0 12px' }} onClick={() => setShowAiKeys(!showAiKeys)}>
+                  {showAiKeys ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              <p className="input-hint">Get a free key from Google AI Studio. Stored securely on your device.</p>
+            </div>
+          )}
+
+          {aiOpts.provider === "openrouter" && (
+            <>
+              <div className="form-group">
+                <label className="settings-label">OpenRouter API Key</label>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <input 
+                    type={showAiKeys ? "text" : "password"} 
+                    className="settings-input" 
+                    style={{ flex: 1 }}
+                    placeholder="sk-or-v1-..." 
+                    value={aiOpts.openRouterKey} 
+                    onChange={(e) => { const n = { ...aiOpts, openRouterKey: e.target.value }; setAiOpts(n); saveAIOptions(n); }} 
+                  />
+                  <button type="button" className="btn-outline" style={{ padding: '0 12px' }} onClick={() => setShowAiKeys(!showAiKeys)}>
+                    {showAiKeys ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+              <div className="form-group" style={{ marginTop: 12 }}>
+                <label className="settings-label">OpenRouter Model</label>
+                <input 
+                  type="text"
+                  list="openrouter-models"
+                  className="settings-input" 
+                  value={aiOpts.openRouterModel} 
+                  placeholder="e.g. google/gemini-flash-1.5"
+                  onChange={(e) => { const n = { ...aiOpts, openRouterModel: e.target.value }; setAiOpts(n); saveAIOptions(n); }}
+                />
+                <datalist id="openrouter-models">
+                  {OPENROUTER_MODELS.map(m => (
+                    <option key={m.id} value={m.id}>{m.name}</option>
+                  ))}
+                </datalist>
+                <p className="input-hint">Select a model from the list or type a custom OpenRouter model ID.</p>
+              </div>
+            </>
+          )}
+
+          {aiOpts.provider === "groq" && (
+            <>
+              <div className="form-group">
+                <label className="settings-label">Groq API Key</label>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <input 
+                    type={showAiKeys ? "text" : "password"} 
+                    className="settings-input" 
+                    style={{ flex: 1 }}
+                    placeholder="gsk_..." 
+                    value={aiOpts.groqKey} 
+                    onChange={(e) => { const n = { ...aiOpts, groqKey: e.target.value }; setAiOpts(n); saveAIOptions(n); }} 
+                  />
+                  <button type="button" className="btn-outline" style={{ padding: '0 12px' }} onClick={() => setShowAiKeys(!showAiKeys)}>
+                    {showAiKeys ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+              <div className="form-group" style={{ marginTop: 12 }}>
+                <label className="settings-label">Groq Model</label>
+                <input 
+                  type="text"
+                  list="groq-models"
+                  className="settings-input" 
+                  value={aiOpts.groqModel} 
+                  placeholder="e.g. llama-3.1-8b-instant"
+                  onChange={(e) => { const n = { ...aiOpts, groqModel: e.target.value }; setAiOpts(n); saveAIOptions(n); }}
+                />
+                <datalist id="groq-models">
+                  {GROQ_MODELS.map(m => (
+                    <option key={m.id} value={m.id}>{m.name}</option>
+                  ))}
+                </datalist>
+                <p className="input-hint">Select a model from the list or type a custom Groq model ID.</p>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="settings-section">

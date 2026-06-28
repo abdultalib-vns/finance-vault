@@ -102,3 +102,12 @@ export interface BankExpense {
   category?: string;
   createdAt: number;
 }
+
+export interface AIOptions {
+  provider: "none" | "gemini" | "openrouter" | "groq";
+  geminiKey: string;
+  openRouterKey: string;
+  openRouterModel: string;
+  groqKey: string;
+  groqModel: string;
+}
