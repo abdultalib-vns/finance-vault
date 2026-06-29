@@ -67,7 +67,6 @@ export default function Settings({
   const [popupMsg, setPopupMsg] = useState<{title: string, desc: string, type: "success" | "error" | "info"} | null>(null);
   const [showAiPinPrompt, setShowAiPinPrompt] = useState(false);
   const [aiPin, setAiPin] = useState("");
-  const [veloClickCount, setVeloClickCount] = useState(0);
 
   useEffect(() => {
     isBiometricSupported().then(setBioSupported);
@@ -339,21 +338,9 @@ export default function Settings({
     <div className="screen">
       <header className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 className="header-title">Settings</h2>
-        <div 
-          style={{ display: 'flex', alignItems: 'center', height: '32px', cursor: 'pointer' }}
-          onClick={() => {
-            const newCount = veloClickCount + 1;
-            setVeloClickCount(newCount);
-            if (newCount === 7) {
-              if (window.confirm("Do you want to login to the admin portal?")) {
-                window.location.href = "https://finaura-velolaunch.vercel.app/#/admin";
-              }
-              setVeloClickCount(0);
-            }
-          }}
-        >
+        <a href="https://velolaunch.lovable.app" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', height: '32px' }}>
           <img src={veloLaunchLogo} alt="VeloLaunch" style={{ display: 'block', height: "100%", width: 'auto', objectFit: "contain", opacity: 0.9, transition: "opacity 0.2s ease" }} onMouseOver={e => e.currentTarget.style.opacity = "1"} onMouseOut={e => e.currentTarget.style.opacity = "0.9"} />
-        </div>
+        </a>
       </header>
       <div className="content">
         <div className="settings-section">
