@@ -1,7 +1,7 @@
 import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { hashPin } from "../lib/crypto";
-import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses, saveAIOptions, loadAIOptions } from "../lib/storage";
+import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses, saveAIOptions, loadAIOptions, getVeloAIUsageCount } from "../lib/storage";
 import { encryptData, decryptData } from "../lib/crypto";
 import { FinanceItem, Currency, AIOptions } from "../types";
 import { OPENROUTER_MODELS, GROQ_MODELS } from "../lib/ai";
@@ -389,6 +389,13 @@ export default function Settings({
               </button>
             </div>
           </div>
+
+          {aiOpts.provider === "veloai" && (
+            <div className="settings-msg info" style={{ marginBottom: 12 }}>
+              <Bot size={16} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6 }} />
+              You have {10 - getVeloAIUsageCount()}/10 messages left for today.
+            </div>
+          )}
 
           {aiOpts.provider === "gemini" && (
             <div className="form-group">

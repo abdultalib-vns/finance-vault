@@ -19,7 +19,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: "autoUpdate",
+      registerType: "prompt",
       base: basePath,
       includeAssets: ["favicon.png", "icon-192.png", "icon-512.png"],
       manifest: {

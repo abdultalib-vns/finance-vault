@@ -193,3 +193,16 @@ export function incrementVeloAIUsage(): void {
     // Ignore errors
   }
 }
+
+export function getVeloAIUsageCount(): number {
+  try {
+    const raw = localStorage.getItem(VELOAI_USAGE_KEY);
+    const today = new Date().toISOString().split("T")[0];
+    if (!raw) return 0;
+    const usage = JSON.parse(raw);
+    if (usage.date !== today) return 0;
+    return usage.count;
+  } catch (e) {
+    return 0;
+  }
+}
