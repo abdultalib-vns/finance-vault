@@ -64,6 +64,9 @@ export default function Settings({
 
   const [aiOpts, setAiOpts] = useState<AIOptions>(loadAIOptions());
   const [showAiKeys, setShowAiKeys] = useState(false);
+  const [popupMsg, setPopupMsg] = useState<{title: string, desc: string, type: "success" | "error" | "info"} | null>(null);
+  const [showAiPinPrompt, setShowAiPinPrompt] = useState(false);
+  const [aiPin, setAiPin] = useState("");
 
   useEffect(() => {
     isBiometricSupported().then(setBioSupported);
@@ -172,19 +175,31 @@ export default function Settings({
       }
     }
 
-    const pin = window.prompt("Enter your vault PIN to view API keys:");
-    if (!pin) return;
+    setShowAiPinPrompt(true);
+    setAiPin("");
+  }
+
+  function handleAiPinSubmit() {
     const storedHash = localStorage.getItem("vault_pin") || hashPin(masterKey);
-    if (hashPin(pin) === storedHash) {
+    if (hashPin(aiPin) === storedHash) {
       setShowAiKeys(true);
+      setShowAiPinPrompt(false);
     } else {
-      alert("Incorrect PIN");
+      setPopupMsg({
+        title: "Authentication Failed",
+        desc: "The PIN you entered is incorrect. Please try again.",
+        type: "error"
+      });
     }
   }
 
   function handleSaveAiSettings() {
     saveAIOptions(aiOpts);
-    alert("AI API keys and models have been saved securely.");
+    setPopupMsg({
+      title: "Success",
+      desc: "AI API keys and models have been saved securely.",
+      type: "success"
+    });
     setShowAiKeys(false); // Hide after saving for security
   }
 
@@ -460,6 +475,16 @@ export default function Settings({
 
           {aiOpts.provider !== "none" && (
             <div style={{ marginTop: 16 }}>
+              {showAiPinPrompt && (
+                <div className="pin-prompt-box" style={{ marginBottom: 12 }}>
+                  <label className="settings-label">Enter PIN to view keys:</label>
+                  <input type="password" inputMode="numeric" className="settings-input" value={aiPin} onChange={(e) => setAiPin(e.target.value)} placeholder="PIN" />
+                  <div style={{display:'flex', gap:8, marginTop:12}}>
+                    <button type="button" className="btn-outline" style={{flex:1}} onClick={() => setShowAiPinPrompt(false)}>Cancel</button>
+                    <button type="button" className="btn-primary" style={{flex:1}} onClick={handleAiPinSubmit}>Unlock</button>
+                  </div>
+                </div>
+              )}
               <button type="button" className="btn-primary" style={{ width: '100%' }} onClick={handleSaveAiSettings}>
                 Save API Keys & Models
               </button>
@@ -678,6 +703,25 @@ export default function Settings({
           Developed by Velo Launch <br /> A Company by <a href="https://smartvistaitsolutions.in" target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 600 }}>Smart Vista IT Solutions</a>
         </div>
       </div>
+
+      {popupMsg && (
+        <div className="modal-overlay" style={{ zIndex: 9999 }} onClick={() => setPopupMsg(null)}>
+          <div className="modal-sheet" style={{ paddingBottom: 24, maxHeight: 'none', top: 'auto', bottom: 0, transform: 'none' }} onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                {popupMsg.type === "success" && <CheckCircle size={20} style={{ color: "var(--success)" }} />}
+                {popupMsg.type === "error" && <AlertTriangle size={20} style={{ color: "var(--danger)" }} />}
+                {popupMsg.type === "info" && <Info size={20} style={{ color: "var(--primary)" }} />}
+                {popupMsg.title}
+              </h3>
+            </div>
+            <p style={{ margin: "16px 0", color: "var(--text)" }}>{popupMsg.desc}</p>
+            <button className="btn-primary" style={{ width: "100%" }} onClick={() => setPopupMsg(null)}>
+              OK
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
