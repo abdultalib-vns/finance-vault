@@ -362,11 +362,12 @@ export default function Settings({
               <label className="settings-label">Gemini API Key</label>
               <div style={{ display: 'flex', gap: 8 }}>
                 <input 
-                  type={showAiKeys ? "text" : "password"} 
+                  type="text" 
                   className="settings-input" 
                   style={{ flex: 1 }}
                   placeholder="AIzaSy..." 
-                  value={aiOpts.geminiKey} 
+                  readOnly={!showAiKeys && !!aiOpts.geminiKey}
+                  value={(!showAiKeys && aiOpts.geminiKey) ? "••••••••••••••••••••••••••••••••" : aiOpts.geminiKey} 
                   onChange={(e) => { const n = { ...aiOpts, geminiKey: e.target.value }; setAiOpts(n); }} 
                 />
                 <button type="button" className="btn-outline" style={{ padding: '0 12px' }} onClick={handleToggleShowAiKeys}>
@@ -383,11 +384,12 @@ export default function Settings({
                 <label className="settings-label">OpenRouter API Key</label>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <input 
-                    type={showAiKeys ? "text" : "password"} 
+                    type="text" 
                     className="settings-input" 
                     style={{ flex: 1 }}
                     placeholder="sk-or-v1-..." 
-                    value={aiOpts.openRouterKey} 
+                    readOnly={!showAiKeys && !!aiOpts.openRouterKey}
+                    value={(!showAiKeys && aiOpts.openRouterKey) ? "••••••••••••••••••••••••••••••••" : aiOpts.openRouterKey} 
                     onChange={(e) => { const n = { ...aiOpts, openRouterKey: e.target.value }; setAiOpts(n); }} 
                   />
                   <button type="button" className="btn-outline" style={{ padding: '0 12px' }} onClick={handleToggleShowAiKeys}>
@@ -401,7 +403,8 @@ export default function Settings({
                   type="text"
                   list="openrouter-models"
                   className="settings-input" 
-                  value={aiOpts.openRouterModel} 
+                  readOnly={!showAiKeys && !!aiOpts.openRouterModel}
+                  value={(!showAiKeys && aiOpts.openRouterModel) ? "••••••••••••••••" : aiOpts.openRouterModel} 
                   placeholder="e.g. google/gemini-flash-1.5"
                   onChange={(e) => { const n = { ...aiOpts, openRouterModel: e.target.value }; setAiOpts(n); }}
                 />
@@ -421,11 +424,12 @@ export default function Settings({
                 <label className="settings-label">Groq API Key</label>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <input 
-                    type={showAiKeys ? "text" : "password"} 
+                    type="text" 
                     className="settings-input" 
                     style={{ flex: 1 }}
                     placeholder="gsk_..." 
-                    value={aiOpts.groqKey} 
+                    readOnly={!showAiKeys && !!aiOpts.groqKey}
+                    value={(!showAiKeys && aiOpts.groqKey) ? "••••••••••••••••••••••••••••••••" : aiOpts.groqKey} 
                     onChange={(e) => { const n = { ...aiOpts, groqKey: e.target.value }; setAiOpts(n); }} 
                   />
                   <button type="button" className="btn-outline" style={{ padding: '0 12px' }} onClick={handleToggleShowAiKeys}>
@@ -439,7 +443,8 @@ export default function Settings({
                   type="text"
                   list="groq-models"
                   className="settings-input" 
-                  value={aiOpts.groqModel} 
+                  readOnly={!showAiKeys && !!aiOpts.groqModel}
+                  value={(!showAiKeys && aiOpts.groqModel) ? "••••••••••••••••" : aiOpts.groqModel} 
                   placeholder="e.g. llama-3.1-8b-instant"
                   onChange={(e) => { const n = { ...aiOpts, groqModel: e.target.value }; setAiOpts(n); }}
                 />
