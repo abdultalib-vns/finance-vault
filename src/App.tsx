@@ -9,6 +9,7 @@ import Settings from "./pages/Settings";
 import BottomNav from "./components/BottomNav";
 import PopupAdBanner from "./components/PopupAdBanner";
 import ThemeUpdateBanner from "./components/ThemeUpdateBanner";
+import UpdatePrompt from "./components/UpdatePrompt";
 import SplashScreen from "./components/SplashScreen";
 import NewCardModal from "./components/NewCardModal";
 import WelcomeSetup, { isOnboardingDone } from "./components/WelcomeSetup";
@@ -213,6 +214,7 @@ function MainApp() {
       )}
       <PopupAdBanner />
       <ThemeUpdateBanner />
+      <UpdatePrompt />
       <NewCardModal onShowMore={(cardId) => {
         setTargetCardId(cardId);
         setTab("cards");

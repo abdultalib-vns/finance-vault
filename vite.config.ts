@@ -12,6 +12,9 @@ const basePath = process.env.BASE_PATH || "/";
 
 export default defineConfig({
   base: basePath,
+  define: {
+    'import.meta.env.VITE_BUILD_VERSION': JSON.stringify(`Build ${new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')} UTC`),
+  },
   plugins: [
     react(),
     tailwindcss(),

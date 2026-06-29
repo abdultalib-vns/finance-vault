@@ -5614,3 +5614,11 @@ html, body {
 :root.dark-mode .icon-btn { color: var(--text); }
 
 svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertical-align: middle; position: relative; top: -0.05em; }
+
+
+.update-toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 10000; width: 90%; max-width: 400px; animation: slideUp 0.3s ease-out; }
+.update-toast-content { display: flex; align-items: center; gap: 12px; }
+.update-text { display: flex; flex-direction: column; }
+.update-title { font-weight: 600; font-size: 0.95rem; color: var(--text); }
+.update-sub { font-size: 0.8rem; color: var(--text2); }
+.update-actions { display: flex; align-items: center; }

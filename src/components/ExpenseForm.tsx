@@ -1,4 +1,4 @@
-import { Ban, CheckCircle, AlertTriangle, Camera, Sparkles, Send } from "lucide-react";
+import { Ban, CheckCircle, AlertTriangle, Camera, Sparkles, Send, Image } from "lucide-react";
 import { useState, useRef } from "react";
 import { CardExpense } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
@@ -32,6 +32,7 @@ export default function ExpenseForm({ cardId, currency, onAdd, onCancel, initial
   const [naturalText, setNaturalText] = useState("");
   const [isParsing, setIsParsing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   const aiOpts = loadAIOptions();
 
   const enteredAmt = parseFloat(amount) || 0;
@@ -143,18 +144,30 @@ export default function ExpenseForm({ cardId, currency, onAdd, onCancel, initial
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <h3 className="form-title" style={{ margin: 0 }}>{isEdit ? "Edit Expense" : "Add Expense"}</h3>
         {!isEdit && aiOpts.provider !== "none" && (
-          <>
+          <div style={{ display: 'flex', gap: 6 }}>
             <input type="file" accept="image/*" style={{ display: 'none' }} ref={fileInputRef} onChange={handleFileChange} />
+            <input type="file" accept="image/*" capture="environment" style={{ display: 'none' }} ref={cameraInputRef} onChange={handleFileChange} />
             <button 
               type="button" 
               className="btn-outline" 
-              style={{ padding: '4px 8px', fontSize: '0.85rem' }} 
+              style={{ padding: '4px 8px', fontSize: '0.85rem', display: 'flex', alignItems: 'center' }} 
               onClick={() => fileInputRef.current?.click()}
               disabled={isScanning}
+              title="Upload Receipt"
             >
-              {isScanning ? "Scanning..." : <><Camera size={14} style={{ marginRight: 4 }} /> AI Scan</>}
+              {isScanning ? "..." : <><Image size={14} style={{ marginRight: 4 }} /> Upload</>}
             </button>
-          </>
+            <button 
+              type="button" 
+              className="btn-outline" 
+              style={{ padding: '4px 8px', fontSize: '0.85rem', display: 'flex', alignItems: 'center' }} 
+              onClick={() => cameraInputRef.current?.click()}
+              disabled={isScanning}
+              title="Scan Receipt with Camera"
+            >
+              {isScanning ? "Scanning..." : <><Camera size={14} style={{ marginRight: 4 }} /> Scan</>}
+            </button>
+          </div>
         )}
       </div>
       {error && <p className="form-error">{error}</p>}

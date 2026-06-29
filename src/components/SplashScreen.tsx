@@ -54,6 +54,9 @@ export default function SplashScreen({ onFinish }: Props) {
       {/* Credit */}
       <div style={{ position: "absolute", bottom: "30px", left: "0", width: "100%", textAlign: "center", fontSize: "0.75rem", color: "var(--text3)", opacity: 0.8, lineHeight: 1.4 }}>
         Developed by Velo Launch <br /> A Company by <a href="https://smartvistaitsolutions.in" target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 600 }}>Smart Vista IT Solutions</a>
+        <div style={{ marginTop: '8px', fontSize: '0.65rem', opacity: 0.6, letterSpacing: '0.05em' }}>
+          {import.meta.env.VITE_BUILD_VERSION || "Dev Build"}
+        </div>
       </div>
     </div>
   );
