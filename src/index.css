@@ -5600,7 +5600,7 @@ html, body {
 .ai-typing { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); }
 .spin { animation: spin 1s linear infinite; }
 .ai-suggestions { padding: 0 16px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
-.ai-suggestion-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 16px; padding: 6px 12px; font-size: 0.85rem; color: var(--text-secondary); cursor: pointer; white-space: nowrap; }
+.ai-suggestion-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 16px; padding: 6px 12px; font-size: 0.85rem; color: var(--text-secondary); cursor: pointer; white-space: nowrap; flex-shrink: 0; }
 .ai-input-form { display: flex; padding: 16px; gap: 8px; border-top: 1px solid var(--border); background: var(--surface); }
 .ai-chat-input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 10px 16px; font-size: 0.95rem; color: var(--text); outline: none; }
 .ai-send-btn { width: 40px; height: 40px; border-radius: 20px; background: var(--primary); color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
