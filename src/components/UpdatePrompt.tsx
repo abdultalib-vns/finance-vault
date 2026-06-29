@@ -8,6 +8,12 @@ export default function UpdatePrompt() {
   } = useRegisterSW({
     onRegistered(r) {
       console.log('SW Registered: ', r);
+      // Periodically check for updates every 5 minutes
+      if (r) {
+        setInterval(() => {
+          r.update();
+        }, 5 * 60 * 1000);
+      }
     },
     onRegisterError(error) {
       console.log('SW registration error', error);

@@ -206,3 +206,26 @@ export function getVeloAIUsageCount(): number {
     return 0;
   }
 }
+
+// ── Dashboard Due Reminders ─────────────────────────────────────────
+const SUPPRESSED_DUES_KEY = "finance_suppressed_dues";
+
+export function suppressDueReminder(cardId: string, dueDate: string): void {
+  try {
+    const raw = localStorage.getItem(SUPPRESSED_DUES_KEY);
+    const suppressed = raw ? JSON.parse(raw) : {};
+    suppressed[`${cardId}_${dueDate}`] = true;
+    localStorage.setItem(SUPPRESSED_DUES_KEY, JSON.stringify(suppressed));
+  } catch (e) {}
+}
+
+export function isDueReminderSuppressed(cardId: string, dueDate: string): boolean {
+  try {
+    const raw = localStorage.getItem(SUPPRESSED_DUES_KEY);
+    if (!raw) return false;
+    const suppressed = JSON.parse(raw);
+    return !!suppressed[`${cardId}_${dueDate}`];
+  } catch (e) {
+    return false;
+  }
+}

@@ -1,11 +1,12 @@
-import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignLeft, Calendar, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowRight, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignLeft, Calendar, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowRight, Sparkles, AlertTriangle, X, Coins, CheckCircle, EyeOff } from "lucide-react";
+import { useState, useEffect } from "react";
 import { FinanceItem } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
-import { saveItems, loadExpenses, saveExpenses, loadBankExpenses, saveBankExpenses } from "../lib/storage";
+import { saveItems, loadExpenses, saveExpenses, loadBankExpenses, saveBankExpenses, suppressDueReminder, isDueReminderSuppressed } from "../lib/storage";
 import AddItemForm from "../components/AddItemForm";
 import ItemCard from "../components/ItemCard";
 import NotificationBell from "../components/NotificationBell";
+import PaymentAppsModal from "../components/PaymentAppsModal";
 
 interface Props {
   masterKey: string;
@@ -89,6 +90,88 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
     const n = new Date();
     return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}`;
   });
+
+  // Upcoming Due Modal State
+  const [upcomingDue, setUpcomingDue] = useState<{
+    cardId: string;
+    cardName: string;
+    lastFour: string;
+    dueDate: string;
+    amount: number;
+    daysLeft: number;
+  } | null>(null);
+  const [showPaymentApps, setShowPaymentApps] = useState(false);
+
+  useEffect(() => {
+    const allExpenses = loadExpenses();
+    const todayStr = new Date().toISOString().split("T")[0];
+    const todayMs = new Date(todayStr).getTime();
+    
+    // Find all unpaid expenses with a due date
+    const unpaidDues = allExpenses.filter(e => 
+      (e.status === "unpaid" || e.status === "bill_generated_unpaid") && e.dueDate
+    );
+
+    // Group by cardId and dueDate
+    const grouped = unpaidDues.reduce((acc, exp) => {
+      const key = `${exp.cardId}_${exp.dueDate!}`;
+      if (!acc[key]) acc[key] = { ...exp, totalAmount: 0 };
+      acc[key].totalAmount += exp.amount;
+      return acc;
+    }, {} as Record<string, any>);
+
+    let mostUrgent = null;
+    let minDays = Infinity;
+
+    Object.values(grouped).forEach(group => {
+      const dueMs = new Date(group.dueDate).getTime();
+      const diffDays = Math.ceil((dueMs - todayMs) / (1000 * 60 * 60 * 24));
+      
+      // If due within next 3 days (or past due), and not suppressed
+      if (diffDays <= 3 && !isDueReminderSuppressed(group.cardId, group.dueDate)) {
+        if (diffDays < minDays) {
+          minDays = diffDays;
+          const card = items.find(i => i.id === group.cardId);
+          mostUrgent = {
+            cardId: group.cardId,
+            cardName: card?.name || "Unknown Card",
+            lastFour: card?.lastFour || "",
+            dueDate: group.dueDate,
+            amount: group.totalAmount,
+            daysLeft: diffDays
+          };
+        }
+      }
+    });
+
+    setUpcomingDue(mostUrgent);
+  }, [items]);
+
+  function handleMarkPaid() {
+    if (!upcomingDue) return;
+    const allExps = loadExpenses();
+    const updated = allExps.map(e => {
+      if (e.cardId === upcomingDue.cardId && e.dueDate === upcomingDue.dueDate) {
+        if (e.status === "bill_generated_unpaid") return { ...e, status: "bill_generated" as const };
+        if (e.status === "unpaid") return { ...e, status: "paid" as const };
+      }
+      return e;
+    });
+    saveExpenses(updated);
+    // trigger a slight re-render update to the dashboard stats via fake event or prop?
+    // Since expenses are loaded on mount in this component, we can force a reload.
+    // Dashboard computes dues from local `expenses` array which we don't have here. Wait, Dashboard loads expenses?
+    // Yes, below: const [expenses, setExpenses] = useState(loadExpenses());
+    // We should probably just reload the page or update the local `expenses` state if it exists.
+    // I'll check if expenses state exists further down.
+    window.location.reload(); 
+  }
+
+  function handleSuppress() {
+    if (!upcomingDue) return;
+    suppressDueReminder(upcomingDue.cardId, upcomingDue.dueDate);
+    setUpcomingDue(null);
+  }
 
   const now = new Date();
   const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
@@ -190,6 +273,34 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
 
   return (
     <div className="screen">
+      {upcomingDue && (
+        <div className="modal-overlay" style={{ zIndex: 10000 }}>
+          <div className="modal-sheet">
+            <div className="modal-header">
+              <h3 className="form-title" style={{ color: "var(--danger)" }}><AlertTriangle size={20} /> Bill Due Reminder</h3>
+            </div>
+            <div className="form-group" style={{ textAlign: "center", padding: "10px 0" }}>
+              <p style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>{upcomingDue.cardName}</p>
+              <p style={{ fontSize: "0.85rem", color: "var(--text2)", marginBottom: 16 }}>{upcomingDue.lastFour ? `•••• ${upcomingDue.lastFour}` : "•••• •••• ••••"}</p>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--surface2)", padding: "12px 16px", borderRadius: "12px", marginBottom: "16px" }}>
+                <span style={{ fontSize: "0.9rem", color: "var(--text2)" }}>Amount Due</span>
+                <span style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--danger)" }}>{formatAmount(upcomingDue.amount, currency)}</span>
+              </div>
+              <p style={{ fontSize: "0.9rem", color: "var(--danger)", fontWeight: 500, marginBottom: "20px" }}>
+                {upcomingDue.daysLeft < 0 ? `Overdue by ${Math.abs(upcomingDue.daysLeft)} day(s)` : upcomingDue.daysLeft === 0 ? "Due Today!" : `Due in ${upcomingDue.daysLeft} day(s)`}
+              </p>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <button type="button" className="btn-primary" onClick={() => setShowPaymentApps(true)}><Coins size={16} /> Pay Now</button>
+              <button type="button" className="btn-outline" onClick={handleMarkPaid} style={{ borderColor: "var(--success)", color: "var(--success)" }}><CheckCircle size={16} /> Paid Already</button>
+              <button type="button" className="btn-outline" onClick={handleSuppress} style={{ borderColor: "var(--border)", color: "var(--text2)" }}><EyeOff size={16} /> Do not show again</button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {showPaymentApps && <PaymentAppsModal onClose={() => setShowPaymentApps(false)} />}
+
       <header className="dashboard-header">
         <div className="header-top">
           <h2 className="header-title"><LayoutDashboard size={20} /> Dashboard</h2>
