@@ -1,4 +1,5 @@
-import { Coins, X } from "lucide-react";
+import { Coins, X, AlertTriangle } from "lucide-react";
+import { useState } from "react";
 import { PaymentApp } from "../types";
 
 export const PAYMENT_APPS: PaymentApp[] = [
@@ -13,8 +14,40 @@ export const PAYMENT_APPS: PaymentApp[] = [
 ];
 
 export default function PaymentAppsModal({ onClose }: { onClose: () => void }) {
+  const [toastMsg, setToastMsg] = useState("");
+
+  const handleAppClick = (e: React.MouseEvent, url: string) => {
+    e.preventDefault();
+    
+    let deepLink = url;
+    if (url.includes('cred.club')) deepLink = 'cred://';
+    else if (url.includes('pay.google.com')) deepLink = 'tez://upi/';
+    else if (url.includes('phonepe.com')) deepLink = 'phonepe://';
+    else if (url.includes('paytm.com')) deepLink = 'paytmmp://';
+    else if (url.includes('amazon.com')) deepLink = 'amazon://';
+    else if (url.includes('navi.com')) deepLink = 'navi://';
+    else if (url.includes('mobikwik.com')) deepLink = 'mobikwik://';
+    else if (url.includes('freecharge.in')) deepLink = 'freecharge://';
+
+    window.location.href = deepLink;
+    
+    const start = Date.now();
+    setTimeout(() => {
+      if (Date.now() - start < 2000 && !document.hidden) {
+        setToastMsg("App not found, install it to proceed");
+        setTimeout(() => setToastMsg(""), 3000);
+      }
+    }, 1000);
+  };
+
   return (
     <div className="modal-overlay" onClick={onClose} style={{ zIndex: 10005 }}>
+      {toastMsg && (
+        <div className="settings-msg error" style={{ position: "absolute", top: 20, zIndex: 10006, background: "var(--surface)", boxShadow: "0 4px 12px rgba(0,0,0,0.15)", margin: "0 20px" }}>
+          <AlertTriangle size={20} style={{ display: "inline", verticalAlign: "middle", marginRight: 4 }} />
+          {toastMsg}
+        </div>
+      )}
       <div className="modal-sheet payment-apps-sheet" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3 className="form-title"><Coins size={20} /> Pay Your Bills</h3>
@@ -26,8 +59,7 @@ export default function PaymentAppsModal({ onClose }: { onClose: () => void }) {
             <a
               key={app.name}
               href={app.url}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={(e) => handleAppClick(e, app.url)}
               className="payment-app-card"
             >
             <span className="payment-app-icon">

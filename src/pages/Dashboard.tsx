@@ -278,6 +278,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
           <div className="modal-sheet">
             <div className="modal-header">
               <h3 className="form-title" style={{ color: "var(--danger)" }}><AlertTriangle size={20} /> Bill Due Reminder</h3>
+              <button className="modal-close" onClick={() => setUpcomingDue(null)}><X size={16} /></button>
             </div>
             <div className="form-group" style={{ textAlign: "center", padding: "10px 0" }}>
               <p style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>{upcomingDue.cardName}</p>
