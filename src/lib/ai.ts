@@ -59,7 +59,11 @@ async function callOpenRouter(key: string, model: string, systemPrompt: string, 
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error?.message || `OpenRouter error: ${response.status}`);
+    const errMsg = errorData.error?.message || `OpenRouter error: ${response.status}`;
+    if (errMsg.includes("must be a string")) {
+      throw new Error("The selected AI model does not support Image Scanning. Please select a Vision-capable model in Settings.");
+    }
+    throw new Error(errMsg);
   }
 
   const data = await response.json();
@@ -100,7 +104,11 @@ async function callGroq(key: string, model: string, systemPrompt: string, userPr
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error?.message || `Groq error: ${response.status}`);
+    const errMsg = errorData.error?.message || `Groq error: ${response.status}`;
+    if (errMsg.includes("must be a string")) {
+      throw new Error("The selected AI model does not support Image Scanning. Please select a Vision-capable model in Settings.");
+    }
+    throw new Error(errMsg);
   }
 
   const data = await response.json();
