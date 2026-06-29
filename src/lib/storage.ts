@@ -161,3 +161,35 @@ export function loadAIOptions(): AIOptions {
     return { provider: "none", geminiKey: "", openRouterKey: "", openRouterModel: "google/gemini-flash-1.5", groqKey: "", groqModel: "llama-3.1-8b-instant" };
   }
 }
+
+// ── VeloAI Limits ───────────────────────────────────────────────────
+const VELOAI_USAGE_KEY = "finance_veloai_usage";
+
+export function checkVeloAILimit(): boolean {
+  try {
+    const raw = localStorage.getItem(VELOAI_USAGE_KEY);
+    const today = new Date().toISOString().split("T")[0];
+    if (!raw) return true;
+    const usage = JSON.parse(raw);
+    if (usage.date !== today) return true;
+    return usage.count < 10;
+  } catch (e) {
+    return true;
+  }
+}
+
+export function incrementVeloAIUsage(): void {
+  try {
+    const raw = localStorage.getItem(VELOAI_USAGE_KEY);
+    const today = new Date().toISOString().split("T")[0];
+    let usage = { date: today, count: 0 };
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.date === today) usage.count = parsed.count;
+    }
+    usage.count += 1;
+    localStorage.setItem(VELOAI_USAGE_KEY, JSON.stringify(usage));
+  } catch (e) {
+    // Ignore errors
+  }
+}

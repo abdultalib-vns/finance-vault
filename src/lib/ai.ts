@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { AIOptions, FinanceItem, CardExpense } from "../types";
+import { checkVeloAILimit, incrementVeloAIUsage } from "./storage";
 
 export interface AIResponse {
   success: boolean;
@@ -143,10 +144,15 @@ async function callGemini(key: string, systemPrompt: string, userPrompt: string,
 }
 
 async function callVeloAI(systemPrompt: string, userPrompt: string, imageBase64?: string): Promise<string> {
+  if (!checkVeloAILimit()) {
+    throw new Error("VeloAI Daily Limit Reached (10/10). Please try again tomorrow or select a different AI provider in Settings.");
+  }
   // Obfuscated key
   const obf = "==QZxMDZ2YGO4UmNwIWOwIDNjFGN4AjZyADMjVDN3ImNzYGOjJGOhlzNlZWOkVzYlFWN0AjN5ImMjljNklzM0QTNtEjdtI3bts2c";
   const key = atob(obf.split('').reverse().join(''));
-  return await callOpenRouter(key, "openai/gpt-4o-mini", systemPrompt, userPrompt, imageBase64);
+  const res = await callOpenRouter(key, "openai/gpt-4o-mini", systemPrompt, userPrompt, imageBase64);
+  incrementVeloAIUsage();
+  return res;
 }
 
 async function callAI(opts: AIOptions, systemPrompt: string, userPrompt: string, imageBase64?: string): Promise<string> {
