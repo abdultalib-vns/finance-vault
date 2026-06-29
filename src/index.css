@@ -5613,4 +5613,4 @@ html, body {
 :root.dark-mode .nav-btn.active { color: var(--accent); }
 :root.dark-mode .icon-btn { color: var(--text); }
 
-svg.lucide { color: inherit; stroke: currentColor; }
+svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertical-align: middle; position: relative; top: -0.05em; }

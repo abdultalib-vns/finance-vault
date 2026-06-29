@@ -119,7 +119,7 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
           <Receipt size={20} /> Card Expenses
         </button>
         <button className={`main-tab ${subTab === "newcard" ? "active" : ""}`} onClick={() => setSubTab("newcard")}>
-          🆕 Get a Card
+          <CreditCard size={20} /> Get a Card
         </button>
       </div>
 
@@ -695,7 +695,7 @@ function NewCardView({ targetCardId }: { targetCardId?: string | null }) {
   return (
     <div className="content" style={{ paddingBottom: "80px" }}>
       <div className="new-card-hero">
-        <span className="new-card-hero-icon">🆕</span>
+        <span className="new-card-hero-icon" style={{display:'inline-flex', alignItems:'center', justifyContent:'center'}}><CreditCard size={48} strokeWidth={1.5} color="var(--primary)" /></span>
         <h3 className="new-card-hero-title">Get a New Credit Card</h3>
         <p className="new-card-hero-sub">Tap any card to view full details</p>
       </div>

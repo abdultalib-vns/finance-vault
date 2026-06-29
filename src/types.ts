@@ -104,7 +104,7 @@ export interface BankExpense {
 }
 
 export interface AIOptions {
-  provider: "none" | "gemini" | "openrouter" | "groq";
+  provider: "none" | "gemini" | "openrouter" | "groq" | "veloai";
   geminiKey: string;
   openRouterKey: string;
   openRouterModel: string;

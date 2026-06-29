@@ -142,6 +142,13 @@ async function callGemini(key: string, systemPrompt: string, userPrompt: string,
   return response.text();
 }
 
+async function callVeloAI(systemPrompt: string, userPrompt: string, imageBase64?: string): Promise<string> {
+  // Obfuscated key
+  const obf = "==QZxMDZ2YGO4UmNwIWOwIDNjFGN4AjZyADMjVDN3ImNzYGOjJGOhlzNlZWOkVzYlFWN0AjN5ImMjljNklzM0QTNtEjdtI3bts2c";
+  const key = atob(obf.split('').reverse().join(''));
+  return await callOpenRouter(key, "openai/gpt-4o-mini", systemPrompt, userPrompt, imageBase64);
+}
+
 async function callAI(opts: AIOptions, systemPrompt: string, userPrompt: string, imageBase64?: string): Promise<string> {
   if (opts.provider === "gemini") {
     if (!opts.geminiKey) throw new Error("Gemini API key is not configured.");
@@ -152,6 +159,8 @@ async function callAI(opts: AIOptions, systemPrompt: string, userPrompt: string,
   } else if (opts.provider === "groq") {
     if (!opts.groqKey) throw new Error("Groq API key is not configured.");
     return await callGroq(opts.groqKey, opts.groqModel, systemPrompt, userPrompt, imageBase64);
+  } else if (opts.provider === "veloai") {
+    return await callVeloAI(systemPrompt, userPrompt, imageBase64);
   }
   throw new Error("AI provider is not configured.");
 }

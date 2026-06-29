@@ -203,6 +203,24 @@ export default function Settings({
     setShowAiKeys(false); // Hide after saving for security
   }
 
+  function handleDeleteAiKey() {
+    const provider = aiOpts.provider;
+    if (provider === "none" || provider === "veloai") return;
+    
+    let n = { ...aiOpts };
+    if (provider === "gemini") n.geminiKey = "";
+    if (provider === "openrouter") { n.openRouterKey = ""; n.openRouterModel = ""; }
+    if (provider === "groq") { n.groqKey = ""; n.groqModel = ""; }
+    
+    setAiOpts(n);
+    saveAIOptions(n);
+    setPopupMsg({
+      title: "Deleted",
+      desc: "API key and model for this provider have been deleted.",
+      type: "info"
+    });
+  }
+
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) {
@@ -343,10 +361,10 @@ export default function Settings({
             <div className="type-tabs" style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
               <button 
                 type="button" 
-                className={`type-tab ${aiOpts.provider === "none" ? "active" : ""}`}
-                onClick={() => { const n = { ...aiOpts, provider: "none" as const }; setAiOpts(n); saveAIOptions(n); }}
+                className={`type-tab ${aiOpts.provider === "veloai" ? "active" : ""}`}
+                onClick={() => { const n = { ...aiOpts, provider: "veloai" as const }; setAiOpts(n); saveAIOptions(n); }}
               >
-                None
+                VeloAI
               </button>
               <button 
                 type="button" 
@@ -469,6 +487,10 @@ export default function Settings({
                   ))}
                 </datalist>
                 <p className="input-hint">Select a model from the list or type a custom Groq model ID.</p>
+                <div className="settings-msg error" style={{ marginTop: 12 }}>
+                  <AlertTriangle size={16} style={{display:'inline', verticalAlign:'middle', marginRight:6}}/>
+                  Note: Groq currently does not support Receipt AI Scanning features.
+                </div>
               </div>
             </>
           )}
@@ -485,9 +507,16 @@ export default function Settings({
                   </div>
                 </div>
               )}
-              <button type="button" className="btn-primary" style={{ width: '100%' }} onClick={handleSaveAiSettings}>
-                Save API Keys & Models
-              </button>
+              {aiOpts.provider !== "veloai" && (
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button type="button" className="btn-primary" style={{ flex: 1 }} onClick={handleSaveAiSettings}>
+                    Save API Keys & Models
+                  </button>
+                  <button type="button" className="btn-danger" style={{ padding: '0 16px' }} onClick={handleDeleteAiKey}>
+                    Delete
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
