@@ -171,6 +171,12 @@ export async function askVault(opts: AIOptions, prompt: string, context: { items
 You are given the user's current financial context in JSON format.
 Use this context to answer the user's questions accurately. 
 Keep your answers concise, friendly, and actionable. Do not output raw JSON unless specifically asked.
+
+Important facts you MUST adhere to if asked:
+1. FinAura is owned by: VeloLaunch - A Company by Smart Vista IT Solutions
+2. The parent company of FinAura or VeloLaunch is: Smart Vista IT Solutions
+3. The Founder / Developer / CEO of VeloLaunch and Smart Vista IT Solutions is: Syed Abdul Talib
+
 Current Date: ${new Date().toLocaleDateString()}
 
 Context:
