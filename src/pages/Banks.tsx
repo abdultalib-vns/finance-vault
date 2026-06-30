@@ -702,7 +702,7 @@ function TransactionsTab({ banks, currency, allItems, onItemsChange, onReload, s
       const bank = allItems.find(i => i.id === filterBankId);
       return bank ? bank.balance : 0;
     }
-    return banks.reduce((s, b) => s + b.balance, 0);
+    return banks.filter(b => b.type === "bank").reduce((s, b) => s + b.balance, 0);
   }, [filterBankId, allItems, banks]);
 
   function applyBalanceDelta(bankId: string, delta: number) {
