@@ -697,7 +697,13 @@ function TransactionsTab({ banks, currency, allItems, onItemsChange, onReload, s
     };
   }, [expenses, bankMap]);
 
-  const net = totals.credit - totals.debit;
+  const currentBankBalance = useMemo(() => {
+    if (filterBankId !== "all") {
+      const bank = allItems.find(i => i.id === filterBankId);
+      return bank ? bank.balance : 0;
+    }
+    return banks.reduce((s, b) => s + b.balance, 0);
+  }, [filterBankId, allItems, banks]);
 
   function applyBalanceDelta(bankId: string, delta: number) {
     const current = loadItems();
@@ -716,6 +722,13 @@ function TransactionsTab({ banks, currency, allItems, onItemsChange, onReload, s
   }
 
   function handleDeleteExpense(id: string) {
+    const expenseToDelete = expenses.find(e => e.id === id);
+    if (!expenseToDelete) return;
+    
+    // Reverse the balance delta
+    const reverseDelta = expenseToDelete.type === "debit" ? expenseToDelete.amount : -expenseToDelete.amount;
+    applyBalanceDelta(expenseToDelete.bankId, reverseDelta);
+
     const updated = expenses.filter((e) => e.id !== id);
     saveBankExpenses(updated);
     setExpenses(updated);
@@ -747,10 +760,10 @@ function TransactionsTab({ banks, currency, allItems, onItemsChange, onReload, s
         </div>
         <div className="stat-divider" />
         <div className="stat-item">
-          <span className="stat-value" style={{ color: net >= 0 ? "#10b981" : "#ef4444" }}>
-            {showAmounts ? `${net >= 0 ? "+" : "−"}${formatAmount(Math.abs(net), currency)}` : MASK}
+          <span className="stat-value" style={{ color: "var(--text)" }}>
+            {showAmounts ? formatAmount(currentBankBalance, currency) : MASK}
           </span>
-          <span className="stat-label">Net</span>
+          <span className="stat-label">{filterBankId === "all" ? "Total Balance" : "Bank Balance"}</span>
         </div>
       </div>
 
