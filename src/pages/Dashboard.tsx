@@ -100,7 +100,9 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
     amount: number;
     daysLeft: number;
   } | null>(null);
+  const [allUpcomingDues, setAllUpcomingDues] = useState<any[]>([]);
   const [showPaymentApps, setShowPaymentApps] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     const allExpenses = loadExpenses();
@@ -122,16 +124,29 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
 
     let mostUrgent = null;
     let minDays = Infinity;
+    const allDues: any[] = [];
 
     Object.values(grouped).forEach(group => {
       const dueMs = new Date(group.dueDate).getTime();
       const diffDays = Math.ceil((dueMs - todayMs) / (1000 * 60 * 60 * 24));
       
-      // If due within next 3 days (or past due), and not suppressed
-      if (diffDays <= 3 && !isDueReminderSuppressed(group.cardId, group.dueDate)) {
-        if (diffDays < minDays) {
+      // If due within next 3 days (or past due)
+      if (diffDays <= 3) {
+        const card = items.find(i => i.id === group.cardId);
+        const isSuppressed = isDueReminderSuppressed(group.cardId, group.dueDate);
+        
+        allDues.push({
+          cardId: group.cardId,
+          cardName: card?.name || "Unknown Card",
+          lastFour: card?.lastFour || "",
+          dueDate: group.dueDate,
+          amount: group.totalAmount,
+          daysLeft: diffDays,
+          isSuppressed
+        });
+
+        if (!isSuppressed && diffDays < minDays) {
           minDays = diffDays;
-          const card = items.find(i => i.id === group.cardId);
           mostUrgent = {
             cardId: group.cardId,
             cardName: card?.name || "Unknown Card",
@@ -145,7 +160,8 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
     });
 
     setUpcomingDue(mostUrgent);
-  }, [items]);
+    setAllUpcomingDues(allDues);
+  }, [items, refreshKey]);
 
   function handleMarkPaid() {
     if (!upcomingDue) return;
@@ -158,13 +174,8 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
       return e;
     });
     saveExpenses(updated);
-    // trigger a slight re-render update to the dashboard stats via fake event or prop?
-    // Since expenses are loaded on mount in this component, we can force a reload.
-    // Dashboard computes dues from local `expenses` array which we don't have here. Wait, Dashboard loads expenses?
-    // Yes, below: const [expenses, setExpenses] = useState(loadExpenses());
-    // We should probably just reload the page or update the local `expenses` state if it exists.
-    // I'll check if expenses state exists further down.
-    window.location.reload(); 
+    setUpcomingDue(null);
+    setRefreshKey(k => k + 1);
   }
 
   function handleSuppress() {
@@ -307,7 +318,16 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
           <h2 className="header-title"><LayoutDashboard size={20} /> Dashboard</h2>
           <div className="header-actions">
             <span className="header-count">{items.length} item{items.length !== 1 ? "s" : ""}</span>
-            <NotificationBell />
+            <NotificationBell 
+              customNotifs={allUpcomingDues.map(d => ({
+                id: `due_${d.cardId}_${d.dueDate}`,
+                type: "warning",
+                title: "Bill Due Reminder",
+                message: `${d.cardName} (${d.lastFour ? "•••• " + d.lastFour : ""}) bill of ${formatAmount(d.amount, currency)} is ${d.daysLeft < 0 ? `overdue by ${Math.abs(d.daysLeft)} day(s)` : d.daysLeft === 0 ? "due today!" : `due in ${d.daysLeft} day(s)`}.`,
+                ctaText: "Pay Now",
+                ctaAction: () => setShowPaymentApps(true)
+              }))} 
+            />
             <button type="button" className="btn-logout" onClick={onLock} aria-label="Logout" title="Logout"><LogOut size={20} /></button>
           </div>
         </div>

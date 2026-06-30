@@ -16,7 +16,16 @@ const TYPE_ICONS: Record<string, React.ReactNode> = {
   warning: <AlertTriangle size={16} />,
 };
 
-export default function NotificationBell() {
+export interface CustomNotif {
+  id: string;
+  type: "info" | "warning" | "promo";
+  title: string;
+  message: string;
+  ctaText?: string;
+  ctaAction?: () => void;
+}
+
+export default function NotificationBell({ customNotifs = [] }: { customNotifs?: CustomNotif[] }) {
   const [ad, setAd] = useState<PopupAd | null>(null);
   const [open, setOpen] = useState(false);
   const [dismissed, setDismissed] = useState(false);
@@ -40,28 +49,37 @@ export default function NotificationBell() {
     return () => document.removeEventListener("mousedown", handler);
   }, [open]);
 
-  if (!ad || dismissed) return null;
+  const allNotifs: CustomNotif[] = [];
+  
+  if (ad && !dismissed) {
+    const isPermanentlyDismissed = !!localStorage.getItem(AD_PERMANENT_KEY + ad.id);
+    if (!isPermanentlyDismissed) {
+      allNotifs.push({
+        id: ad.id,
+        type: ad.type as any,
+        title: ad.title,
+        message: ad.message,
+        ctaText: ad.ctaText,
+        ctaAction: () => {
+          trackEvent("notification_bell_cta_click", ad.id);
+          if (ad.ctaUrl) window.open(ad.ctaUrl, "_blank", "noopener,noreferrer");
+          setOpen(false);
+        }
+      });
+    }
+  }
 
-  const isPermanentlyDismissed = !!localStorage.getItem(AD_PERMANENT_KEY + ad.id);
-  const color = TYPE_COLORS[ad.type] ?? "#2563eb";
+  allNotifs.push(...customNotifs);
+
+  if (allNotifs.length === 0) return null;
 
   function handleBellClick() {
-    if (!open) trackEvent("notification_bell_open", ad!.id);
+    if (!open && ad) trackEvent("notification_bell_open", ad.id);
     setOpen((o) => !o);
   }
 
-  function handleCta() {
-    trackEvent("notification_bell_cta_click", ad!.id);
-    if (ad!.ctaUrl) window.open(ad!.ctaUrl, "_blank", "noopener,noreferrer");
-    setOpen(false);
-  }
-
-  function handleDismissPermanent() {
-    localStorage.setItem(AD_PERMANENT_KEY + ad!.id, "1");
-    trackEvent("notification_bell_dismissed", ad!.id);
-    setDismissed(true);
-    setOpen(false);
-  }
+  const hasWarning = allNotifs.some(n => n.type === "warning");
+  const bellColor = hasWarning ? TYPE_COLORS["warning"] : TYPE_COLORS[allNotifs[0].type] ?? "#2563eb";
 
   return (
     <div className="notif-bell-wrap" ref={dropdownRef}>
@@ -72,45 +90,47 @@ export default function NotificationBell() {
         title="Notifications"
       >
         <Bell size={20} />
-        {/* Red dot — show if not permanently dismissed */}
-        {!isPermanentlyDismissed && (
-          <span className="notif-bell-dot" style={{ background: color }} />
-        )}
+        <span className="notif-bell-dot" style={{ background: bellColor }} />
       </button>
 
       {open && (
-        <div className="notif-dropdown" style={{ "--notif-color": color } as React.CSSProperties}>
-          <div className="notif-dropdown-header">
-            <span className="notif-dropdown-label">Notification</span>
+        <div className="notif-dropdown" style={{ "--notif-color": bellColor, padding: 0 } as React.CSSProperties}>
+          <div className="notif-dropdown-header" style={{ padding: "12px 16px" }}>
+            <span className="notif-dropdown-label">Notifications ({allNotifs.length})</span>
             <button className="notif-dropdown-x" onClick={() => setOpen(false)}><X size={16} /></button>
           </div>
 
-          <div className="notif-dropdown-body">
-            <div className="notif-dropdown-icon-row">
-              <span className="notif-dropdown-icon-wrap" style={{ background: color + "1a", color }}>
-                {TYPE_ICONS[ad.type]}
-              </span>
-              <div>
-                <div className="notif-dropdown-type" style={{ color }}>
-                  {ad.type.charAt(0).toUpperCase() + ad.type.slice(1)}
+          <div className="notif-dropdown-list" style={{ maxHeight: "400px", overflowY: "auto" }}>
+            {allNotifs.map((n, i) => {
+              const color = TYPE_COLORS[n.type] ?? "#2563eb";
+              return (
+                <div key={n.id} style={{ borderBottom: i < allNotifs.length - 1 ? "1px solid var(--border)" : "none", padding: "16px" }}>
+                  <div className="notif-dropdown-icon-row" style={{ marginBottom: "8px" }}>
+                    <span className="notif-dropdown-icon-wrap" style={{ background: color + "1a", color }}>
+                      {TYPE_ICONS[n.type]}
+                    </span>
+                    <div>
+                      <div className="notif-dropdown-type" style={{ color }}>
+                        {n.type.charAt(0).toUpperCase() + n.type.slice(1)}
+                      </div>
+                      <div className="notif-dropdown-title" style={{ fontSize: "0.95rem" }}>{n.title}</div>
+                    </div>
+                  </div>
+                  <p className="notif-dropdown-message" style={{ marginBottom: n.ctaText ? "12px" : 0 }}>{n.message}</p>
+                  
+                  {n.ctaText && (
+                    <button
+                      className="notif-dropdown-cta"
+                      style={{ background: color, width: "100%", padding: "8px", borderRadius: "8px", color: "white", fontSize: "0.85rem", fontWeight: 600, border: "none", cursor: "pointer" }}
+                      onClick={n.ctaAction}
+                    >
+                      {n.ctaText}
+                    </button>
+                  )}
                 </div>
-                <div className="notif-dropdown-title">{ad.title}</div>
-              </div>
-            </div>
-            <p className="notif-dropdown-message">{ad.message}</p>
+              );
+            })}
           </div>
-
-          {(ad.ctaText || ad.ctaUrl) && (
-            <div className="notif-dropdown-footer">
-              <button
-                className="notif-dropdown-cta"
-                style={{ background: color }}
-                onClick={handleCta}
-              >
-                {ad.ctaText || "Learn More"}
-              </button>
-            </div>
-          )}
         </div>
       )}
     </div>
