@@ -4,6 +4,7 @@ import {
   loadItems, loadExpenses, loadBills, loadCashbacks, loadRDInstallments, loadBankExpenses,
   saveItems, saveExpenses, saveBills, saveCashbacks, saveRDInstallments, saveBankExpenses,
   loadPinHash,
+  loadVeloAIUsage, saveVeloAIUsage,
 } from "./storage";
 import { hashPin } from "./crypto";
 
@@ -16,6 +17,7 @@ export interface VaultBackup {
   cashbacks: CashbackEntry[];
   rdInstallments: RDInstallment[];
   bankExpenses: BankExpense[];
+  veloAIUsage?: { date: string, count: number };
 }
 
 export function verifyPin(pin: string): boolean {
@@ -35,6 +37,7 @@ export async function exportVault(pin: string): Promise<void> {
     cashbacks: loadCashbacks(),
     rdInstallments: loadRDInstallments(),
     bankExpenses: loadBankExpenses(),
+    veloAIUsage: loadVeloAIUsage(),
   };
   const json = JSON.stringify(backup, null, 2);
   const date = new Date().toISOString().slice(0, 10);
@@ -97,5 +100,6 @@ export async function importVault(file: File, pin: string): Promise<VaultBackup>
   if (Array.isArray(data.cashbacks)) saveCashbacks(data.cashbacks);
   if (Array.isArray(data.rdInstallments)) saveRDInstallments(data.rdInstallments);
   if (Array.isArray(data.bankExpenses)) saveBankExpenses(data.bankExpenses);
+  if (data.veloAIUsage) saveVeloAIUsage(data.veloAIUsage);
   return data;
 }

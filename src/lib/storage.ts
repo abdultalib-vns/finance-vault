@@ -165,6 +165,9 @@ export function loadAIOptions(): AIOptions {
 // ── VeloAI Limits ───────────────────────────────────────────────────
 const VELOAI_USAGE_KEY = "finance_veloai_usage";
 
+export function loadVeloAIUsage() { try { const raw = localStorage.getItem(VELOAI_USAGE_KEY); return raw ? JSON.parse(raw) : undefined; } catch { return undefined; } }
+export function saveVeloAIUsage(usage: { date: string, count: number }) { localStorage.setItem(VELOAI_USAGE_KEY, JSON.stringify(usage)); }
+
 export function checkVeloAILimit(): boolean {
   try {
     const raw = localStorage.getItem(VELOAI_USAGE_KEY);
