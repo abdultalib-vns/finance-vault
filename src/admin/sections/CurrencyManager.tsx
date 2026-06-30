@@ -1,3 +1,4 @@
+import { customAlert, customConfirm } from "../../components/CustomAlert";
 import { useState, useEffect } from "react";
 import { CustomCurrency } from "../adminTypes";
 import { loadCustomCurrencies, saveCustomCurrencies } from "../adminStorage";
@@ -32,11 +33,11 @@ export default function CurrencyManagerSection() {
 
   function handleAdd() {
     if (!code || !symbol || !name) {
-      alert("Please fill all fields.");
+      customAlert("Please fill all fields.");
       return;
     }
     if (currencies.some(c => c.code === code.toUpperCase() && c.code !== editingId)) {
-      alert("Currency code already exists.");
+      customAlert("Currency code already exists.");
       return;
     }
 
@@ -60,8 +61,8 @@ export default function CurrencyManagerSection() {
     setEditingId(c.code);
   }
 
-  function handleDelete(code: string) {
-    if (confirm(`Remove currency ${code}?`)) {
+  async function handleDelete(code: string) {
+    if (await customConfirm(`Remove currency ${code}?`)) {
       setCurrencies(prev => prev.filter(c => c.code !== code));
     }
   }

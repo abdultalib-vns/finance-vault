@@ -1,3 +1,4 @@
+import { customAlert, customConfirm } from "../components/CustomAlert";
 import type { FinanceItem, CardExpense, CardBill, CashbackEntry, RDInstallment, BankExpense } from "../types";
 import {
   loadItems, loadExpenses, loadBills, loadCashbacks, loadRDInstallments, loadBankExpenses,
@@ -63,7 +64,7 @@ export async function exportVault(pin: string): Promise<void> {
       console.warn("Directory picker failed or was cancelled.", err);
     }
   } else {
-      alert("Note: Automatic folder creation (FinAura/) is not supported on this device/browser. The file will be saved to your default Downloads folder.");
+      customAlert("Note: Automatic folder creation (FinAura/) is not supported on this device/browser. The file will be saved to your default Downloads folder.");
   }
 
   // Fallback: Traditional download (for mobile browsers or if picker was cancelled)

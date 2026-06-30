@@ -1,3 +1,4 @@
+import { customAlert, customConfirm } from "../components/CustomAlert";
 import { Lock, AlertTriangle , Key, Smartphone,  } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { hashPin } from "../lib/crypto";
@@ -106,9 +107,9 @@ export default function AuthScreen({ onUnlock }: Props) {
       }
       setInstallPromptEvent(null);
     } else if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-      alert("To install on iOS: tap the Share button at the bottom of Safari and select 'Add to Home Screen'.");
+      customAlert("To install on iOS: tap the Share button at the bottom of Safari and select 'Add to Home Screen'.");
     } else {
-      alert("Installation is not supported on this browser, or the app is already installed.");
+      customAlert("Installation is not supported on this browser, or the app is already installed.");
     }
   }
 

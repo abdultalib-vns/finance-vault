@@ -1,3 +1,4 @@
+import { customAlert, customConfirm } from "../../components/CustomAlert";
 import { useEffect, useState } from "react";
 
 interface Feedback {
@@ -54,19 +55,19 @@ export default function FeedbacksSection() {
       setFeedbacks(prev => prev.map(f => f.id === id ? { ...f, status: "completed" } : f));
       if (selected?.id === id) setSelected(prev => prev ? { ...prev, status: "completed" } : null);
     } catch {
-      alert("Failed to mark as completed.");
+      customAlert("Failed to mark as completed.");
     }
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this feedback?")) return;
+    if (!await customConfirm("Are you sure you want to delete this feedback?")) return;
     try {
       const resp = await fetch(`/api/feedback?id=${id}`, { method: "DELETE" });
       if (!resp.ok) throw new Error();
       setFeedbacks(prev => prev.filter(f => f.id !== id));
       if (selected?.id === id) setSelected(null);
     } catch {
-      alert("Failed to delete feedback.");
+      customAlert("Failed to delete feedback.");
     }
   }
 

@@ -1,3 +1,4 @@
+import { customAlert, customConfirm } from "../components/CustomAlert";
 import { CardTemplate, PopupAd, SessionRecord, AnalyticsEvent, AdminThemeSettings, GlobalAppConfig, CustomCurrency } from "./adminTypes";
 import CryptoJS from "crypto-js";
 import { generateId } from "../lib/utils";
@@ -29,7 +30,7 @@ function pushToServer(payload: { cardTemplates?: CardTemplate[]; popupAds?: Popu
     .then(async (res) => {
       if (!res.ok) {
         const err = await res.text();
-        alert("Failed to sync globally. Did you create the Vercel KV database? Error: " + err);
+        customAlert("Failed to sync globally. Did you create the Vercel KV database? Error: " + err);
       }
     })
     .catch((e) => {

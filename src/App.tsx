@@ -13,8 +13,9 @@ import UpdatePrompt from "./components/UpdatePrompt";
 import SplashScreen from "./components/SplashScreen";
 import NewCardModal from "./components/NewCardModal";
 import WelcomeSetup, { isOnboardingDone } from "./components/WelcomeSetup";
-import AdminApp from "./admin/AdminApp";
 import AIAssistant from "./components/AIAssistant";
+import { AlertContainer, customAlert } from "./components/CustomAlert";
+import AdminApp from "./admin/AdminApp";
 import Lottie from "lottie-react";
 import aiAnimation from "../public/FinAura_AI_Lottie.json";
 import { loadItems, loadCurrency, loadIdleTimeout, loadTheme, saveTheme, loadPinHash, loadAIOptions, loadExpenses } from "./lib/storage";
@@ -257,8 +258,8 @@ function MainApp() {
             className="fab-btn ai-fab-btn" 
             onClick={() => {
               if (aiOpts.provider === "none") {
-                alert("Please select an AI Provider (Groq, OpenRouter, or Gemini) in Settings first!");
-                handleTabChange("settings");
+                customAlert("Please select an AI Provider (Groq, OpenRouter, or Gemini) in Settings first!", "Provider Required", "error");
+                return;
               } else {
                 setShowAIAssistant(true);
               }
@@ -280,6 +281,7 @@ function MainApp() {
           </button>
         )}
 
+        <AlertContainer />
         {showAIAssistant && (
           <AIAssistant 
             aiOpts={aiOpts}

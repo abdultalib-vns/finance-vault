@@ -1,3 +1,4 @@
+import { customAlert, customConfirm } from "../components/CustomAlert";
 import React, { useState, useRef, useEffect } from "react";
 import { Bot, X, Send, Sparkles, User, RefreshCw, Trash2, Mic } from "lucide-react";
 import { AIOptions, FinanceItem, CardExpense } from "../types";
@@ -70,7 +71,7 @@ export default function AIAssistant({ aiOpts, contextData, onClose }: Props) {
   function handleMic() {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert("Speech recognition is not supported in this browser.");
+      customAlert("Speech recognition is not supported in this browser.");
       return;
     }
     const recognition = new SpeechRecognition();

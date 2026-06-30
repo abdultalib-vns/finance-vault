@@ -1,3 +1,4 @@
+import { customAlert, customConfirm } from "../../components/CustomAlert";
 import { useState } from "react";
 import { CardTemplate } from "../adminTypes";
 import { saveCardTemplates } from "../adminStorage";
@@ -91,7 +92,7 @@ export default function CardTemplatesSection({ templates, onUpdate }: Props) {
     setShowForm(false);
   }
 
-  function handleDelete(id: string) {
+  async function handleDelete(id: string) {
     const updated = templates.filter((t) => t.id !== id);
     saveCardTemplates(updated);
     onUpdate(updated);
@@ -293,7 +294,7 @@ export default function CardTemplatesSection({ templates, onUpdate }: Props) {
                       <input type="file" accept="image/*" style={{ display: "none" }} onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (!file) return;
-                        if (file.size > 500_000) { alert("Image too large (max 500KB)"); return; }
+                        if (file.size > 500_000) { customAlert("Image too large (max 500KB)"); return; }
                         const reader = new FileReader();
                         reader.onload = () => setForm({ ...form, imageUrl: reader.result as string });
                         reader.readAsDataURL(file);
