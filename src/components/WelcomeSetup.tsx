@@ -2,6 +2,7 @@ import { Banknote, Search, Check, ArrowLeft, ArrowRight, Palette, Sun, Moon, Loc
 import { useEffect, useState, useRef } from "react";
 import { getDynamicCurrencies, getCurrency } from "../lib/currency";
 import { saveCurrency, saveTheme, loadTheme, saveUserProfile } from "../lib/storage";
+import ImageCropper from "./ImageCropper";
 import {
   isBiometricSupported,
   isBiometricEnrolled,
@@ -40,6 +41,7 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
   const [profileName, setProfileName] = useState("");
   const [profileEmail, setProfileEmail] = useState("");
   const [profilePhoto, setProfilePhoto] = useState("");
+  const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -80,34 +82,10 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
 
     const reader = new FileReader();
     reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const MAX_WIDTH = 256;
-        const MAX_HEIGHT = 256;
-        let width = img.width;
-        let height = img.height;
-
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-        } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
-        }
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        ctx?.drawImage(img, 0, 0, width, height);
-        setProfilePhoto(canvas.toDataURL("image/jpeg", 0.8));
-      };
-      img.src = event.target?.result as string;
+      setCropImageSrc(event.target?.result as string);
     };
     reader.readAsDataURL(file);
+    e.target.value = '';
   }
 
   function handleProfileNext() {
@@ -404,6 +382,17 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
           </div>
         )}
       </div>
+
+      {cropImageSrc && (
+        <ImageCropper
+          imageSrc={cropImageSrc}
+          onCropComplete={(croppedBase64) => {
+            setProfilePhoto(croppedBase64);
+            setCropImageSrc(null);
+          }}
+          onCancel={() => setCropImageSrc(null)}
+        />
+      )}
     </div>
   );
 }

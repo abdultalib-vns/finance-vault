@@ -5,6 +5,7 @@ import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadIt
 import { encryptData, decryptData } from "../lib/crypto";
 import { FinanceItem, Currency, AIOptions, UserProfile } from "../types";
 import { OPENROUTER_MODELS, GROQ_MODELS } from "../lib/ai";
+import ImageCropper from "../components/ImageCropper";
 import { getDynamicCurrencies, getCurrency } from "../lib/currency";
 import {
   isBiometricSupported,
@@ -73,6 +74,7 @@ export default function Settings({
   const [profileName, setProfileName] = useState("");
   const [profileEmail, setProfileEmail] = useState("");
   const [profilePhoto, setProfilePhoto] = useState("");
+  const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
   const profileFileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -119,27 +121,10 @@ export default function Settings({
 
     const reader = new FileReader();
     reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const MAX_WIDTH = 256;
-        const MAX_HEIGHT = 256;
-        let width = img.width;
-        let height = img.height;
-        if (width > height) {
-          if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-        } else {
-          if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-        }
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        ctx?.drawImage(img, 0, 0, width, height);
-        setProfilePhoto(canvas.toDataURL("image/jpeg", 0.8));
-      };
-      img.src = event.target?.result as string;
+      setCropImageSrc(event.target?.result as string);
     };
     reader.readAsDataURL(file);
+    e.target.value = '';
   }
 
   function handleProfileSave() {
@@ -876,6 +861,17 @@ export default function Settings({
             </button>
           </div>
         </div>
+      )}
+
+      {cropImageSrc && (
+        <ImageCropper
+          imageSrc={cropImageSrc}
+          onCropComplete={(croppedBase64) => {
+            setProfilePhoto(croppedBase64);
+            setCropImageSrc(null);
+          }}
+          onCancel={() => setCropImageSrc(null)}
+        />
       )}
     </div>
   );
