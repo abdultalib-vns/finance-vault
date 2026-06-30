@@ -729,6 +729,7 @@ function NewCardView({ targetCardId }: { targetCardId?: string | null }) {
   );
 }
 
+const cleanText = (txt: string) => txt.replace(/^[^a-zA-Z0-9(₹$]+/, '').trim();
 function CardOfferDetail({ offer, onBack }: { offer: CardOfferEntry; onBack: () => void }) {
   const benefitLines = offer.benefits.split(/[,\n]/).map((b) => b.trim()).filter(Boolean);
 
@@ -765,7 +766,7 @@ function CardOfferDetail({ offer, onBack }: { offer: CardOfferEntry; onBack: () 
             <h3 className="card-offer-detail-section-title">Why is {offer.name} so AWESOME?</h3>
             <ul className="card-offer-detail-list">
               {offer.awesomeFeatures.split('\n').filter(Boolean).map((b, i) => (
-                <li key={i}>{b}</li>
+                <li key={i}>{cleanText(b)}</li>
               ))}
             </ul>
           </div>
@@ -776,7 +777,7 @@ function CardOfferDetail({ offer, onBack }: { offer: CardOfferEntry; onBack: () 
             <h3 className="card-offer-detail-section-title">Eligibility Criteria</h3>
             <ul className="card-offer-detail-list">
               {offer.eligibilityCriteria.split('\n').filter(Boolean).map((b, i) => (
-                <li key={i}>{b}</li>
+                <li key={i}>{cleanText(b)}</li>
               ))}
             </ul>
           </div>
@@ -787,7 +788,7 @@ function CardOfferDetail({ offer, onBack }: { offer: CardOfferEntry; onBack: () 
             <h3 className="card-offer-detail-section-title">Fees & Charges</h3>
             <ul className="card-offer-detail-list">
               {offer.feesAndCharges.split('\n').filter(Boolean).map((b, i) => (
-                <li key={i}>{b}</li>
+                <li key={i}>{cleanText(b)}</li>
               ))}
             </ul>
           </div>
@@ -798,7 +799,7 @@ function CardOfferDetail({ offer, onBack }: { offer: CardOfferEntry; onBack: () 
             <h3 className="card-offer-detail-section-title">Important Information</h3>
             <ul className="card-offer-detail-list">
               {offer.importantInformation.split('\n').filter(Boolean).map((b, i) => (
-                <li key={i}>{b}</li>
+                <li key={i}>{cleanText(b)}</li>
               ))}
             </ul>
           </div>
@@ -809,7 +810,7 @@ function CardOfferDetail({ offer, onBack }: { offer: CardOfferEntry; onBack: () 
             <h3 className="card-offer-detail-section-title">Documents Needed</h3>
             <ul className="card-offer-detail-list">
               {offer.documentsNeeded.split('\n').filter(Boolean).map((b, i) => (
-                <li key={i}>{b}</li>
+                <li key={i}>{cleanText(b)}</li>
               ))}
             </ul>
           </div>
@@ -820,7 +821,7 @@ function CardOfferDetail({ offer, onBack }: { offer: CardOfferEntry; onBack: () 
             <h3 className="card-offer-detail-section-title">Steps to Apply</h3>
             <ul className="card-offer-detail-list">
               {offer.stepsToApply.split('\n').filter(Boolean).map((b, i) => (
-                <li key={i}>{b}</li>
+                <li key={i}>{cleanText(b)}</li>
               ))}
             </ul>
           </div>
@@ -833,7 +834,7 @@ function CardOfferDetail({ offer, onBack }: { offer: CardOfferEntry; onBack: () 
               {benefitLines.map((b, i) => (
                 <li key={i} className="card-offer-benefit-item">
                   <span className="card-offer-benefit-dot" style={{ background: offer.color }} />
-                  <span>{b}</span>
+                  <span>{cleanText(b)}</span>
                 </li>
               ))}
             </ul>

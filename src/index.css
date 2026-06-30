@@ -2281,7 +2281,7 @@ html, body {
 .new-card-hero-title { font-size: 1.1rem; font-weight: 700; margin-top: 6px; }
 .new-card-hero-sub { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
 
-.new-card-list { display: flex; flex-direction: column; gap: 16px; padding: 0 16px; margin-top: 10px; }
+.new-card-list { display: flex; flex-direction: column; gap: 16px; margin: 10px -8px 0 -8px; }
 .new-card-row { background: #1f2229; border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: stretch; gap: 12px; cursor: pointer; color: white; position: relative; overflow: hidden; border: 1px solid #374151; }
 .new-card-row::before { content: ""; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary); }
 .new-card-row-info { flex: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; }
@@ -3569,6 +3569,7 @@ html, body {
   font-size: 12px;
   color: var(--text2);
 }
+.card-offer-detail-image img { max-width: 320px; max-height: 200px; width: auto; border-radius: 14px; box-shadow: 0 6px 24px rgba(0,0,0,0.15); object-fit: contain; }
 .theme-update-actions {
   display: flex;
   gap: 8px;
@@ -3883,13 +3884,7 @@ html, body {
   padding: 16px 16px 0;
   background: var(--bg);
 }
-.card-offer-detail-image img {
-  max-width: 320px;
-  width: 100%;
-  border-radius: 14px;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.15);
-  object-fit: contain;
-}
+.card-offer-detail-image img { max-width: 320px; max-height: 200px; width: auto; border-radius: 14px; box-shadow: 0 6px 24px rgba(0,0,0,0.15); object-fit: contain; }
 
 .card-offer-detail-facts {
   display: grid;
