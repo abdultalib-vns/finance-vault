@@ -117,8 +117,9 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
     // Group by cardId and dueDate
     const grouped = unpaidDues.reduce((acc, exp) => {
       const key = `${exp.cardId}_${exp.dueDate!}`;
-      if (!acc[key]) acc[key] = { ...exp, totalAmount: 0 };
+      if (!acc[key]) acc[key] = { ...exp, totalAmount: 0, expenseIds: [] };
       acc[key].totalAmount += exp.amount;
+      acc[key].expenseIds.push(exp.id);
       return acc;
     }, {} as Record<string, any>);
 
@@ -133,7 +134,8 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
       // If due within next 3 days (or past due)
       if (diffDays <= 3) {
         const card = items.find(i => i.id === group.cardId);
-        const isSuppressed = isDueReminderSuppressed(group.cardId, group.dueDate);
+        const expenseIdsStr = group.expenseIds.sort().join(",");
+        const isSuppressed = isDueReminderSuppressed(group.cardId, group.dueDate, expenseIdsStr);
         
         allDues.push({
           cardId: group.cardId,
@@ -141,6 +143,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
           lastFour: card?.lastFour || "",
           dueDate: group.dueDate,
           amount: group.totalAmount,
+          expenseIdsStr,
           daysLeft: diffDays,
           isSuppressed
         });
@@ -153,6 +156,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
             lastFour: card?.lastFour || "",
             dueDate: group.dueDate,
             amount: group.totalAmount,
+            expenseIdsStr,
             daysLeft: diffDays
           };
         }
@@ -180,7 +184,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
 
   function handleSuppress() {
     if (!upcomingDue) return;
-    suppressDueReminder(upcomingDue.cardId, upcomingDue.dueDate);
+    suppressDueReminder(upcomingDue.cardId, upcomingDue.dueDate, upcomingDue.expenseIdsStr);
     setUpcomingDue(null);
   }
 
