@@ -111,3 +111,9 @@ export interface AIOptions {
   groqKey: string;
   groqModel: string;
 }
+
+export interface UserProfile {
+  name: string;
+  email: string;
+  photo: string;
+}

@@ -1,4 +1,4 @@
-import { FinanceItem, CardExpense, CardBill, CashbackEntry, RDInstallment, BankExpense, AIOptions } from "../types";
+import { FinanceItem, CardExpense, CardBill, CashbackEntry, RDInstallment, BankExpense, AIOptions, UserProfile } from "../types";
 const ITEMS_KEY         = "finance_items";
 const PIN_HASH_KEY      = "finance_pin_hash";
 const CURRENCY_KEY      = "finance_currency";
@@ -228,4 +228,21 @@ export function isDueReminderSuppressed(cardId: string, dueDate: string, expense
   } catch (e) {
     return false;
   }
+}
+
+// ── User Profile ────────────────────────────────────────────────
+const USER_PROFILE_KEY = "finance_user_profile";
+
+export function loadUserProfile(): UserProfile | null {
+  try {
+    const raw = localStorage.getItem(USER_PROFILE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+export function saveUserProfile(profile: UserProfile): void {
+  localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(profile));
 }

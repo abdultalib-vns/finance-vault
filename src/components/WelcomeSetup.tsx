@@ -1,7 +1,7 @@
-import { Banknote, Search, Check, ArrowLeft, ArrowRight, Palette, Sun, Moon, Lock, Ban, CheckCircle, Rocket } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Banknote, Search, Check, ArrowLeft, ArrowRight, Palette, Sun, Moon, Lock, Ban, CheckCircle, Rocket, User, Camera } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
 import { getDynamicCurrencies, getCurrency } from "../lib/currency";
-import { saveCurrency, saveTheme, loadTheme } from "../lib/storage";
+import { saveCurrency, saveTheme, loadTheme, saveUserProfile } from "../lib/storage";
 import {
   isBiometricSupported,
   isBiometricEnrolled,
@@ -14,7 +14,7 @@ interface Props {
   onComplete: (currency: Currency, theme: "light" | "dark") => void;
 }
 
-type WelcomeStep = "currency" | "theme" | "biometric" | "done";
+type WelcomeStep = "currency" | "theme" | "profile" | "biometric" | "done";
 
 const ONBOARDING_DONE_KEY = "finaura_onboarding_done";
 
@@ -36,6 +36,11 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
   const [bioEnrolling, setBioEnrolling] = useState(false);
   const [bioError, setBioError] = useState("");
   const [bioSuccess, setBioSuccess] = useState(false);
+
+  const [profileName, setProfileName] = useState("");
+  const [profileEmail, setProfileEmail] = useState("");
+  const [profilePhoto, setProfilePhoto] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     isBiometricSupported().then(setBioSupported);
@@ -66,6 +71,53 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
     saveTheme(selectedTheme);
     if (selectedTheme === "dark") document.documentElement.classList.add("dark-mode");
     else document.documentElement.classList.remove("dark-mode");
+    setStep("profile");
+  }
+
+  function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const MAX_WIDTH = 256;
+        const MAX_HEIGHT = 256;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0, width, height);
+        setProfilePhoto(canvas.toDataURL("image/jpeg", 0.8));
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function handleProfileNext() {
+    if (profileName || profileEmail || profilePhoto) {
+      saveUserProfile({ name: profileName, email: profileEmail, photo: profilePhoto });
+    }
+    setStep("biometric");
+  }
+
+  function handleProfileSkip() {
     setStep("biometric");
   }
 
@@ -87,8 +139,8 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
     onComplete(getCurrency(selectedCurrency), selectedTheme);
   }
 
-  const stepIndex = step === "currency" ? 0 : step === "theme" ? 1 : 2;
-  const stepLabels = ["Currency", "Theme", "Security"];
+  const stepIndex = step === "currency" ? 0 : step === "theme" ? 1 : step === "profile" ? 2 : 3;
+  const stepLabels = ["Currency", "Theme", "Profile", "Security"];
 
   return (
     <div className="welcome-overlay">
@@ -245,6 +297,55 @@ export default function WelcomeSetup({ masterKey, onComplete }: Props) {
             <div className="welcome-btn-row">
               <button className="welcome-btn-secondary" onClick={() => setStep("currency")}><ArrowLeft size={16} /> Back</button>
               <button className="welcome-btn-primary" onClick={handleThemeNext}>Continue <ArrowRight size={16} /></button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Step 2.5: Profile (Optional) ── */}
+        {step === "profile" && (
+          <div className="welcome-step">
+            <div className="welcome-step-header">
+              <span className="welcome-step-icon"><User size={20} /></span>
+              <div>
+                <h3>Setup your Profile</h3>
+                <p>Personalize your Vault</p>
+              </div>
+              <span className="welcome-badge-optional">Optional</span>
+            </div>
+
+            <div className="welcome-profile-setup" style={{ display: "flex", flexDirection: "column", gap: "20px", marginTop: "20px" }}>
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <div 
+                  style={{ 
+                    width: 100, height: 100, borderRadius: "50%", background: "var(--surface2)", 
+                    display: "flex", alignItems: "center", justifyContent: "center", border: "2px dashed var(--border)",
+                    cursor: "pointer", position: "relative", overflow: "hidden"
+                  }}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {profilePhoto ? (
+                    <img src={profilePhoto} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  ) : (
+                    <Camera size={32} color="var(--text2)" />
+                  )}
+                  <input type="file" accept="image/*" ref={fileInputRef} onChange={handlePhotoUpload} style={{ display: "none" }} />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Name</label>
+                <input type="text" className="text-input" placeholder="Enter your name" value={profileName} onChange={(e) => setProfileName(e.target.value)} />
+              </div>
+              
+              <div className="form-group">
+                <label>Email (Optional)</label>
+                <input type="email" className="text-input" placeholder="Enter your email" value={profileEmail} onChange={(e) => setProfileEmail(e.target.value)} />
+              </div>
+            </div>
+
+            <div className="welcome-btn-row" style={{ marginTop: "30px" }}>
+              <button className="welcome-btn-secondary" onClick={handleProfileSkip}>Skip for now</button>
+              <button className="welcome-btn-primary" onClick={handleProfileNext} disabled={!profileName && !profilePhoto}>Continue <ArrowRight size={16} /></button>
             </div>
           </div>
         )}

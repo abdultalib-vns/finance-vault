@@ -1,9 +1,9 @@
-import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff } from "lucide-react";
+import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff, User, Camera, Edit2, Save } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { hashPin } from "../lib/crypto";
-import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses, saveAIOptions, loadAIOptions, getVeloAIUsageCount } from "../lib/storage";
+import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses, saveAIOptions, loadAIOptions, getVeloAIUsageCount, loadUserProfile, saveUserProfile } from "../lib/storage";
 import { encryptData, decryptData } from "../lib/crypto";
-import { FinanceItem, Currency, AIOptions } from "../types";
+import { FinanceItem, Currency, AIOptions, UserProfile } from "../types";
 import { OPENROUTER_MODELS, GROQ_MODELS } from "../lib/ai";
 import { getDynamicCurrencies, getCurrency } from "../lib/currency";
 import {
@@ -68,6 +68,13 @@ export default function Settings({
   const [showAiPinPrompt, setShowAiPinPrompt] = useState(false);
   const [aiPin, setAiPin] = useState("");
 
+  const [profile, setProfile] = useState<UserProfile | null>(loadUserProfile());
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profileName, setProfileName] = useState("");
+  const [profileEmail, setProfileEmail] = useState("");
+  const [profilePhoto, setProfilePhoto] = useState("");
+  const profileFileRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     isBiometricSupported().then(setBioSupported);
   }, []);
@@ -97,7 +104,52 @@ export default function Settings({
     setNewPin("");
     setConfirmPin("");
     setPinMsg("Success: PIN changed! All data re-encrypted.");
+  }
 
+  function handleProfileEditOpen() {
+    setProfileName(profile?.name || "");
+    setProfileEmail(profile?.email || "");
+    setProfilePhoto(profile?.photo || "");
+    setShowProfileModal(true);
+  }
+
+  function handleProfilePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const MAX_WIDTH = 256;
+        const MAX_HEIGHT = 256;
+        let width = img.width;
+        let height = img.height;
+        if (width > height) {
+          if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+        } else {
+          if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0, width, height);
+        setProfilePhoto(canvas.toDataURL("image/jpeg", 0.8));
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function handleProfileSave() {
+    const p = { name: profileName, email: profileEmail, photo: profilePhoto };
+    saveUserProfile(p);
+    setProfile(p);
+    setShowProfileModal(false);
+  }
+
+  async function handleToggleBio() {
     if (isBiometricEnrolled()) {
       disableBiometric();
       setBioEnabled(false);
@@ -343,6 +395,26 @@ export default function Settings({
         </a>
       </header>
       <div className="content">
+        {/* ── User Profile Section ── */}
+        <div className="settings-section" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px", background: "var(--surface)", borderRadius: "12px", marginBottom: "20px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <div style={{ width: 60, height: 60, borderRadius: "50%", background: "var(--surface2)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+              {profile?.photo ? (
+                <img src={profile.photo} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                <User size={32} color="var(--text2)" />
+              )}
+            </div>
+            <div>
+              <h3 style={{ margin: 0, fontSize: "1.1rem", color: "var(--text)" }}>{profile?.name || "No Name Set"}</h3>
+              {profile?.email && <p style={{ margin: "4px 0 0", fontSize: "0.85rem", color: "var(--text2)" }}>{profile.email}</p>}
+            </div>
+          </div>
+          <button className="icon-btn" onClick={handleProfileEditOpen} style={{ background: "var(--surface2)", padding: "10px", borderRadius: "50%" }}>
+            <Edit2 size={18} />
+          </button>
+        </div>
+
         <div className="settings-section">
           <h3 className="settings-section-title">Appearance</h3>
           <p className="settings-label">Theme</p>
@@ -740,6 +812,52 @@ export default function Settings({
           Developed by Velo Launch <br /> A Company by <a href="https://smartvistaitsolutions.in" target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 600 }}>Smart Vista IT Solutions</a>
         </div>
       </div>
+
+      {showProfileModal && (
+        <div className="modal-overlay" onClick={() => setShowProfileModal(false)}>
+          <div className="modal-sheet" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 className="form-title">Edit Profile</h3>
+              <button className="modal-close" onClick={() => setShowProfileModal(false)}><XCircle size={20} /></button>
+            </div>
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px", padding: "16px 0" }}>
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <div 
+                  style={{ 
+                    width: 100, height: 100, borderRadius: "50%", background: "var(--surface2)", 
+                    display: "flex", alignItems: "center", justifyContent: "center", border: "2px dashed var(--border)",
+                    cursor: "pointer", position: "relative", overflow: "hidden"
+                  }}
+                  onClick={() => profileFileRef.current?.click()}
+                >
+                  {profilePhoto ? (
+                    <img src={profilePhoto} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  ) : (
+                    <Camera size={32} color="var(--text2)" />
+                  )}
+                  <input type="file" accept="image/*" ref={profileFileRef} onChange={handleProfilePhotoUpload} style={{ display: "none" }} />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Name</label>
+                <input type="text" className="text-input" placeholder="Enter your name" value={profileName} onChange={(e) => setProfileName(e.target.value)} />
+              </div>
+              
+              <div className="form-group">
+                <label>Email (Optional)</label>
+                <input type="email" className="text-input" placeholder="Enter your email" value={profileEmail} onChange={(e) => setProfileEmail(e.target.value)} />
+              </div>
+            </div>
+
+            <div className="form-actions">
+              <button className="btn-outline" onClick={() => setShowProfileModal(false)}>Cancel</button>
+              <button className="btn-primary" onClick={handleProfileSave} disabled={!profileName && !profilePhoto}><Save size={16} /> Save</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {popupMsg && (
         <div className="modal-overlay" style={{ zIndex: 9999 }} onClick={() => setPopupMsg(null)}>
