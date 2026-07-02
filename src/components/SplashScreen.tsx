@@ -44,7 +44,7 @@ export default function SplashScreen({ onFinish }: Props) {
       </h1>
 
       {/* Tagline */}
-      <p className="splash-tagline">A Personal Finance Vault</p>
+      <p className="splash-tagline">AI-Powered Personal Finance Vault</p>
 
       {/* Loading bar */}
       <div className="splash-loader">

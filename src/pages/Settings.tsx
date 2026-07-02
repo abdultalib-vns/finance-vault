@@ -1,4 +1,4 @@
-import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff, User, Camera, Edit2, Save } from "lucide-react";
+import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff, User, Camera, Edit2, Save, Grid3x3 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { hashPin } from "../lib/crypto";
 import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses, saveAIOptions, loadAIOptions, getVeloAIUsageCount, loadUserProfile, saveUserProfile } from "../lib/storage";
@@ -6,6 +6,7 @@ import { encryptData, decryptData } from "../lib/crypto";
 import { FinanceItem, Currency, AIOptions, UserProfile } from "../types";
 import { OPENROUTER_MODELS, GROQ_MODELS } from "../lib/ai";
 import ImageCropper from "../components/ImageCropper";
+import VeloAppsModal from "../components/VeloAppsModal";
 import { getDynamicCurrencies, getCurrency } from "../lib/currency";
 import {
   isBiometricSupported,
@@ -76,6 +77,7 @@ export default function Settings({
   const [profilePhoto, setProfilePhoto] = useState("");
   const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
   const profileFileRef = useRef<HTMLInputElement>(null);
+  const [showVeloApps, setShowVeloApps] = useState(false);
 
   useEffect(() => {
     isBiometricSupported().then(setBioSupported);
@@ -375,10 +377,14 @@ export default function Settings({
     <div className="screen">
       <header className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 className="header-title">Settings</h2>
-        <a href="https://velolaunch.lovable.app" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', height: '32px' }}>
-          <img src={veloLaunchLogo} alt="VeloLaunch" style={{ display: 'block', height: "100%", width: 'auto', objectFit: "contain", opacity: 0.9, transition: "opacity 0.2s ease" }} onMouseOver={e => e.currentTarget.style.opacity = "1"} onMouseOut={e => e.currentTarget.style.opacity = "0.9"} />
-        </a>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <button onClick={() => setShowVeloApps(true)} style={{ background: "none", border: "none", color: "var(--text2)", cursor: "pointer", display: "flex", alignItems: "center", marginRight: 12 }}><Grid3x3 size={24} /></button>
+          <a href="https://velolaunch.lovable.app" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', height: '32px' }}>
+            <img src={veloLaunchLogo} alt="VeloLaunch" style={{ display: 'block', height: "100%", width: 'auto', objectFit: "contain", opacity: 0.9, transition: "opacity 0.2s ease" }} onMouseOver={e => e.currentTarget.style.opacity = "1"} onMouseOut={e => e.currentTarget.style.opacity = "0.9"} />
+          </a>
+        </div>
       </header>
+      {showVeloApps && <VeloAppsModal onClose={() => setShowVeloApps(false)} />}
       <div className="content">
         {/* ── User Profile Section ── */}
         <div className="settings-section" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px", background: "var(--surface)", borderRadius: "12px", marginBottom: "20px" }}>
