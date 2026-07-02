@@ -1,4 +1,4 @@
-import { Search, Check, ArrowLeft, Ban, CheckCircle, Calendar, Receipt , CheckSquare, Square, FileText, AlertTriangle, Hourglass,  } from "lucide-react";
+import { Search, Check, ArrowLeft, Ban, CheckCircle, Calendar, Receipt, CheckSquare, Square, FileText, AlertTriangle, Hourglass, X } from "lucide-react";
 import { useState, useMemo } from "react";
 import { FinanceItem, CardExpense, CardBill, ExpenseStatus } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
@@ -12,8 +12,8 @@ interface Props {
   onBack: () => void;
 }
 
-type ExpenseFilter = "all" | "unpaid" | "paid" | "billed";
-type MainTab = "expenses" | "bills";
+type ExpenseFilter = "all" | "unpaid" | "paid" | "in_statement";
+type MainTab = "transactions" | "statements";
 
 function getMonthKey(dateStr: string): string {
   try {
@@ -37,7 +37,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
   );
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState<ExpenseFilter>("all");
-  const [mainTab, setMainTab] = useState<MainTab>("expenses");
+  const [mainTab, setMainTab] = useState<MainTab>("transactions");
   const [editingExpense, setEditingExpense] = useState<CardExpense | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string>("all");
   const [selectedForBill, setSelectedForBill] = useState<Set<string>>(new Set());
@@ -70,7 +70,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
     if (filter === "all") return sorted;
     if (filter === "unpaid") return sorted.filter((e) => e.status === "unpaid");
     if (filter === "paid") return sorted.filter((e) => e.status === "paid");
-    if (filter === "billed") return sorted.filter((e) => e.status === "bill_generated" || e.status === "bill_generated_unpaid");
+    if (filter === "in_statement") return sorted.filter((e) => e.status === "bill_generated" || e.status === "bill_generated_unpaid");
     return sorted;
   }, [expenses, filter, selectedMonth]);
 
@@ -150,12 +150,9 @@ export default function CardDetail({ card, currency, onBack }: Props) {
     persistExpenses(updated);
   }
 
-  // ── Generate Bill (partial or full) ────────────────────────────
-  function generateBill(expenseIds?: string[]) {
-    const toBill = expenseIds
-      ? expenses.filter((e) => expenseIds.includes(e.id) && e.status === "unpaid")
-      : unpaidExpenses;
-
+  // ── Generate Statement ─────────────────────────────────────────
+  function generateStatement(expenseIds: string[]) {
+    const toBill = expenses.filter((e) => expenseIds.includes(e.id) && e.status === "unpaid");
     if (toBill.length === 0) return;
 
     const now = new Date();
@@ -186,11 +183,11 @@ export default function CardDetail({ card, currency, onBack }: Props) {
     persistExpenses(updatedExpenses);
     setSelectMode(false);
     setSelectedForBill(new Set());
-    setMainTab("bills");
+    setMainTab("statements");
   }
 
-  // ── Pay Bill ───────────────────────────────────────────────────
-  function payBill(billId: string) {
+  // ── Pay Statement ──────────────────────────────────────────────
+  function payStatement(billId: string) {
     const updatedBills = bills.map((b) =>
       b.id === billId ? { ...b, status: "paid" as const, paidAt: Date.now() } : b
     );
@@ -210,15 +207,24 @@ export default function CardDetail({ card, currency, onBack }: Props) {
     });
   }
 
+  function selectAllUnpaid() {
+    setSelectedForBill(new Set(unpaidExpenses.map(e => e.id)));
+  }
+
   // ── Status display ─────────────────────────────────────────────
   function statusInfo(status: ExpenseStatus) {
     switch (status) {
       case "paid": return { label: "Paid", color: "#10b981", bg: "#d1fae5" };
       case "unpaid": return { label: "Unpaid", color: "#f59e0b", bg: "#fef3c7" };
-      case "bill_generated_unpaid": return { label: "Bill Due", color: "#ef4444", bg: "#fee2e2" };
-      case "bill_generated": return { label: "Billed & Paid", color: "#6366f1", bg: "#ede9fe" };
+      case "bill_generated_unpaid": return { label: "In Statement", color: "#ef4444", bg: "#fee2e2" };
+      case "bill_generated": return { label: "Cleared", color: "#6366f1", bg: "#ede9fe" };
     }
   }
+
+  const selectedTotal = [...selectedForBill].reduce((sum, id) => {
+    const exp = expenses.find(e => e.id === id);
+    return sum + (exp?.amount || 0);
+  }, 0);
 
   // ── Edit form overlay ─────────────────────────────────────────
   if (editingExpense) {
@@ -277,22 +283,22 @@ export default function CardDetail({ card, currency, onBack }: Props) {
       {/* Main Tabs */}
       <div className="main-tabs">
         <button
-          className={`main-tab ${mainTab === "expenses" ? "active" : ""}`}
-          onClick={() => setMainTab("expenses")}
+          className={`main-tab ${mainTab === "transactions" ? "active" : ""}`}
+          onClick={() => { setMainTab("transactions"); setSelectMode(false); setSelectedForBill(new Set()); }}
         >
-          Expenses ({expenses.length})
+          <Receipt size={14} /> Transactions ({expenses.length})
         </button>
         <button
-          className={`main-tab ${mainTab === "bills" ? "active" : ""}`}
-          onClick={() => setMainTab("bills")}
+          className={`main-tab ${mainTab === "statements" ? "active" : ""}`}
+          onClick={() => { setMainTab("statements"); setSelectMode(false); setSelectedForBill(new Set()); }}
         >
-          Bills ({bills.length})
+          <FileText size={14} /> Statements ({bills.length})
         </button>
       </div>
 
-      <div className="content">
-        {/* ── EXPENSES TAB ── */}
-        {mainTab === "expenses" && (
+      <div className="content" style={{ paddingBottom: selectMode ? 140 : undefined }}>
+        {/* ── TRANSACTIONS TAB ── */}
+        {mainTab === "transactions" && (
           <>
             {/* Month Filter */}
             {availableMonths.length > 0 && !showForm && (
@@ -327,28 +333,19 @@ export default function CardDetail({ card, currency, onBack }: Props) {
                   </>
                 );
               })()}
+
+              {/* Generate Statement button */}
               {hasUnpaid && !showForm && !selectMode && (
-                <button className="btn-outline generate-bill-btn" onClick={() => generateBill()}>
-                  <Receipt size={20} /> Generate Full Bill ({unpaidExpenses.length})
+                <button className="btn-outline generate-stmt-btn" onClick={() => { setSelectMode(true); selectAllUnpaid(); }}>
+                  <Receipt size={16} /> Generate Statement ({unpaidExpenses.length} unpaid)
                 </button>
               )}
-              {hasUnpaid && !showForm && !selectMode && (
-                <button className="btn-outline" onClick={() => setSelectMode(true)}>
-                  <><CheckSquare size={16} /> Select & Generate Bill</>
-                </button>
-              )}
+
+              {/* Selection mode hint */}
               {selectMode && (
-                <div className="select-bill-actions">
-                  <button
-                    className="btn-primary"
-                    disabled={selectedForBill.size === 0}
-                    onClick={() => generateBill([...selectedForBill])}
-                  >
-                    <Receipt size={20} /> Generate Bill ({selectedForBill.size} selected)
-                  </button>
-                  <button className="btn-secondary" onClick={() => { setSelectMode(false); setSelectedForBill(new Set()); }}>
-                    Cancel
-                  </button>
+                <div className="select-mode-hint">
+                  <span>Tap expenses to select/deselect for this statement</span>
+                  <button className="select-hint-link" onClick={selectAllUnpaid}>Select All</button>
                 </div>
               )}
             </div>
@@ -367,13 +364,13 @@ export default function CardDetail({ card, currency, onBack }: Props) {
             {/* Filters */}
             {!showForm && expenses.length > 0 && (
               <div className="filter-chips">
-                {(["all", "unpaid", "paid", "billed"] as ExpenseFilter[]).map((f) => (
+                {(["all", "unpaid", "paid", "in_statement"] as ExpenseFilter[]).map((f) => (
                   <button
                     key={f}
                     className={`filter-chip ${filter === f ? "active" : ""}`}
                     onClick={() => setFilter(f)}
                   >
-                    {f === "all" ? "All" : f === "unpaid" ? <><Hourglass size={16} /> Unpaid</> : f === "paid" ? <><CheckCircle size={16} /> Paid</> : <><Receipt size={16} /> Billed</>}
+                    {f === "all" ? "All" : f === "unpaid" ? <><Hourglass size={14} /> Unpaid</> : f === "paid" ? <><CheckCircle size={14} /> Paid</> : <><FileText size={14} /> In Statement</>}
                   </button>
                 ))}
               </div>
@@ -384,7 +381,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
               <div className="empty-state">
                 <p className="empty-icon">{expenses.length === 0 ? <Receipt size={24} /> : <Search size={24} />}</p>
                 <p className="empty-text">
-                  {expenses.length === 0 ? "No expenses yet" : `No ${filter} expenses`}
+                  {expenses.length === 0 ? "No transactions yet" : `No ${filter === "in_statement" ? "statement" : filter} transactions`}
                 </p>
                 {expenses.length === 0 && (
                   <p className="empty-sub">Tap + Add Expense to track your spending</p>
@@ -394,15 +391,16 @@ export default function CardDetail({ card, currency, onBack }: Props) {
               <ul className="expense-list">
                 {filtered.map((exp) => {
                   const si = statusInfo(exp.status);
+                  const isSelectable = selectMode && exp.status === "unpaid";
                   const isSelected = selectedForBill.has(exp.id);
                   return (
                     <li
                       key={exp.id}
-                      className={`expense-item ${selectMode && exp.status === "unpaid" ? "selectable" : ""} ${isSelected ? "selected" : ""}`}
-                      onClick={selectMode && exp.status === "unpaid" ? () => toggleSelect(exp.id) : undefined}
+                      className={`expense-item ${isSelectable ? "selectable" : ""} ${isSelected ? "selected" : ""}`}
+                      onClick={isSelectable ? () => toggleSelect(exp.id) : undefined}
                     >
                       <div className="expense-item-top">
-                        {selectMode && exp.status === "unpaid" && (
+                        {isSelectable && (
                           <span className="select-checkbox">{isSelected ? <CheckSquare size={16} /> : <Square size={16} />}</span>
                         )}
                         <div className="expense-item-left">
@@ -459,69 +457,88 @@ export default function CardDetail({ card, currency, onBack }: Props) {
           </>
         )}
 
-        {/* ── BILLS TAB ── */}
-        {mainTab === "bills" && (
+        {/* ── STATEMENTS TAB ── */}
+        {mainTab === "statements" && (
           <>
             {bills.length === 0 ? (
               <div className="empty-state">
-                <p className="empty-icon"><FileText size={20} /></p>
-                <p className="empty-text">No bills generated yet</p>
-                <p className="empty-sub">Add unpaid expenses and click "Generate Bill"</p>
+                <p className="empty-icon"><FileText size={24} /></p>
+                <p className="empty-text">No statements yet</p>
+                <p className="empty-sub">Add unpaid expenses and tap "Generate Statement" to create one</p>
               </div>
             ) : (
-              <ul className="bill-list">
+              <ul className="statement-list">
                 {sortedBills.map((bill) => {
-                  const billExpenses = allExpenses.filter((e) => bill.expenseIds.includes(e.id));
+                  const billExpenses = expenses.filter((e) => bill.expenseIds.includes(e.id));
+                  const isPaid = bill.status === "paid";
                   return (
-                    <li key={bill.id} className={`bill-item ${bill.status}`}>
-                      <div className="bill-item-header">
-                        <div>
-                          <span className="bill-month">{formatMonth(bill.month)}</span>
+                    <li key={bill.id} className={`statement-card ${isPaid ? "paid" : "unpaid"}`}>
+                      {/* Statement Header */}
+                      <div className="statement-header">
+                        <div className="statement-header-left">
+                          <span className="statement-month">{formatMonth(bill.month)}</span>
                           <span
-                            className="bill-status-badge"
+                            className="statement-status-badge"
                             style={
-                              bill.status === "paid"
+                              isPaid
                                 ? { background: "#d1fae5", color: "#10b981" }
                                 : { background: "#fee2e2", color: "#ef4444" }
                             }
                           >
-                            {bill.status === "paid" ? <><Check size={16} /> Paid</> : <><AlertTriangle size={16} /> Unpaid</>}
+                            {isPaid ? <><Check size={12} /> Paid</> : <><AlertTriangle size={12} /> Unpaid</>}
                           </span>
                         </div>
-                        <span className="bill-total">{formatAmount(bill.totalAmount, currency)}</span>
+                        <span className="statement-total">{formatAmount(bill.totalAmount, currency)}</span>
                       </div>
 
-                      <div className="bill-meta">
-                        <span>{bill.expenseIds.length} expense{bill.expenseIds.length !== 1 ? "s" : ""}</span>
-                        {bill.dueDate && bill.status === "unpaid" && (
-                          <span className="bill-due">Due: {formatDate(bill.dueDate)}</span>
+                      {/* Statement Meta */}
+                      <div className="statement-meta">
+                        <span className="statement-meta-item">
+                          <Receipt size={12} /> {bill.expenseIds.length} transaction{bill.expenseIds.length !== 1 ? "s" : ""}
+                        </span>
+                        {bill.dueDate && !isPaid && (
+                          <span className="statement-meta-item statement-due">
+                            <Calendar size={12} /> Due: {formatDate(bill.dueDate)}
+                          </span>
                         )}
                         {bill.totalCashback > 0 && (
-                          <span className="bill-cashback">Cashback: +{formatAmount(bill.totalCashback, currency)}</span>
+                          <span className="statement-meta-item statement-cashback">
+                            +{formatAmount(bill.totalCashback, currency)} cashback
+                          </span>
                         )}
                         {bill.paidAt && (
-                          <span>Paid on {new Date(bill.paidAt).toLocaleDateString()}</span>
+                          <span className="statement-meta-item">
+                            <Check size={12} /> Paid on {new Date(bill.paidAt).toLocaleDateString()}
+                          </span>
                         )}
                       </div>
 
-                      {bill.status === "unpaid" && (
-                        <button className="btn-primary pay-bill-btn" onClick={() => payBill(bill.id)}>
-                          <CheckCircle size={20} /> Mark Bill as Paid
+                      {/* Inline Expense List — always visible */}
+                      <div className="statement-expenses">
+                        <div className="statement-expenses-header">Included Transactions</div>
+                        <ul className="statement-expense-list">
+                          {billExpenses.length > 0 ? billExpenses.map((e) => (
+                            <li key={e.id} className="statement-expense-row">
+                              <div className="statement-expense-info">
+                                <span className="statement-expense-desc">{e.description}</span>
+                                <span className="statement-expense-date">{formatDate(e.date)}</span>
+                              </div>
+                              <span className="statement-expense-amt">{formatAmount(e.amount, currency)}</span>
+                            </li>
+                          )) : (
+                            <li className="statement-expense-row" style={{ opacity: 0.5, justifyContent: "center" }}>
+                              <span>Expenses removed</span>
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+
+                      {/* Pay button */}
+                      {!isPaid && (
+                        <button className="btn-primary statement-pay-btn" onClick={() => payStatement(bill.id)}>
+                          <CheckCircle size={16} /> Mark Statement Paid
                         </button>
                       )}
-
-                      {/* Expense breakdown */}
-                      <details className="bill-breakdown">
-                        <summary className="bill-breakdown-toggle">View expenses</summary>
-                        <ul className="bill-breakdown-list">
-                          {billExpenses.map((e) => (
-                            <li key={e.id} className="bill-breakdown-item">
-                              <span>{e.description}</span>
-                              <span>{formatAmount(e.amount, currency)}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </details>
                     </li>
                   );
                 })}
@@ -530,6 +547,28 @@ export default function CardDetail({ card, currency, onBack }: Props) {
           </>
         )}
       </div>
+
+      {/* ── Sticky Selection Bar ── */}
+      {selectMode && (
+        <div className="select-bar">
+          <div className="select-bar-info">
+            <span className="select-bar-count">{selectedForBill.size} selected</span>
+            <span className="select-bar-total">{formatAmount(selectedTotal, currency)}</span>
+          </div>
+          <div className="select-bar-actions">
+            <button
+              className="btn-primary select-bar-generate"
+              disabled={selectedForBill.size === 0}
+              onClick={() => generateStatement([...selectedForBill])}
+            >
+              <Receipt size={16} /> Generate
+            </button>
+            <button className="btn-secondary select-bar-cancel" onClick={() => { setSelectMode(false); setSelectedForBill(new Set()); }}>
+              <X size={14} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
