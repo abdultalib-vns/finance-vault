@@ -48,6 +48,7 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
   const [selectMode, setSelectMode] = useState(false);
   const [payingBill, setPayingBill] = useState<CardBill | null>(null);
   const [payingExpense, setPayingExpense] = useState<CardExpense | null>(null);
+  const [deletingBillId, setDeletingBillId] = useState<string | null>(null);
 
   const bankItems = items.filter((i) => i.type === "bank");
 
@@ -217,10 +218,14 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
   }
 
   // ── Delete Statement ───────────────────────────────────────────
-  function deleteStatement(id: string) {
-    if (!window.confirm("Are you sure you want to delete this statement? All included expenses will become unpaid again.")) return;
+  function handleConfirmDelete() {
+    if (!deletingBillId) return;
+    const id = deletingBillId;
     const bill = bills.find(b => b.id === id);
-    if (!bill) return;
+    if (!bill) {
+      setDeletingBillId(null);
+      return;
+    }
 
     // Revert expenses to unpaid
     const updatedExpenses = expenses.map(e => {
@@ -235,6 +240,7 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
     
     persistExpenses(updatedExpenses);
     persistBills(updatedBills);
+    setDeletingBillId(null);
   }
 
   // ── Pay Statement ──────────────────────────────────────────────
@@ -605,7 +611,7 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
                             <CheckCircle size={16} /> Mark Statement Paid
                           </button>
                         )}
-                        <button className="btn-outline statement-delete-btn" onClick={() => deleteStatement(bill.id)} style={{ flex: isPaid ? 1 : 0, padding: isPaid ? "13px 20px" : "8px 14px", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", borderColor: "var(--danger, #ef4444)", color: "var(--danger, #ef4444)" }}>
+                        <button className="btn-outline statement-delete-btn" onClick={() => setDeletingBillId(bill.id)} style={{ flex: isPaid ? 1 : 0, padding: isPaid ? "13px 20px" : "8px 14px", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", borderColor: "var(--danger, #ef4444)", color: "var(--danger, #ef4444)" }}>
                           <Trash size={16} /> {isPaid ? "Delete Statement" : ""}
                         </button>
                       </div>
@@ -662,6 +668,31 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
           </div>
         </div>
       )}
+      {/* ── Delete Statement Modal ── */}
+      {deletingBillId && (
+        <div className="modal-overlay" onClick={() => setDeletingBillId(null)} style={{ zIndex: 2000 }}>
+          <div className="modal-sheet" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 className="form-title">Delete Statement</h3>
+              <button className="modal-close" onClick={() => setDeletingBillId(null)}><X size={20} /></button>
+            </div>
+            <div className="modal-body" style={{ padding: "0 20px 20px" }}>
+              <p style={{ margin: "16px 0", color: "var(--text2)", fontSize: "0.95rem", lineHeight: "1.5" }}>
+                Are you sure you want to delete this statement? All included expenses will become unpaid again.
+              </p>
+              <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
+                <button className="btn-secondary" onClick={() => setDeletingBillId(null)} style={{ flex: 1 }}>
+                  Cancel
+                </button>
+                <button className="btn-primary" onClick={handleConfirmDelete} style={{ flex: 1, background: "var(--danger, #ef4444)", color: "#fff", border: "none" }}>
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
