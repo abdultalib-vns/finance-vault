@@ -10,7 +10,8 @@ import successAnimation from "../../public/success.json";
 type Step = "select" | "verify" | "success";
 
 interface Props {
-  bill: CardBill;
+  amount: number;
+  label?: string; // e.g. "Statement Amount" or "Expense Amount"
   card: FinanceItem;
   bankItems: FinanceItem[];
   currency: Currency;
@@ -20,7 +21,8 @@ interface Props {
 }
 
 export default function BillPaymentSheet({
-  bill,
+  amount,
+  label = "Amount",
   card,
   bankItems,
   currency,
@@ -37,7 +39,7 @@ export default function BillPaymentSheet({
   const pinRef = useRef<HTMLInputElement>(null);
 
   const selectedBank = bankItems.find((b) => b.id === selectedBankId) || null;
-  const newBalance = selectedBank ? selectedBank.balance - bill.totalAmount : 0;
+  const newBalance = selectedBank ? selectedBank.balance - amount : 0;
   const isLowBalance = selectedBank ? newBalance < 0 : false;
 
   // Auto-focus PIN input when entering verify step
@@ -122,9 +124,9 @@ export default function BillPaymentSheet({
 
         <div className="bps-body">
           <div className="bps-bill-summary">
-            <span className="bps-bill-label">Statement Amount</span>
+            <span className="bps-bill-label">{label}</span>
             <span className="bps-bill-amount">
-              {formatAmount(bill.totalAmount, currency)}
+              {formatAmount(amount, currency)}
             </span>
             <span className="bps-bill-card">{card.name} {card.lastFour ? `•••• ${card.lastFour}` : ""}</span>
           </div>
@@ -215,7 +217,7 @@ export default function BillPaymentSheet({
 
           <p className="bps-verify-text">
             Confirm payment of{" "}
-            <strong>{formatAmount(bill.totalAmount, currency)}</strong>{" "}
+            <strong>{formatAmount(amount, currency)}</strong>{" "}
             from <strong>{selectedBank?.name}</strong>
           </p>
 
@@ -293,7 +295,7 @@ export default function BillPaymentSheet({
 
           <div className="bps-success-details">
             <span className="bps-success-via">
-              via {selectedBank?.name} — {formatAmount(bill.totalAmount, currency)}
+              via {selectedBank?.name} — {formatAmount(amount, currency)}
             </span>
             <span className="bps-success-remaining">
               Remaining Balance: {formatAmount(newBalance, currency)}

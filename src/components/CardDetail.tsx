@@ -47,6 +47,7 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
   const [selectedForBill, setSelectedForBill] = useState<Set<string>>(new Set());
   const [selectMode, setSelectMode] = useState(false);
   const [payingBill, setPayingBill] = useState<CardBill | null>(null);
+  const [payingExpense, setPayingExpense] = useState<CardExpense | null>(null);
 
   const bankItems = items.filter((i) => i.type === "bank");
 
@@ -141,11 +142,23 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
   }
 
   // ── Mark expense as paid directly ──────────────────────────────
-  function markExpensePaid(id: string) {
+  function markExpensePaid(id: string, bankId: string, bankName: string) {
     const updated = expenses.map((e) =>
       e.id === id ? { ...e, status: "paid" as ExpenseStatus } : e
     );
     persistExpenses(updated);
+
+    // Deduct amount from the bank account balance
+    const exp = expenses.find((e) => e.id === id);
+    if (exp) {
+      const updatedItems = items.map((item) =>
+        item.id === bankId
+          ? { ...item, balance: item.balance - exp.amount }
+          : item
+      );
+      saveItems(updatedItems);
+      onItemsChange(updatedItems);
+    }
   }
 
   // ── Delete expense ─────────────────────────────────────────────
@@ -450,7 +463,7 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
                             {exp.status === "unpaid" && (
                               <button
                                 className="exp-action-btn pay"
-                                onClick={() => markExpensePaid(exp.id)}
+                                onClick={() => setPayingExpense(exp)}
                               >
                                 Mark Paid
                               </button>
@@ -570,15 +583,27 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
       </div>
 
       {/* ── Bill Payment Sheet ── */}
-      {payingBill && (
+      {(payingBill || payingExpense) && (
         <BillPaymentSheet
-          bill={payingBill}
+          amount={payingBill ? payingBill.totalAmount : (payingExpense?.amount || 0)}
+          label={payingBill ? "Statement Amount" : "Expense Amount"}
           card={card}
           bankItems={bankItems}
           currency={currency}
           masterKey={masterKey}
-          onConfirm={(bankId, bankName) => payStatement(payingBill.id, bankId, bankName)}
-          onClose={() => setPayingBill(null)}
+          onConfirm={(bankId, bankName) => {
+            if (payingBill) {
+              payStatement(payingBill.id, bankId, bankName);
+              setPayingBill(null);
+            } else if (payingExpense) {
+              markExpensePaid(payingExpense.id, bankId, bankName);
+              setPayingExpense(null);
+            }
+          }}
+          onClose={() => {
+            setPayingBill(null);
+            setPayingExpense(null);
+          }}
         />
       )}
 
