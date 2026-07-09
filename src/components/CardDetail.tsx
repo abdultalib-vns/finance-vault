@@ -84,15 +84,14 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
 
   const sortedBills = [...bills].sort((a, b) => b.generatedAt - a.generatedAt);
 
-  // ── Helpers ────────────────────────────────────────────────────
   function persistExpenses(updated: CardExpense[]) {
-    const rest = allExpenses.filter((e) => e.cardId !== card.id);
+    const rest = loadExpenses().filter((e) => e.cardId !== card.id);
     saveExpenses([...rest, ...updated]);
     setExpenses(updated);
   }
 
   function persistBills(updated: CardBill[]) {
-    const rest = allBills.filter((b) => b.cardId !== card.id);
+    const rest = loadBills().filter((b) => b.cardId !== card.id);
     saveBills([...rest, ...updated]);
     setBills(updated);
   }
@@ -170,10 +169,16 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
     persistExpenses(updated);
   }
 
+  const isGeneratingRef = useRef(false);
+
   // ── Generate Statement ─────────────────────────────────────────
   function generateStatement(expenseIds: string[]) {
+    if (isGeneratingRef.current) return;
+    
     const toBill = expenses.filter((e) => expenseIds.includes(e.id) && e.status === "unpaid");
     if (toBill.length === 0) return;
+
+    isGeneratingRef.current = true;
 
     const now = new Date();
     const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
@@ -204,6 +209,11 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
     setSelectMode(false);
     setSelectedForBill(new Set());
     setMainTab("statements");
+    
+    // Release lock after state updates
+    setTimeout(() => {
+      isGeneratingRef.current = false;
+    }, 100);
   }
 
   // ── Pay Statement ──────────────────────────────────────────────
