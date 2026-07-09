@@ -3,11 +3,13 @@ import React, { useState, useRef, useEffect } from "react";
 import { Bot, X, Send, Sparkles, User, RefreshCw, Trash2, Mic } from "lucide-react";
 import { AIOptions, FinanceItem, CardExpense } from "../types";
 import { askVault, AIResponse } from "../lib/ai";
+import { executeAITool } from "../lib/ai-tools";
 
 interface Props {
   aiOpts: AIOptions;
   contextData: { items: FinanceItem[]; expenses: CardExpense[] };
   onClose: () => void;
+  onDataChanged: () => void;
 }
 
 interface Message {
@@ -17,7 +19,7 @@ interface Message {
   loading?: boolean;
 }
 
-export default function AIAssistant({ aiOpts, contextData, onClose }: Props) {
+export default function AIAssistant({ aiOpts, contextData, onClose, onDataChanged }: Props) {
   const [messages, setMessages] = useState<Message[]>(() => {
     const saved = sessionStorage.getItem("finaura_ai_chat");
     if (saved) {
@@ -51,17 +53,57 @@ export default function AIAssistant({ aiOpts, contextData, onClose }: Props) {
     const userMsg: Message = { id: Date.now().toString(), role: "user", text: userText };
     const loadingMsg: Message = { id: Date.now().toString() + "-ai", role: "ai", text: "Thinking...", loading: true };
     
-    setMessages(prev => [...prev, userMsg, loadingMsg]);
+    const currentMessages = [...messages, userMsg];
+    setMessages([...currentMessages, loadingMsg]);
     setIsTyping(true);
 
-    const response: AIResponse = await askVault(aiOpts, userText, contextData);
+    let apiMessages = currentMessages
+      .filter(m => m.id !== "welcome" && !m.loading)
+      .map(m => ({ role: m.role, content: m.text }));
+
+    let response: AIResponse = await askVault(aiOpts, apiMessages, contextData);
+
+    while (response.success && response.data?.type === "tool_call") {
+      const toolCall = response.data;
+      
+      setMessages(prev => {
+        const newMsgs = [...prev];
+        newMsgs[newMsgs.length - 1] = {
+          id: loadingMsg.id,
+          role: "ai",
+          text: `Executing action: ${toolCall.tool_call}...`,
+          loading: true
+        };
+        return newMsgs;
+      });
+
+      const toolResult = await executeAITool(toolCall.tool_call, toolCall.arguments);
+      
+      onDataChanged();
+
+      apiMessages.push({ role: "ai", content: response.text || "" });
+      apiMessages.push({ role: "user", content: `SYSTEM: Tool execution result: ${toolResult}` });
+
+      setMessages(prev => {
+        const newMsgs = [...prev];
+        newMsgs[newMsgs.length - 1] = {
+          id: loadingMsg.id,
+          role: "ai",
+          text: "Thinking...",
+          loading: true
+        };
+        return newMsgs;
+      });
+
+      response = await askVault(aiOpts, apiMessages, contextData);
+    }
 
     setMessages(prev => {
       const newMsgs = [...prev];
       newMsgs[newMsgs.length - 1] = {
         id: loadingMsg.id,
         role: "ai",
-        text: response.success && response.text ? response.text : (response.error || "Sorry, I couldn't process that.")
+        text: response.success && response.text ? response.text.replace(/```json[\s\S]*?```/g, "").trim() : (response.error || "Sorry, I couldn't process that.")
       };
       return newMsgs;
     });

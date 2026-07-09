@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { AIOptions, FinanceItem, CardExpense } from "../types";
 import { checkVeloAILimit, incrementVeloAIUsage } from "./storage";
+import { AI_TOOLS_SCHEMA } from "./ai-tools";
 
 export interface AIResponse {
   success: boolean;
@@ -26,22 +27,21 @@ export const GROQ_MODELS = [
   { id: "gemma2-9b-it", name: "Gemma 2 9B" },
 ];
 
-async function callOpenRouter(key: string, model: string, systemPrompt: string, userPrompt: string, imageBase64?: string): Promise<string> {
+async function callOpenRouter(key: string, model: string, systemPrompt: string, inputMessages: {role: string, content: string}[], imageBase64?: string): Promise<string> {
   const safeKey = key.trim();
   const messages: any[] = [
-    { role: "system", content: systemPrompt }
+    { role: "system", content: systemPrompt },
+    ...inputMessages.map(m => ({ role: m.role === "ai" ? "assistant" : "user", content: m.content }))
   ];
 
   if (imageBase64) {
-    messages.push({
-      role: "user",
-      content: [
-        { type: "text", text: userPrompt },
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg.role === "user") {
+      lastMsg.content = [
+        { type: "text", text: lastMsg.content },
         { type: "image_url", image_url: { url: imageBase64 } }
-      ]
-    });
-  } else {
-    messages.push({ role: "user", content: userPrompt });
+      ];
+    }
   }
 
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -71,24 +71,21 @@ async function callOpenRouter(key: string, model: string, systemPrompt: string, 
   return data.choices?.[0]?.message?.content || "";
 }
 
-async function callGroq(key: string, model: string, systemPrompt: string, userPrompt: string, imageBase64?: string): Promise<string> {
+async function callGroq(key: string, model: string, systemPrompt: string, inputMessages: {role: string, content: string}[], imageBase64?: string): Promise<string> {
   const safeKey = key.trim();
   const messages: any[] = [
-    { role: "system", content: systemPrompt }
+    { role: "system", content: systemPrompt },
+    ...inputMessages.map(m => ({ role: m.role === "ai" ? "assistant" : "user", content: m.content }))
   ];
 
   if (imageBase64) {
-    // Groq currently doesn't have native vision API broadly accessible on standard models yet,
-    // but if a vision model is selected in Groq (like Llama 3.2 Vision when available), it uses the same OpenAI format.
-    messages.push({
-      role: "user",
-      content: [
-        { type: "text", text: userPrompt },
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg.role === "user") {
+      lastMsg.content = [
+        { type: "text", text: lastMsg.content },
         { type: "image_url", image_url: { url: imageBase64 } }
-      ]
-    });
-  } else {
-    messages.push({ role: "user", content: userPrompt });
+      ];
+    }
   }
 
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -116,67 +113,91 @@ async function callGroq(key: string, model: string, systemPrompt: string, userPr
   return data.choices?.[0]?.message?.content || "";
 }
 
-async function callGemini(key: string, systemPrompt: string, userPrompt: string, imageBase64?: string): Promise<string> {
+async function callGemini(key: string, systemPrompt: string, inputMessages: {role: string, content: string}[], imageBase64?: string): Promise<string> {
   const genAI = new GoogleGenerativeAI(key);
-  // We use gemini-1.5-flash as it is fast and supports vision
   const model = genAI.getGenerativeModel({ 
     model: "gemini-1.5-flash",
     systemInstruction: systemPrompt 
   });
 
-  const parts: any[] = [userPrompt];
+  const contents = inputMessages.map(m => ({
+    role: m.role === "ai" ? "model" : "user",
+    parts: [{ text: m.content }]
+  }));
+
   if (imageBase64) {
-    // Determine mime type from base64 string
     const match = imageBase64.match(/^data:(image\/[a-zA-Z]+);base64,(.+)$/);
     if (match) {
-      parts.push({
-        inlineData: {
-          mimeType: match[1],
-          data: match[2]
-        }
-      });
+      const lastMsg = contents[contents.length - 1];
+      if (lastMsg.role === "user") {
+        lastMsg.parts.push({
+          inlineData: {
+            mimeType: match[1],
+            data: match[2]
+          }
+        } as any);
+      }
     }
   }
 
-  const result = await model.generateContent(parts);
+  const result = await model.generateContent({ contents });
   const response = await result.response;
   return response.text();
 }
 
-async function callVeloAI(systemPrompt: string, userPrompt: string, imageBase64?: string): Promise<string> {
+async function callVeloAI(systemPrompt: string, inputMessages: {role: string, content: string}[], imageBase64?: string): Promise<string> {
   if (!checkVeloAILimit()) {
     throw new Error("VeloAI Daily Limit Reached (10/10). Please try again tomorrow or select a different AI provider in Settings.");
   }
-  // Obfuscated key
   const obf = "==QZxMDZ2YGO4UmNwIWOwIDNjFGN4AjZyADMjVDN3ImNzYGOjJGOhlzNlZWOkVzYlFWN0AjN5ImMjljNklzM0QTNtEjdtI3bts2c";
   const key = atob(obf.split('').reverse().join(''));
-  const res = await callOpenRouter(key, "openai/gpt-4o-mini", systemPrompt, userPrompt, imageBase64);
+  const res = await callOpenRouter(key, "openai/gpt-4o-mini", systemPrompt, inputMessages, imageBase64);
   incrementVeloAIUsage();
   return res;
 }
 
-async function callAI(opts: AIOptions, systemPrompt: string, userPrompt: string, imageBase64?: string): Promise<string> {
+async function callAI(opts: AIOptions, systemPrompt: string, messages: {role: string, content: string}[], imageBase64?: string): Promise<string> {
   if (opts.provider === "gemini") {
     if (!opts.geminiKey) throw new Error("Gemini API key is not configured.");
-    return await callGemini(opts.geminiKey, systemPrompt, userPrompt, imageBase64);
+    return await callGemini(opts.geminiKey, systemPrompt, messages, imageBase64);
   } else if (opts.provider === "openrouter") {
     if (!opts.openRouterKey) throw new Error("OpenRouter API key is not configured.");
-    return await callOpenRouter(opts.openRouterKey, opts.openRouterModel, systemPrompt, userPrompt, imageBase64);
+    return await callOpenRouter(opts.openRouterKey, opts.openRouterModel, systemPrompt, messages, imageBase64);
   } else if (opts.provider === "groq") {
     if (!opts.groqKey) throw new Error("Groq API key is not configured.");
-    return await callGroq(opts.groqKey, opts.groqModel, systemPrompt, userPrompt, imageBase64);
+    return await callGroq(opts.groqKey, opts.groqModel, systemPrompt, messages, imageBase64);
   } else if (opts.provider === "veloai") {
-    return await callVeloAI(systemPrompt, userPrompt, imageBase64);
+    return await callVeloAI(systemPrompt, messages, imageBase64);
   }
   throw new Error("AI provider is not configured.");
 }
 
-export async function askVault(opts: AIOptions, prompt: string, context: { items: FinanceItem[], expenses: CardExpense[] }): Promise<AIResponse> {
+export async function askVault(opts: AIOptions, messages: { role: string, content: string }[], context: { items: FinanceItem[], expenses: CardExpense[] }): Promise<AIResponse> {
   try {
-    const systemPrompt = `You are a helpful and intelligent financial assistant built into the "Finance-Vault" app. You are known as "FinAura Assistant".
-You are given the user's current financial context in JSON format.
-Use this context to answer the user's questions accurately. 
-Keep your answers concise, friendly, and actionable. Do not output raw JSON unless specifically asked.
+    const systemPrompt = `You are an Agentic Financial AI Assistant built into the "Finance-Vault" app. You are known as "FinAura Assistant".
+You are given the user's current financial context in JSON format, and a list of TOOLS you can use to perform actions.
+
+When the user asks general questions, answer them naturally and concisely.
+When the user asks to perform an ACTION (like adding an expense, deleting a transaction, creating an account), you MUST use a tool.
+
+To use a tool, you MUST output ONLY a JSON block wrapped in \`\`\`json containing "tool_call" and "arguments". Do NOT output any other text when calling a tool.
+Example Tool Call Output:
+\`\`\`json
+{
+  "tool_call": "add_card_expense",
+  "arguments": {
+    "cardId": "123",
+    "description": "Starbucks",
+    "amount": 5.50,
+    "date": "${new Date().toISOString().split("T")[0]}"
+  }
+}
+\`\`\`
+
+If a destructive action is requested (e.g., delete), you MUST ask the user for confirmation first BEFORE outputting the tool call.
+
+AVAILABLE TOOLS SCHEMA:
+${JSON.stringify(AI_TOOLS_SCHEMA, null, 2)}
 
 Important facts you MUST adhere to if asked:
 1. FinAura is owned by: VeloLaunch - A Company by Smart Vista IT Solutions
@@ -188,7 +209,19 @@ Current Date: ${new Date().toLocaleDateString()}
 Context:
 ${JSON.stringify(context, null, 2)}`;
 
-    const text = await callAI(opts, systemPrompt, prompt);
+    const text = await callAI(opts, systemPrompt, messages);
+    
+    // Check if the output is a tool call
+    if (text.includes('```json') && text.includes('"tool_call"')) {
+      const cleanJson = text.split('```json')[1].split('```')[0].trim();
+      try {
+        const parsed = JSON.parse(cleanJson);
+        if (parsed.tool_call) {
+          return { success: true, data: { type: "tool_call", ...parsed }, text };
+        }
+      } catch(e) {}
+    }
+    
     return { success: true, text };
   } catch (err: any) {
     let msg = err.message || "Failed to contact AI.";
@@ -212,7 +245,7 @@ The JSON object must have the following fields:
 Context (Available Cards):
 ${JSON.stringify(cards.map(c => ({ id: c.id, name: c.name })), null, 2)}`;
 
-    const resultText = await callAI(opts, systemPrompt, text);
+    const resultText = await callAI(opts, systemPrompt, [{ role: "user", content: text }]);
     // Strip markdown formatting if the model still outputs it
     const cleanJson = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
     const data = JSON.parse(cleanJson);
@@ -238,7 +271,7 @@ Extract the following fields from the image:
 
 Respond ONLY with the JSON object.`;
 
-    const resultText = await callAI(opts, systemPrompt, "Extract receipt details from this image.", base64Image);
+    const resultText = await callAI(opts, systemPrompt, [{ role: "user", content: "Extract receipt details from this image." }], base64Image);
     const cleanJson = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
     const data = JSON.parse(cleanJson);
     return { success: true, data };

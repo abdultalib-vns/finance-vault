@@ -287,6 +287,7 @@ function MainApp() {
             aiOpts={aiOpts}
             contextData={{ items, expenses: loadExpenses() }}
             onClose={() => setShowAIAssistant(false)}
+            onDataChanged={() => setItems(loadItems())}
           />
         )}
       </div>
