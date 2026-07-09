@@ -64,7 +64,7 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
   }
 
   if (selectedCard) {
-    return <CardDetail card={selectedCard} currency={currency} onBack={() => setSelectedCard(null)} />;
+    return <CardDetail card={selectedCard} currency={currency} onBack={() => setSelectedCard(null)} items={items} masterKey={masterKey} onItemsChange={onItemsChange} />;
   }
 
   return (

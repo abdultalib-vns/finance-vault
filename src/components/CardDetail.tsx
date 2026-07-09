@@ -2,14 +2,18 @@ import { Search, Check, ArrowLeft, Ban, CheckCircle, Calendar, Receipt, CheckSqu
 import { useState, useMemo } from "react";
 import { FinanceItem, CardExpense, CardBill, ExpenseStatus } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
-import { saveExpenses, loadExpenses, saveBills, loadBills, saveCashbacks, loadCashbacks } from "../lib/storage";
+import { saveExpenses, loadExpenses, saveBills, loadBills, saveCashbacks, loadCashbacks, saveItems } from "../lib/storage";
 import { generateId } from "../lib/utils";
 import ExpenseForm from "./ExpenseForm";
+import BillPaymentSheet from "./BillPaymentSheet";
 
 interface Props {
   card: FinanceItem;
   currency: Currency;
   onBack: () => void;
+  items: FinanceItem[];
+  masterKey: string;
+  onItemsChange: (items: FinanceItem[]) => void;
 }
 
 type ExpenseFilter = "all" | "unpaid" | "paid" | "in_statement";
@@ -28,7 +32,7 @@ function getAvailableMonths(expenses: CardExpense[]): string[] {
   return [...monthSet].sort((a, b) => b.localeCompare(a));
 }
 
-export default function CardDetail({ card, currency, onBack }: Props) {
+export default function CardDetail({ card, currency, onBack, items, masterKey, onItemsChange }: Props) {
   const [expenses, setExpenses] = useState<CardExpense[]>(() =>
     loadExpenses().filter((e) => e.cardId === card.id)
   );
@@ -42,6 +46,9 @@ export default function CardDetail({ card, currency, onBack }: Props) {
   const [selectedMonth, setSelectedMonth] = useState<string>("all");
   const [selectedForBill, setSelectedForBill] = useState<Set<string>>(new Set());
   const [selectMode, setSelectMode] = useState(false);
+  const [payingBill, setPayingBill] = useState<CardBill | null>(null);
+
+  const bankItems = items.filter((i) => i.type === "bank");
 
   const allExpenses = loadExpenses();
   const allBills = loadBills();
@@ -187,15 +194,29 @@ export default function CardDetail({ card, currency, onBack }: Props) {
   }
 
   // ── Pay Statement ──────────────────────────────────────────────
-  function payStatement(billId: string) {
+  function payStatement(billId: string, bankId: string, bankName: string) {
     const updatedBills = bills.map((b) =>
-      b.id === billId ? { ...b, status: "paid" as const, paidAt: Date.now() } : b
+      b.id === billId
+        ? { ...b, status: "paid" as const, paidAt: Date.now(), paidViaBankId: bankId, paidViaBankName: bankName }
+        : b
     );
     const updatedExpenses = expenses.map((e) =>
       e.billId === billId ? { ...e, status: "bill_generated" as ExpenseStatus } : e
     );
     persistBills(updatedBills);
     persistExpenses(updatedExpenses);
+
+    // Deduct amount from the bank account balance
+    const bill = bills.find((b) => b.id === billId);
+    if (bill) {
+      const updatedItems = items.map((item) =>
+        item.id === bankId
+          ? { ...item, balance: item.balance - bill.totalAmount }
+          : item
+      );
+      saveItems(updatedItems);
+      onItemsChange(updatedItems);
+    }
   }
 
   // ── Toggle selection ───────────────────────────────────────────
@@ -535,7 +556,7 @@ export default function CardDetail({ card, currency, onBack }: Props) {
 
                       {/* Pay button */}
                       {!isPaid && (
-                        <button className="btn-primary statement-pay-btn" onClick={() => payStatement(bill.id)}>
+                        <button className="btn-primary statement-pay-btn" onClick={() => setPayingBill(bill)}>
                           <CheckCircle size={16} /> Mark Statement Paid
                         </button>
                       )}
@@ -547,6 +568,19 @@ export default function CardDetail({ card, currency, onBack }: Props) {
           </>
         )}
       </div>
+
+      {/* ── Bill Payment Sheet ── */}
+      {payingBill && (
+        <BillPaymentSheet
+          bill={payingBill}
+          card={card}
+          bankItems={bankItems}
+          currency={currency}
+          masterKey={masterKey}
+          onConfirm={(bankId, bankName) => payStatement(payingBill.id, bankId, bankName)}
+          onClose={() => setPayingBill(null)}
+        />
+      )}
 
       {/* ── Sticky Selection Bar ── */}
       {selectMode && (

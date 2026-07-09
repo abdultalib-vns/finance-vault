@@ -5801,3 +5801,330 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
 .update-title { font-weight: 600; font-size: 0.95rem; color: var(--text); }
 .update-sub { font-size: 0.8rem; color: var(--text2); }
 .update-actions { display: flex; align-items: center; }
+
+/* ── Bill Payment Sheet ────────────────────────────────────────── */
+.bps-sheet {
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+}
+
+.bps-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 20px 0;
+}
+
+.bps-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.bps-close {
+  background: var(--surface2);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text2);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.bps-close:hover {
+  background: var(--border);
+}
+
+.bps-body {
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ── Step 1: Bill Summary ── */
+.bps-bill-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 20px;
+  background: var(--surface2);
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+
+.bps-bill-label {
+  font-size: 0.8rem;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.bps-bill-amount {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.bps-bill-card {
+  font-size: 0.85rem;
+  color: var(--text2);
+}
+
+/* ── Bank Select ── */
+.bps-select-group {
+  margin-bottom: 16px;
+}
+
+.bps-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text2);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.bps-select-wrapper {
+  position: relative;
+}
+
+.bps-select {
+  width: 100%;
+  padding: 14px 40px 14px 14px;
+  font-size: 0.95rem;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  appearance: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.bps-select:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.bps-select-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text2);
+  pointer-events: none;
+}
+
+/* ── Balance Card ── */
+.bps-balance-card {
+  background: var(--surface2);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.bps-balance-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.bps-balance-label {
+  font-size: 0.85rem;
+  color: var(--text2);
+  font-weight: 500;
+}
+
+.bps-balance-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.bps-balance-value.positive {
+  color: #10b981;
+}
+.bps-balance-value.negative {
+  color: #ef4444;
+}
+
+.bps-balance-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 8px 0;
+}
+
+.bps-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 8px;
+}
+[data-theme="dark"] .bps-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+/* ── Footer ── */
+.bps-footer {
+  padding: 16px 20px 24px;
+  border-top: 1px solid var(--border);
+}
+
+.bps-footer-sticky {
+  position: sticky;
+  bottom: 0;
+  background: var(--surface);
+}
+
+.bps-confirm-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 14px;
+}
+
+/* ── Step 2: Verify ── */
+.bps-verify-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  padding-top: 28px;
+}
+
+.bps-verify-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+}
+
+.bps-verify-text {
+  font-size: 0.95rem;
+  color: var(--text2);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.bps-bio-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  color: var(--text2);
+  font-size: 0.85rem;
+}
+
+.bps-bio-icon {
+  color: var(--primary);
+  animation: bps-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes bps-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+.bps-pin-group {
+  width: 100%;
+  max-width: 240px;
+}
+
+.bps-pin-input {
+  width: 100%;
+  padding: 14px;
+  font-size: 1.5rem;
+  text-align: center;
+  letter-spacing: 0.5em;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  margin-top: 8px;
+  transition: border-color 0.15s;
+}
+.bps-pin-input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.bps-pin-error {
+  font-size: 0.8rem;
+  color: #ef4444;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.bps-retry-bio {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+
+/* ── Step 3: Success ── */
+.bps-success-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 32px 20px 20px;
+}
+
+.bps-success-lottie {
+  margin-bottom: 12px;
+}
+
+.bps-success-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.bps-success-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.bps-success-via {
+  font-size: 0.95rem;
+  color: var(--text2);
+  font-weight: 500;
+}
+
+.bps-success-remaining {
+  font-size: 0.85rem;
+  color: #10b981;
+  font-weight: 600;
+}

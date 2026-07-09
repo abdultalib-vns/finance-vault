@@ -72,6 +72,8 @@ export interface CardBill {
   generatedAt: number;
   paidAt?: number;
   dueDate?: string;
+  paidViaBankId?: string;
+  paidViaBankName?: string;
 }
 
 export interface CashbackEntry {
