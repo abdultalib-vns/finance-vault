@@ -1,5 +1,5 @@
-import { Search, Check, ArrowLeft, Ban, CheckCircle, Calendar, Receipt, CheckSquare, Square, FileText, AlertTriangle, Hourglass, X } from "lucide-react";
-import { useState, useMemo } from "react";
+import { Search, Check, ArrowLeft, Ban, CheckCircle, Calendar, Receipt, CheckSquare, Square, FileText, AlertTriangle, Hourglass, X, Trash } from "lucide-react";
+import { useState, useMemo, useRef } from "react";
 import { FinanceItem, CardExpense, CardBill, ExpenseStatus } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
 import { saveExpenses, loadExpenses, saveBills, loadBills, saveCashbacks, loadCashbacks, saveItems } from "../lib/storage";
@@ -214,6 +214,27 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
     setTimeout(() => {
       isGeneratingRef.current = false;
     }, 100);
+  }
+
+  // ── Delete Statement ───────────────────────────────────────────
+  function deleteStatement(id: string) {
+    if (!window.confirm("Are you sure you want to delete this statement? All included expenses will become unpaid again.")) return;
+    const bill = bills.find(b => b.id === id);
+    if (!bill) return;
+
+    // Revert expenses to unpaid
+    const updatedExpenses = expenses.map(e => {
+      if (e.billId === id) {
+        const { billId, ...rest } = e;
+        return { ...rest, status: "unpaid" as ExpenseStatus };
+      }
+      return e;
+    });
+
+    const updatedBills = bills.filter(b => b.id !== id);
+    
+    persistExpenses(updatedExpenses);
+    persistBills(updatedBills);
   }
 
   // ── Pay Statement ──────────────────────────────────────────────
@@ -577,12 +598,17 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
                         </ul>
                       </div>
 
-                      {/* Pay button */}
-                      {!isPaid && (
-                        <button className="btn-primary statement-pay-btn" onClick={() => setPayingBill(bill)}>
-                          <CheckCircle size={16} /> Mark Statement Paid
+                      {/* Actions */}
+                      <div className="statement-actions" style={{ display: "flex", gap: "10px", marginTop: "16px" }}>
+                        {!isPaid && (
+                          <button className="btn-primary statement-pay-btn" onClick={() => setPayingBill(bill)} style={{ flex: 1 }}>
+                            <CheckCircle size={16} /> Mark Statement Paid
+                          </button>
+                        )}
+                        <button className="btn-outline statement-delete-btn" onClick={() => deleteStatement(bill.id)} style={{ flex: isPaid ? 1 : 0, padding: isPaid ? "13px 20px" : "8px 14px", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", borderColor: "var(--danger, #ef4444)", color: "var(--danger, #ef4444)" }}>
+                          <Trash size={16} /> {isPaid ? "Delete Statement" : ""}
                         </button>
-                      )}
+                      </div>
                     </li>
                   );
                 })}
