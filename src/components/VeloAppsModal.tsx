@@ -60,7 +60,7 @@ export default function VeloAppsModal({ onClose }: { onClose: () => void }) {
     <div className="modal-overlay" style={{ zIndex: 99999 }} onClick={onClose}>
       <div 
         className="modal-sheet" 
-        style={{ padding: 24, maxWidth: 360, margin: "auto" }} 
+        style={{ padding: 24, maxWidth: 360 }} 
         onClick={e => e.stopPropagation()}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
