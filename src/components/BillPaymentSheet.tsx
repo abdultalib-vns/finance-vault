@@ -54,6 +54,21 @@ export default function BillPaymentSheet({
     }
   }, [step]);
 
+  // Play success sound when entering success step
+  useEffect(() => {
+    let audio: HTMLAudioElement | null = null;
+    if (step === "success") {
+      audio = new Audio("/Success.mp3");
+      audio.play().catch(() => {});
+    }
+    return () => {
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    };
+  }, [step]);
+
   async function handleBiometricVerify() {
     setVerifying(true);
     setBioError("");
