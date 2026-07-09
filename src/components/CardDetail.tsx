@@ -594,10 +594,8 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
           onConfirm={(bankId, bankName) => {
             if (payingBill) {
               payStatement(payingBill.id, bankId, bankName);
-              setPayingBill(null);
             } else if (payingExpense) {
               markExpensePaid(payingExpense.id, bankId, bankName);
-              setPayingExpense(null);
             }
           }}
           onClose={() => {
