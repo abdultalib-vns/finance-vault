@@ -5926,7 +5926,7 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   outline: none;
 }
 
-.bps-select-icon {
+.bps-select-wrapper .bps-select-icon {
   position: absolute;
   right: 14px;
   top: 50%;
