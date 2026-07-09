@@ -229,9 +229,14 @@ html, body {
   transition: background 0.15s, transform 0.1s;
 }
 
-.btn-primary:active {
+.btn-primary:active:not(:disabled) {
   background: var(--primary-dark);
   transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-secondary {
@@ -242,6 +247,11 @@ html, body {
   font-weight: 500;
   font-size: 0.9375rem;
   border: 1px solid var(--border);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-outline {
@@ -5894,10 +5904,13 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
 
 .bps-select-wrapper {
   position: relative;
+  display: block;
+  width: 100%;
 }
 
 .bps-select {
   width: 100%;
+  box-sizing: border-box;
   padding: 14px 40px 14px 14px;
   font-size: 0.95rem;
   border: 1.5px solid var(--border);
