@@ -153,7 +153,7 @@ export default function BillPaymentSheet({
               {isLowBalance && (
                 <div className="bps-warning">
                   <AlertTriangle size={14} />
-                  <span>Insufficient balance. Your account will go negative.</span>
+                  <span>Insufficient balance. Please select a different account.</span>
                 </div>
               )}
             </div>
@@ -170,7 +170,7 @@ export default function BillPaymentSheet({
         <div className="bps-footer">
           <button
             className="btn-primary bps-confirm-btn"
-            disabled={!selectedBank}
+            disabled={!selectedBank || isLowBalance}
             onClick={handleConfirmAndPay}
           >
             Confirm & Pay
