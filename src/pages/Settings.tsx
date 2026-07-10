@@ -226,9 +226,14 @@ export default function Settings({
     const dummyItems: FinanceItem[] = [
       { id: "dev-bank-1", name: "Chase Checking", balance: 12500, type: "bank", encryptedSecret: "", lastFour: "4521", createdAt: Date.now() },
       { id: "dev-bank-2", name: "HDFC Savings", balance: 85000, type: "bank", encryptedSecret: "", lastFour: "7892", createdAt: Date.now() },
+      { id: "dev-bank-3", name: "SBI Current Account", balance: 32000, type: "bank", encryptedSecret: "", lastFour: "6140", createdAt: Date.now() },
       { id: "dev-card-1", name: "Amex Platinum", balance: 0, type: "card", encryptedSecret: "", lastFour: "1008", creditLimit: 150000, createdAt: Date.now() },
       { id: "dev-card-2", name: "ICICI Amazon Pay", balance: 0, type: "card", encryptedSecret: "", lastFour: "3345", creditLimit: 50000, createdAt: Date.now() },
+      { id: "dev-card-3", name: "HDFC Regalia", balance: 0, type: "card", encryptedSecret: "", lastFour: "9021", creditLimit: 200000, createdAt: Date.now() },
       { id: "dev-fd-1", name: "SBI Fixed Deposit", balance: 100000, type: "fd", encryptedSecret: "", interestRate: 7.1, startDate: "2025-01-15", maturityDate: "2026-01-15", createdAt: Date.now() },
+      { id: "dev-fd-2", name: "ICICI FD - Tax Saver", balance: 150000, type: "fd", encryptedSecret: "", interestRate: 6.9, startDate: "2025-04-01", maturityDate: "2030-04-01", createdAt: Date.now() },
+      { id: "dev-rd-1", name: "HDFC Monthly RD", balance: 24000, type: "rd", encryptedSecret: "", interestRate: 6.5, startDate: "2025-06-01", maturityDate: "2026-06-01", monthlyAmount: 2000, createdAt: Date.now() },
+      { id: "dev-paylater-1", name: "Simpl Pay Later", balance: 0, type: "paylater", encryptedSecret: "", creditLimit: 15000, createdAt: Date.now() },
     ];
     const existing = loadItems();
     const merged = [...existing, ...dummyItems];
@@ -238,20 +243,32 @@ export default function Settings({
   }
 
   function devLoadDummyExpenses() {
-    const today = new Date().toISOString().split("T")[0];
-    const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+    const d = (daysAgo: number) => new Date(Date.now() - daysAgo * 86400000).toISOString().split("T")[0];
     const cards = items.filter(i => i.type === "card" || i.type === "paylater");
-    const cardId = cards.length > 0 ? cards[0].id : "dev-card-1";
+    const c1 = cards.length > 0 ? cards[0].id : "dev-card-1";
+    const c2 = cards.length > 1 ? cards[1].id : c1;
+    const c3 = cards.length > 2 ? cards[2].id : c1;
+    const t = Date.now();
     const dummyExpenses = [
-      { id: `dev-exp-${Date.now()}-1`, cardId, description: "Starbucks", amount: 450, date: today, status: "unpaid" as const, cashback: 22, createdAt: Date.now() },
-      { id: `dev-exp-${Date.now()}-2`, cardId, description: "Amazon Prime", amount: 1499, date: today, status: "unpaid" as const, cashback: 75, createdAt: Date.now() },
-      { id: `dev-exp-${Date.now()}-3`, cardId, description: "Uber Ride", amount: 320, date: yesterday, status: "unpaid" as const, cashback: 0, createdAt: Date.now() },
-      { id: `dev-exp-${Date.now()}-4`, cardId, description: "Swiggy Order", amount: 580, date: yesterday, status: "paid" as const, cashback: 29, createdAt: Date.now() },
-      { id: `dev-exp-${Date.now()}-5`, cardId, description: "Netflix", amount: 649, date: today, status: "unpaid" as const, cashback: 0, createdAt: Date.now() },
+      { id: `dev-exp-${t}-1`,  cardId: c1, description: "Starbucks",          amount: 450,   date: d(0), status: "unpaid" as const, cashback: 22,  createdAt: t },
+      { id: `dev-exp-${t}-2`,  cardId: c1, description: "Amazon Prime",       amount: 1499,  date: d(0), status: "unpaid" as const, cashback: 75,  createdAt: t },
+      { id: `dev-exp-${t}-3`,  cardId: c2, description: "Uber Ride",          amount: 320,   date: d(1), status: "unpaid" as const, cashback: 0,   createdAt: t },
+      { id: `dev-exp-${t}-4`,  cardId: c1, description: "Swiggy Order",       amount: 580,   date: d(1), status: "paid"   as const, cashback: 29,  createdAt: t },
+      { id: `dev-exp-${t}-5`,  cardId: c2, description: "Netflix",            amount: 649,   date: d(0), status: "unpaid" as const, cashback: 0,   createdAt: t },
+      { id: `dev-exp-${t}-6`,  cardId: c3, description: "Reliance Fresh",     amount: 2340,  date: d(2), status: "unpaid" as const, cashback: 117, createdAt: t },
+      { id: `dev-exp-${t}-7`,  cardId: c1, description: "Zara Clothing",      amount: 4999,  date: d(3), status: "unpaid" as const, cashback: 250, createdAt: t },
+      { id: `dev-exp-${t}-8`,  cardId: c2, description: "Electricity Bill",   amount: 1850,  date: d(4), status: "paid"   as const, cashback: 0,   createdAt: t },
+      { id: `dev-exp-${t}-9`,  cardId: c3, description: "Flipkart Electronics", amount: 7999, date: d(5), status: "unpaid" as const, cashback: 400, createdAt: t },
+      { id: `dev-exp-${t}-10`, cardId: c1, description: "Dominos Pizza",      amount: 890,   date: d(2), status: "unpaid" as const, cashback: 45,  createdAt: t },
+      { id: `dev-exp-${t}-11`, cardId: c2, description: "Spotify Premium",    amount: 119,   date: d(0), status: "unpaid" as const, cashback: 0,   createdAt: t },
+      { id: `dev-exp-${t}-12`, cardId: c3, description: "Petrol - HP",        amount: 3500,  date: d(6), status: "paid"   as const, cashback: 175, createdAt: t },
+      { id: `dev-exp-${t}-13`, cardId: c1, description: "Myntra Fashion",     amount: 2199,  date: d(7), status: "unpaid" as const, cashback: 110, createdAt: t },
+      { id: `dev-exp-${t}-14`, cardId: c2, description: "Gym Membership",     amount: 1500,  date: d(3), status: "unpaid" as const, cashback: 0,   createdAt: t },
+      { id: `dev-exp-${t}-15`, cardId: c3, description: "BigBasket Groceries", amount: 1780, date: d(1), status: "unpaid" as const, cashback: 89,  createdAt: t },
     ];
     const existing = loadExpenses();
     saveExpenses([...dummyExpenses, ...existing]);
-    devAddLog(`Loaded ${dummyExpenses.length} dummy card expenses.`);
+    devAddLog(`Loaded ${dummyExpenses.length} dummy card expenses across ${new Set([c1,c2,c3]).size} cards.`);
   }
 
   function devClearSessionStorage() {
@@ -1076,10 +1093,10 @@ export default function Settings({
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={devLoadDummyData}>
-                    <Database size={16} /> Load Dummy Accounts (5)
+                    <Database size={16} /> Load Dummy Accounts (10)
                   </button>
                   <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={devLoadDummyExpenses}>
-                    <Receipt size={16} /> Load Dummy Card Expenses (5)
+                    <Receipt size={16} /> Load Dummy Card Expenses (15)
                   </button>
                   <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start', borderColor: 'var(--danger)', color: 'var(--danger)' }} onClick={devPurgeDummyData}>
                     <Trash size={16} /> Purge All Dummy Data
