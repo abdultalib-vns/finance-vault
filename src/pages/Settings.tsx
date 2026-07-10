@@ -1,7 +1,7 @@
-import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff, User, Camera, Edit2, Save, Grid3x3 } from "lucide-react";
+import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff, User, Camera, Edit2, Save, Grid3x3, Code, Database, Cpu, RotateCcw, Bug, Terminal, Layers, Zap } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { hashPin } from "../lib/crypto";
-import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses, saveAIOptions, loadAIOptions, getVeloAIUsageCount, loadUserProfile, saveUserProfile } from "../lib/storage";
+import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses, saveAIOptions, loadAIOptions, getVeloAIUsageCount, loadUserProfile, saveUserProfile, saveExpenses, saveCashbacks, saveBankExpenses, saveBills } from "../lib/storage";
 import { encryptData, decryptData } from "../lib/crypto";
 import { FinanceItem, Currency, AIOptions, UserProfile } from "../types";
 import { OPENROUTER_MODELS, GROQ_MODELS } from "../lib/ai";
@@ -78,6 +78,16 @@ export default function Settings({
   const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
   const profileFileRef = useRef<HTMLInputElement>(null);
   const [showVeloApps, setShowVeloApps] = useState(false);
+
+  // Developer Mode
+  const [devTapCount, setDevTapCount] = useState(0);
+  const devTapTimer = useRef<number | null>(null);
+  const [showDevCodePrompt, setShowDevCodePrompt] = useState(false);
+  const [devCode, setDevCode] = useState("");
+  const [devCodeError, setDevCodeError] = useState("");
+  const [showDevMode, setShowDevMode] = useState(false);
+  const [devLog, setDevLog] = useState<string[]>([]);
+  const [showStorageInspector, setShowStorageInspector] = useState(false);
 
   useEffect(() => {
     isBiometricSupported().then(setBioSupported);
@@ -181,6 +191,109 @@ export default function Settings({
     clearAll();
     onItemsChange([]);
     onLock();
+  }
+
+  // ── Developer Mode ──────────────────────────────────────────
+  function handleDevTap() {
+    if (devTapTimer.current) clearTimeout(devTapTimer.current);
+    const next = devTapCount + 1;
+    setDevTapCount(next);
+    if (next >= 5) {
+      setDevTapCount(0);
+      setDevCode("");
+      setDevCodeError("");
+      setShowDevCodePrompt(true);
+      return;
+    }
+    devTapTimer.current = window.setTimeout(() => setDevTapCount(0), 2000);
+  }
+
+  function handleDevCodeSubmit() {
+    if (devCode === "0904") {
+      setShowDevCodePrompt(false);
+      setShowDevMode(true);
+      setDevLog([]);
+    } else {
+      setDevCodeError("Invalid code.");
+    }
+  }
+
+  function devAddLog(msg: string) {
+    setDevLog(prev => [`[${new Date().toLocaleTimeString()}] ${msg}`, ...prev.slice(0, 49)]);
+  }
+
+  function devLoadDummyData() {
+    const dummyItems: FinanceItem[] = [
+      { id: "dev-bank-1", name: "Chase Checking", balance: 12500, type: "bank", encryptedSecret: "", lastFour: "4521", createdAt: Date.now() },
+      { id: "dev-bank-2", name: "HDFC Savings", balance: 85000, type: "bank", encryptedSecret: "", lastFour: "7892", createdAt: Date.now() },
+      { id: "dev-card-1", name: "Amex Platinum", balance: 0, type: "card", encryptedSecret: "", lastFour: "1008", creditLimit: 150000, createdAt: Date.now() },
+      { id: "dev-card-2", name: "ICICI Amazon Pay", balance: 0, type: "card", encryptedSecret: "", lastFour: "3345", creditLimit: 50000, createdAt: Date.now() },
+      { id: "dev-fd-1", name: "SBI Fixed Deposit", balance: 100000, type: "fd", encryptedSecret: "", interestRate: 7.1, startDate: "2025-01-15", maturityDate: "2026-01-15", createdAt: Date.now() },
+    ];
+    const existing = loadItems();
+    const merged = [...existing, ...dummyItems];
+    saveItems(merged);
+    onItemsChange(merged);
+    devAddLog(`Loaded ${dummyItems.length} dummy accounts (${dummyItems.map(i=>i.name).join(", ")}).`);
+  }
+
+  function devLoadDummyExpenses() {
+    const today = new Date().toISOString().split("T")[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+    const cards = items.filter(i => i.type === "card" || i.type === "paylater");
+    const cardId = cards.length > 0 ? cards[0].id : "dev-card-1";
+    const dummyExpenses = [
+      { id: `dev-exp-${Date.now()}-1`, cardId, description: "Starbucks", amount: 450, date: today, status: "unpaid" as const, cashback: 22, createdAt: Date.now() },
+      { id: `dev-exp-${Date.now()}-2`, cardId, description: "Amazon Prime", amount: 1499, date: today, status: "unpaid" as const, cashback: 75, createdAt: Date.now() },
+      { id: `dev-exp-${Date.now()}-3`, cardId, description: "Uber Ride", amount: 320, date: yesterday, status: "unpaid" as const, cashback: 0, createdAt: Date.now() },
+      { id: `dev-exp-${Date.now()}-4`, cardId, description: "Swiggy Order", amount: 580, date: yesterday, status: "paid" as const, cashback: 29, createdAt: Date.now() },
+      { id: `dev-exp-${Date.now()}-5`, cardId, description: "Netflix", amount: 649, date: today, status: "unpaid" as const, cashback: 0, createdAt: Date.now() },
+    ];
+    const existing = loadExpenses();
+    saveExpenses([...dummyExpenses, ...existing]);
+    devAddLog(`Loaded ${dummyExpenses.length} dummy card expenses.`);
+  }
+
+  function devClearSessionStorage() {
+    sessionStorage.clear();
+    devAddLog("Session storage cleared.");
+  }
+
+  function devForceReload() {
+    devAddLog("Forcing full reload...");
+    window.location.reload();
+  }
+
+  function getStorageUsage(): string {
+    let total = 0;
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key) total += (localStorage.getItem(key) || "").length;
+    }
+    const kb = (total * 2 / 1024).toFixed(1);
+    const mb = (total * 2 / 1024 / 1024).toFixed(2);
+    return `${kb} KB (${mb} MB)`;
+  }
+
+  function getStorageKeys(): { key: string, size: string }[] {
+    const keys: { key: string, size: string }[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key) {
+        const val = localStorage.getItem(key) || "";
+        keys.push({ key, size: `${((val.length * 2) / 1024).toFixed(1)} KB` });
+      }
+    }
+    return keys.sort((a, b) => parseFloat(b.size) - parseFloat(a.size));
+  }
+
+  function devPurgeDummyData() {
+    const updatedItems = items.filter(i => !i.id.startsWith("dev-"));
+    saveItems(updatedItems);
+    onItemsChange(updatedItems);
+    const updatedExpenses = loadExpenses().filter((e: any) => !e.id.startsWith("dev-"));
+    saveExpenses(updatedExpenses);
+    devAddLog("Purged all dummy data (dev-* prefixed entries).");
   }
 
   async function handleExport() {
@@ -799,8 +912,11 @@ export default function Settings({
         </div>
 
         {/* Credit */}
-        <div style={{ textAlign: "center", padding: "10px 0 30px", fontSize: "0.75rem", color: "var(--text3)", opacity: 0.8, lineHeight: 1.4 }}>
-          Developed by Velo Launch <br /> A Company by <a href="https://smartvistaitsolutions.in" target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 600 }}>Smart Vista IT Solutions</a>
+        <div 
+          style={{ textAlign: "center", padding: "10px 0 30px", fontSize: "0.75rem", color: "var(--text3)", opacity: 0.8, lineHeight: 1.4, cursor: "default", userSelect: "none" }}
+          onClick={handleDevTap}
+        >
+          Developed by Velo Launch <br /> A Company by <a href="https://smartvistaitsolutions.in" target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 600 }} onClick={(e) => e.stopPropagation()}>Smart Vista IT Solutions</a>
         </div>
       </div>
 
@@ -879,6 +995,153 @@ export default function Settings({
           onCancel={() => setCropImageSrc(null)}
         />
       )}
+
+      {/* Developer Code Prompt */}
+      {showDevCodePrompt && (
+        <div className="modal-overlay" style={{ zIndex: 9999 }} onClick={() => setShowDevCodePrompt(false)}>
+          <div className="modal-sheet" style={{ maxHeight: 'none', top: 'auto', bottom: 0, transform: 'none' }} onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Lock size={20} /> Enter Developer Code</h3>
+              <button className="modal-close" onClick={() => setShowDevCodePrompt(false)}><XCircle size={20} /></button>
+            </div>
+            <div style={{ padding: "16px 0" }}>
+              <input
+                type="password"
+                className="settings-input"
+                placeholder="Enter 4-digit code"
+                value={devCode}
+                onChange={(e) => { setDevCode(e.target.value); setDevCodeError(""); }}
+                maxLength={4}
+                inputMode="numeric"
+                autoFocus
+                onKeyDown={(e) => e.key === "Enter" && handleDevCodeSubmit()}
+                style={{ textAlign: "center", letterSpacing: "8px", fontSize: "1.5rem", fontWeight: 700 }}
+              />
+              {devCodeError && <p style={{ color: "var(--danger)", fontSize: "0.85rem", marginTop: 8, textAlign: "center" }}>{devCodeError}</p>}
+            </div>
+            <button className="btn-primary" style={{ width: "100%" }} onClick={handleDevCodeSubmit}>Unlock</button>
+          </div>
+        </div>
+      )}
+
+      {/* Developer Mode Bottom Sheet */}
+      {showDevMode && (
+        <div className="modal-overlay" style={{ zIndex: 9999 }} onClick={() => setShowDevMode(false)}>
+          <div className="modal-sheet" style={{ maxHeight: '85vh', top: 'auto', bottom: 0, transform: 'none', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
+            <div className="modal-header" style={{ position: 'sticky', top: 0, zIndex: 1, background: 'var(--surface)' }}>
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Code size={20} style={{ color: 'var(--primary)' }} /> Developer Mode
+              </h3>
+              <button className="modal-close" onClick={() => setShowDevMode(false)}><XCircle size={20} /></button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingBottom: '24px' }}>
+              {/* Storage Info */}
+              <div className="settings-section" style={{ margin: 0, padding: '12px 16px', background: 'var(--surface2)', borderRadius: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                  <Database size={16} style={{ color: 'var(--primary)' }} />
+                  <strong style={{ fontSize: '0.9rem' }}>Storage</strong>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '0.8rem', color: 'var(--text2)' }}>
+                  <span>Usage</span><strong style={{ textAlign: 'right' }}>{getStorageUsage()}</strong>
+                  <span>Keys</span><strong style={{ textAlign: 'right' }}>{localStorage.length}</strong>
+                  <span>Items</span><strong style={{ textAlign: 'right' }}>{items.length}</strong>
+                  <span>Expenses</span><strong style={{ textAlign: 'right' }}>{loadExpenses().length}</strong>
+                  <span>Cashbacks</span><strong style={{ textAlign: 'right' }}>{loadCashbacks().length}</strong>
+                  <span>Bank Txns</span><strong style={{ textAlign: 'right' }}>{loadBankExpenses().length}</strong>
+                </div>
+                <button
+                  className="btn-outline" style={{ width: '100%', marginTop: 12, fontSize: '0.8rem', padding: '8px' }}
+                  onClick={() => setShowStorageInspector(!showStorageInspector)}
+                >
+                  <Layers size={14} /> {showStorageInspector ? 'Hide' : 'Show'} Storage Inspector
+                </button>
+                {showStorageInspector && (
+                  <div style={{ marginTop: 8, maxHeight: '150px', overflowY: 'auto', fontSize: '0.75rem', fontFamily: 'monospace', background: 'var(--bg)', borderRadius: 8, padding: 8 }}>
+                    {getStorageKeys().map(({ key, size }) => (
+                      <div key={key} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid var(--border)' }}>
+                        <span style={{ color: 'var(--primary)' }}>{key}</span>
+                        <span style={{ color: 'var(--text3)' }}>{size}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Data Seeding */}
+              <div className="settings-section" style={{ margin: 0, padding: '12px 16px', background: 'var(--surface2)', borderRadius: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                  <Zap size={16} style={{ color: '#f59e0b' }} />
+                  <strong style={{ fontSize: '0.9rem' }}>Data Seeding</strong>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={devLoadDummyData}>
+                    <Database size={16} /> Load Dummy Accounts (5)
+                  </button>
+                  <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={devLoadDummyExpenses}>
+                    <Receipt size={16} /> Load Dummy Card Expenses (5)
+                  </button>
+                  <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start', borderColor: 'var(--danger)', color: 'var(--danger)' }} onClick={devPurgeDummyData}>
+                    <Trash size={16} /> Purge All Dummy Data
+                  </button>
+                </div>
+              </div>
+
+              {/* Debug Actions */}
+              <div className="settings-section" style={{ margin: 0, padding: '12px 16px', background: 'var(--surface2)', borderRadius: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                  <Bug size={16} style={{ color: '#ef4444' }} />
+                  <strong style={{ fontSize: '0.9rem' }}>Debug Actions</strong>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={devClearSessionStorage}>
+                    <RotateCcw size={16} /> Clear Session Storage
+                  </button>
+                  <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={devForceReload}>
+                    <RefreshCw size={16} /> Force App Reload
+                  </button>
+                  <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={() => { console.log("[DEV] Items:", items); console.log("[DEV] Expenses:", loadExpenses()); console.log("[DEV] Cashbacks:", loadCashbacks()); devAddLog("Dumped all data to browser console."); }}>
+                    <Terminal size={16} /> Dump Data to Console
+                  </button>
+                </div>
+              </div>
+
+              {/* Environment Info */}
+              <div className="settings-section" style={{ margin: 0, padding: '12px 16px', background: 'var(--surface2)', borderRadius: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                  <Cpu size={16} style={{ color: 'var(--primary)' }} />
+                  <strong style={{ fontSize: '0.9rem' }}>Environment</strong>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', fontSize: '0.78rem', color: 'var(--text2)' }}>
+                  <span>Version</span><strong style={{ textAlign: 'right' }}>{APP_VERSION}</strong>
+                  <span>Theme</span><strong style={{ textAlign: 'right' }}>{theme}</strong>
+                  <span>Currency</span><strong style={{ textAlign: 'right' }}>{currency.code}</strong>
+                  <span>AI Provider</span><strong style={{ textAlign: 'right' }}>{aiOpts.provider || 'none'}</strong>
+                  <span>Biometric</span><strong style={{ textAlign: 'right' }}>{bioEnabled ? 'Enabled' : 'Disabled'}</strong>
+                  <span>User Agent</span><strong style={{ textAlign: 'right', fontSize: '0.65rem', wordBreak: 'break-all' }}>{navigator.userAgent.split(' ').slice(-2).join(' ')}</strong>
+                </div>
+              </div>
+
+              {/* Activity Log */}
+              {devLog.length > 0 && (
+                <div className="settings-section" style={{ margin: 0, padding: '12px 16px', background: 'var(--surface2)', borderRadius: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <Terminal size={16} style={{ color: '#22c55e' }} />
+                      <strong style={{ fontSize: '0.9rem' }}>Activity Log</strong>
+                    </div>
+                    <button style={{ background: 'none', border: 'none', color: 'var(--text3)', cursor: 'pointer', fontSize: '0.75rem' }} onClick={() => setDevLog([])}>Clear</button>
+                  </div>
+                  <div style={{ maxHeight: '120px', overflowY: 'auto', fontSize: '0.72rem', fontFamily: 'monospace', color: '#22c55e', background: '#0a0a0a', borderRadius: 8, padding: 8 }}>
+                    {devLog.map((l, i) => <div key={i} style={{ padding: '2px 0' }}>{l}</div>)}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
