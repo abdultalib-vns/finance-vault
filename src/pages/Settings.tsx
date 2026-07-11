@@ -1,4 +1,4 @@
-import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff, User, Camera, Edit2, Save, Grid3x3, Code, Database, Cpu, RotateCcw, Bug, Terminal, Layers, Zap } from "lucide-react";
+import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff, User, Camera, Edit2, Save, Grid3x3, Code, Database, Cpu, RotateCcw, Bug, Terminal, Layers, Zap, QrCode, ScanLine } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { hashPin } from "../lib/crypto";
 import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses, saveAIOptions, loadAIOptions, getVeloAIUsageCount, loadUserProfile, saveUserProfile, saveExpenses, saveCashbacks, saveBankExpenses, saveBills } from "../lib/storage";
@@ -8,6 +8,7 @@ import { OPENROUTER_MODELS, GROQ_MODELS } from "../lib/ai";
 import ImageCropper from "../components/ImageCropper";
 import VeloAppsModal from "../components/VeloAppsModal";
 import { getDynamicCurrencies, getCurrency } from "../lib/currency";
+import QuickSyncModal from "../components/QuickSyncModal";
 import {
   isBiometricSupported,
   isBiometricEnrolled,
@@ -88,6 +89,10 @@ export default function Settings({
   const [showDevMode, setShowDevMode] = useState(false);
   const [devLog, setDevLog] = useState<string[]>([]);
   const [showStorageInspector, setShowStorageInspector] = useState(false);
+
+  // Quick Sync
+  const [syncMode, setSyncMode] = useState<"generate" | "scan" | null>(null);
+  const [showSyncInfo, setShowSyncInfo] = useState(false);
 
   useEffect(() => {
     isBiometricSupported().then(setBioSupported);
@@ -776,6 +781,33 @@ export default function Settings({
           )}
         </div>
 
+        {/* ── Velo's Quick Sync ────────────────────── */}
+        <div className="settings-section">
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <h3 className="settings-section-title" style={{ margin: 0 }}><RefreshCw size={20} /> Velo's Quick Sync</h3>
+            <button
+              onClick={() => setShowSyncInfo(true)}
+              style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: "var(--text3)" }}
+              title="How does Quick Sync work?"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <path d="M12 8h.01" />
+              </svg>
+            </button>
+          </div>
+          <p className="settings-hint" style={{ marginTop: 8 }}>Sync your vault between devices using a QR code or 8-digit code.</p>
+          <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
+            <button className="btn-primary" style={{ flex: 1, gap: 8 }} onClick={() => setSyncMode("generate")}>
+              <QrCode size={16} /> Generate QR Code
+            </button>
+            <button className="btn-outline" style={{ flex: 1, gap: 8 }} onClick={() => setSyncMode("scan")}>
+              <ScanLine size={16} /> Scan QR Code
+            </button>
+          </div>
+        </div>
+
         <div className="settings-section">
           <h3 className="settings-section-title"><Key size={20} /> Security</h3>
           <form className="settings-form" onSubmit={handleChangePin}>
@@ -1011,6 +1043,53 @@ export default function Settings({
           }}
           onCancel={() => setCropImageSrc(null)}
         />
+      )}
+
+      {/* Quick Sync Modal */}
+      {syncMode && (
+        <QuickSyncModal
+          mode={syncMode}
+          onClose={() => setSyncMode(null)}
+          onSyncComplete={onReload}
+        />
+      )}
+
+      {/* Quick Sync Info Popup */}
+      {showSyncInfo && (
+        <div className="modal-overlay" style={{ zIndex: 9999 }} onClick={() => setShowSyncInfo(false)}>
+          <div className="modal-sheet" style={{ maxHeight: 'none', top: 'auto', bottom: 0, transform: 'none' }} onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <RefreshCw size={20} style={{ color: 'var(--primary)' }} /> How Quick Sync Works
+              </h3>
+              <button className="modal-close" onClick={() => setShowSyncInfo(false)}><XCircle size={20} /></button>
+            </div>
+            <div style={{ padding: '12px 0 24px', fontSize: '0.88rem', color: 'var(--text2)', lineHeight: 1.7 }}>
+              <p style={{ fontWeight: 600, color: 'var(--text)', marginBottom: 12 }}>Sync your FinAura data between any two devices — laptop, phone, or tablet.</p>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                  <div style={{ minWidth: 28, height: 28, borderRadius: '50%', background: 'var(--primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 700 }}>1</div>
+                  <div><strong>Generate</strong> — On Device A, tap "Generate QR Code" and enter your PIN. A QR code and an 8-digit code will appear.</div>
+                </div>
+                <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                  <div style={{ minWidth: 28, height: 28, borderRadius: '50%', background: 'var(--primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 700 }}>2</div>
+                  <div><strong>Scan or Enter</strong> — On Device B, tap "Scan QR Code" and scan the QR code, or manually enter the 8-digit code.</div>
+                </div>
+                <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                  <div style={{ minWidth: 28, height: 28, borderRadius: '50%', background: 'var(--primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 700 }}>3</div>
+                  <div><strong>Authenticate</strong> — Enter the same PIN that Device A uses to lock/unlock the app. This decrypts and imports all data.</div>
+                </div>
+              </div>
+
+              <div style={{ marginTop: 16, padding: '12px 14px', borderRadius: 10, background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', fontSize: '0.82rem' }}>
+                <strong style={{ color: '#22c55e' }}>🔒 Secure by Design</strong>
+                <p style={{ margin: '4px 0 0', color: 'var(--text2)' }}>Your data is AES-encrypted on your device before transfer. The server only sees encrypted data it cannot read. Codes expire after 10 minutes and are single-use.</p>
+              </div>
+            </div>
+            <button className="btn-primary" style={{ width: '100%' }} onClick={() => setShowSyncInfo(false)}>Got it</button>
+          </div>
+        </div>
       )}
 
       {/* Developer Code Prompt */}
