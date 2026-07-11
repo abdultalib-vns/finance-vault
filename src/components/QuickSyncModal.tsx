@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { X, Copy, Check, QrCode, Keyboard, Camera, Loader2, Shield, Clock, CheckCircle, AlertTriangle, Send } from "lucide-react";
 import Lottie from "lottie-react";
+import { QRCodeSVG } from "qrcode.react";
+import jsQR from "jsqr";
 import { verifySyncPin, generateSyncPayload, uploadSyncData, pollSyncData, initSyncSession, importSyncPayload } from "../lib/quickSync";
-import { renderQRCode } from "../lib/qrGenerator";
 import syncAnimation from "../../public/Sync.json";
 
 interface Props {
@@ -30,10 +31,10 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
   const [encryptedData, setEncryptedData] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   
-  const qrCanvasRef = useRef<HTMLCanvasElement>(null);
   const countdownRef = useRef<number | null>(null);
   const pollRef = useRef<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null); // Used for jsQR parsing
   const streamRef = useRef<MediaStream | null>(null);
 
   // Cleanup on unmount
@@ -63,13 +64,6 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
       setStep("error");
     }
   }
-
-  // Draw QR when code is ready
-  useEffect(() => {
-    if (step === "qr" && syncCode && qrCanvasRef.current) {
-      renderQRCode(qrCanvasRef.current, syncCode, 200);
-    }
-  }, [step, syncCode]);
 
   // Polling & Countdown for Receiver
   useEffect(() => {
@@ -172,34 +166,47 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
   }
 
   async function scanForQR() {
-    if (!("BarcodeDetector" in window)) {
-      stopCamera();
-      setError("QR scanning not supported on this browser. Please enter the code manually.");
-      setStep("enter-code");
-      return;
-    }
-
-    const detector = new (window as any).BarcodeDetector({ formats: ["qr_code"] });
-    
     const scan = async () => {
-      if (!videoRef.current || !streamRef.current) return;
-      try {
-        const barcodes = await detector.detect(videoRef.current);
-        if (barcodes.length > 0) {
-          const value = barcodes[0].rawValue;
-          if (/^\d{8}$/.test(value)) {
-            stopCamera();
-            setManualCode(value);
-            setStep("grant");
-            return;
-          }
-        }
-      } catch {}
+      if (!videoRef.current || !streamRef.current || videoRef.current.readyState !== videoRef.current.HAVE_ENOUGH_DATA) {
+        if (streamRef.current) requestAnimationFrame(scan);
+        return;
+      }
+
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      
+      if (!canvas) {
+        if (streamRef.current) requestAnimationFrame(scan);
+        return;
+      }
+      
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      // Ensure canvas matches video dimensions for accurate mapping
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      
+      // Use jsQR to decode the frame
+      const code = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: "dontInvert",
+      });
+
+      if (code && /^\d{8}$/.test(code.data)) {
+        stopCamera();
+        setManualCode(code.data);
+        setStep("grant");
+        return;
+      }
+
       if (streamRef.current) requestAnimationFrame(scan);
     };
     
-    // Wait for video to be ready
-    setTimeout(scan, 500);
+    // Start scanning
+    requestAnimationFrame(scan);
   }
 
   // ── SENDER: Upload ───────────────────────────────────────────
@@ -247,7 +254,7 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
             <>
               <div style={{ textAlign: "center" }}>
                 <div style={{ background: "#fff", borderRadius: 16, padding: 20, display: "inline-block", boxShadow: "0 4px 24px rgba(0,0,0,0.1)" }}>
-                  <canvas ref={qrCanvasRef} style={{ width: 200, height: 200 }} />
+                  <QRCodeSVG value={syncCode} size={200} level="M" />
                 </div>
               </div>
 
@@ -345,9 +352,12 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
                   playsInline
                   muted
                 />
+                {/* Hidden canvas for jsQR processing */}
+                <canvas ref={canvasRef} style={{ display: "none" }} />
                 <div style={{
                   position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
-                  width: 180, height: 180, border: "3px solid rgba(255,255,255,0.6)", borderRadius: 16
+                  width: 180, height: 180, border: "3px solid rgba(255,255,255,0.6)", borderRadius: 16,
+                  boxShadow: "0 0 0 4000px rgba(0,0,0,0.3)" // Focus effect
                 }} />
               </div>
               <p style={{ textAlign: "center", fontSize: "0.85rem", color: "var(--text2)" }}>Point your camera at the QR code</p>
