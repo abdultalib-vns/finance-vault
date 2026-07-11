@@ -4,7 +4,11 @@ import {
   loadRDInstallments, loadBankExpenses,
   saveItems, saveExpenses, saveBills, saveCashbacks,
   saveRDInstallments, saveBankExpenses,
-  loadPinHash, loadVeloAIUsage, saveVeloAIUsage,
+  loadPinHash, savePinHash, loadVeloAIUsage, saveVeloAIUsage,
+  loadCurrency, saveCurrency, loadIdleTimeout, saveIdleTimeout,
+  loadTheme, saveTheme, loadSecurityQuestion, saveSecurityQuestion,
+  loadSecurityAnswerHash, saveSecurityAnswerHash,
+  loadUserProfile, saveUserProfile
 } from "./storage";
 import { hashPin } from "./crypto";
 
@@ -18,6 +22,13 @@ export interface SyncPayload {
   rdInstallments: any[];
   bankExpenses: any[];
   veloAIUsage?: { date: string; count: number };
+  userProfile?: any;
+  currency?: string;
+  idleTimeout?: number;
+  theme?: "light" | "dark";
+  pinHash?: string | null;
+  securityQuestion?: number | null;
+  securityAnswerHash?: string | null;
 }
 
 // ── Verify PIN ──────────────────────────────────────────────────
@@ -39,6 +50,13 @@ export function generateSyncPayload(pin: string): string {
     rdInstallments: loadRDInstallments(),
     bankExpenses: loadBankExpenses(),
     veloAIUsage: loadVeloAIUsage(),
+    userProfile: loadUserProfile(),
+    currency: loadCurrency(),
+    idleTimeout: loadIdleTimeout(),
+    theme: loadTheme(),
+    pinHash: loadPinHash(),
+    securityQuestion: loadSecurityQuestion(),
+    securityAnswerHash: loadSecurityAnswerHash()
   };
 
   const json = JSON.stringify(payload);
@@ -130,7 +148,19 @@ export function importSyncPayload(encryptedData: string, pin: string): SyncPaylo
   if (Array.isArray(payload.cashbacks)) saveCashbacks(payload.cashbacks);
   if (Array.isArray(payload.rdInstallments)) saveRDInstallments(payload.rdInstallments);
   if (Array.isArray(payload.bankExpenses)) saveBankExpenses(payload.bankExpenses);
+  
   if (payload.veloAIUsage) saveVeloAIUsage(payload.veloAIUsage);
+  if (payload.userProfile) saveUserProfile(payload.userProfile);
+  if (payload.currency) saveCurrency(payload.currency);
+  if (payload.idleTimeout !== undefined) saveIdleTimeout(payload.idleTimeout);
+  if (payload.theme) {
+    saveTheme(payload.theme);
+    if (payload.theme === "dark") document.documentElement.classList.add("dark-mode");
+    else document.documentElement.classList.remove("dark-mode");
+  }
+  if (payload.pinHash) savePinHash(payload.pinHash);
+  if (payload.securityQuestion !== undefined) saveSecurityQuestion(payload.securityQuestion as number);
+  if (payload.securityAnswerHash) saveSecurityAnswerHash(payload.securityAnswerHash);
 
   return payload;
 }
