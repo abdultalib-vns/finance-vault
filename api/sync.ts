@@ -20,18 +20,9 @@ export default async function handler(req: any, res: any) {
 
   const { action, data, code } = req.body || {};
 
-  // ── UPLOAD: Encrypt + store with 8-digit code ──────────────────
-  if (action === 'upload') {
-    if (!data || typeof data !== 'string') {
-      return res.status(400).json({ error: 'Missing or invalid "data" field.' });
-    }
-
-    // 1MB safety limit
-    if (data.length > 1_000_000) {
-      return res.status(413).json({ error: 'Payload too large. Please reduce your data or clear old transactions.' });
-    }
-
-    // Generate unique 8-digit code, retry if collision
+  // ── INIT: Receiver generates code and waits ──────────────────────
+  if (action === 'init') {
+    // Generate unique 8-digit code
     let syncCode = '';
     let attempts = 0;
     while (attempts < 5) {
@@ -45,29 +36,58 @@ export default async function handler(req: any, res: any) {
       return res.status(503).json({ error: 'Could not generate a unique sync code. Please try again.' });
     }
 
-    // Store with 10-minute TTL (600 seconds)
-    await kv.set(`sync:${syncCode}`, data, { ex: 600 });
+    // Store as 'pending' with 10-minute TTL
+    await kv.set(`sync:${syncCode}`, 'pending', { ex: 600 });
 
     return res.status(200).json({ code: syncCode });
   }
 
-  // ── DOWNLOAD: Fetch by code, one-time use ──────────────────────
-  if (action === 'download') {
+  // ── UPLOAD: Sender uploads encrypted data to the code ────────────
+  if (action === 'upload') {
     if (!code || typeof code !== 'string' || code.length !== 8) {
-      return res.status(400).json({ error: 'Invalid sync code. Must be 8 digits.' });
+      return res.status(400).json({ error: 'Invalid sync code.' });
+    }
+    if (!data || typeof data !== 'string') {
+      return res.status(400).json({ error: 'Missing or invalid data.' });
+    }
+
+    if (data.length > 1_000_000) {
+      return res.status(413).json({ error: 'Payload too large.' });
+    }
+
+    const stored = await kv.get(`sync:${code}`);
+    if (!stored) {
+      return res.status(404).json({ error: 'Sync code not found or expired.' });
+    }
+
+    // Overwrite 'pending' with actual encrypted data, refresh 10-min TTL
+    await kv.set(`sync:${code}`, data, { ex: 600 });
+
+    return res.status(200).json({ success: true });
+  }
+
+  // ── POLL: Receiver checks if data is ready ───────────────────────
+  if (action === 'poll') {
+    if (!code || typeof code !== 'string' || code.length !== 8) {
+      return res.status(400).json({ error: 'Invalid sync code.' });
     }
 
     const stored = await kv.get<string>(`sync:${code}`);
 
     if (!stored) {
-      return res.status(404).json({ error: 'Sync code not found or expired. Please generate a new code on the other device.' });
+      return res.status(404).json({ error: 'Sync code not found or expired.' });
     }
 
-    // Delete after retrieval (one-time use)
+    if (stored === 'pending') {
+      // Data not uploaded yet, keep polling
+      return res.status(202).json({ status: 'pending' });
+    }
+
+    // Data is ready, delete key for one-time use
     await kv.del(`sync:${code}`);
 
     return res.status(200).json({ data: stored });
   }
 
-  return res.status(400).json({ error: 'Invalid action. Use "upload" or "download".' });
+  return res.status(400).json({ error: 'Invalid action.' });
 }

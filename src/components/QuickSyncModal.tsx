@@ -1,18 +1,26 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { X, Copy, Check, QrCode, Keyboard, Camera, Loader2, Shield, Clock, CheckCircle, AlertTriangle } from "lucide-react";
-import { verifySyncPin, generateSyncPayload, uploadSyncData, downloadSyncData, importSyncPayload } from "../lib/quickSync";
+import { X, Copy, Check, QrCode, Keyboard, Camera, Loader2, Shield, Clock, CheckCircle, AlertTriangle, Send } from "lucide-react";
+import Lottie from "lottie-react";
+import { verifySyncPin, generateSyncPayload, uploadSyncData, pollSyncData, initSyncSession, importSyncPayload } from "../lib/quickSync";
 import { renderQRCode } from "../lib/qrGenerator";
+import syncAnimation from "../../public/Sync.json";
 
 interface Props {
-  mode: "generate" | "scan";
+  mode: "generate" | "scan"; // generate = Receiver, scan = Sender
   onClose: () => void;
   onSyncComplete: () => void;
 }
 
-type Step = "pin" | "loading" | "qr" | "enter-code" | "camera" | "download-pin" | "importing" | "success" | "error";
+type Step = 
+  // Receiver Steps
+  | "init" | "qr" | "decrypt" | "importing"
+  // Sender Steps
+  | "choose-method" | "camera" | "enter-code" | "grant" | "uploading"
+  // Common
+  | "success" | "error";
 
 export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props) {
-  const [step, setStep] = useState<Step>("pin");
+  const [step, setStep] = useState<Step>(mode === "generate" ? "init" : "choose-method");
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [syncCode, setSyncCode] = useState("");
@@ -21,8 +29,10 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
   const [manualCode, setManualCode] = useState("");
   const [encryptedData, setEncryptedData] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  
   const qrCanvasRef = useRef<HTMLCanvasElement>(null);
   const countdownRef = useRef<number | null>(null);
+  const pollRef = useRef<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
@@ -30,9 +40,29 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
   useEffect(() => {
     return () => {
       if (countdownRef.current) clearInterval(countdownRef.current);
+      if (pollRef.current) clearInterval(pollRef.current);
       stopCamera();
     };
   }, []);
+
+  // ── RECEIVER: Init Session ────────────────────────────────────
+  useEffect(() => {
+    if (mode === "generate" && step === "init") {
+      initSession();
+    }
+  }, [mode, step]);
+
+  async function initSession() {
+    try {
+      const code = await initSyncSession();
+      setSyncCode(code);
+      setCountdown(600);
+      setStep("qr");
+    } catch (err: any) {
+      setError(err.message || "Failed to initialize sync session.");
+      setStep("error");
+    }
+  }
 
   // Draw QR when code is ready
   useEffect(() => {
@@ -41,13 +71,15 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
     }
   }, [step, syncCode]);
 
-  // Countdown timer
+  // Polling & Countdown for Receiver
   useEffect(() => {
-    if (step === "qr") {
+    if (step === "qr" && syncCode) {
+      // Countdown
       countdownRef.current = window.setInterval(() => {
         setCountdown(prev => {
           if (prev <= 1) {
             if (countdownRef.current) clearInterval(countdownRef.current);
+            if (pollRef.current) clearInterval(pollRef.current);
             setStep("error");
             setError("Sync code has expired. Please generate a new one.");
             return 0;
@@ -55,34 +87,35 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
           return prev - 1;
         });
       }, 1000);
-      return () => { if (countdownRef.current) clearInterval(countdownRef.current); };
+
+      // Polling
+      pollRef.current = window.setInterval(async () => {
+        try {
+          const data = await pollSyncData(syncCode);
+          if (data) {
+            // Data received!
+            if (pollRef.current) clearInterval(pollRef.current);
+            if (countdownRef.current) clearInterval(countdownRef.current);
+            setEncryptedData(data);
+            setStep("decrypt");
+          }
+        } catch (err) {
+          // Silent fail for polling errors, keep trying unless it's a hard error
+        }
+      }, 3000);
+
+      return () => { 
+        if (countdownRef.current) clearInterval(countdownRef.current); 
+        if (pollRef.current) clearInterval(pollRef.current); 
+      };
     }
-  }, [step]);
+  }, [step, syncCode]);
 
   const formatTime = (secs: number) => {
     const m = Math.floor(secs / 60);
     const s = secs % 60;
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
-
-  // ── GENERATE FLOW ─────────────────────────────────────────────
-  async function handleGeneratePin() {
-    setError("");
-    if (pin.length < 4) { setError("PIN must be at least 4 digits."); return; }
-    if (!verifySyncPin(pin)) { setError("Incorrect PIN."); return; }
-
-    setStep("loading");
-    try {
-      const encrypted = generateSyncPayload(pin);
-      const code = await uploadSyncData(encrypted);
-      setSyncCode(code);
-      setCountdown(600);
-      setStep("qr");
-    } catch (err: any) {
-      setError(err.message || "Failed to generate sync code.");
-      setStep("error");
-    }
-  }
 
   function handleCopyCode() {
     navigator.clipboard.writeText(syncCode).then(() => {
@@ -91,31 +124,27 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
     });
   }
 
-  // ── SCAN/ENTER FLOW ───────────────────────────────────────────
-  function handleScanInit() {
-    setStep("pin");
-  }
-
-  async function handleScanPin() {
+  // ── RECEIVER: Decrypt & Import ───────────────────────────────
+  async function handleDecrypt() {
     setError("");
-    if (manualCode.length !== 8) { setError("Please enter a valid 8-digit code."); return; }
     if (pin.length < 4) { setError("PIN must be at least 4 digits."); return; }
 
     setStep("importing");
-    try {
-      const data = await downloadSyncData(manualCode);
-      setEncryptedData(data);
-      const payload = importSyncPayload(data, pin);
-      setSuccessMsg(`Synced ${payload.items.length} accounts, ${payload.expenses.length} expenses, ${payload.cashbacks.length} cashbacks, and ${payload.bankExpenses.length} bank transactions.`);
-      setStep("success");
-      onSyncComplete();
-    } catch (err: any) {
-      setError(err.message || "Sync failed.");
-      setStep("error");
-    }
+    // Adding slight delay so UI updates
+    setTimeout(() => {
+      try {
+        const payload = importSyncPayload(encryptedData, pin);
+        setSuccessMsg(`Synced ${payload.items.length} accounts, ${payload.expenses.length} expenses, and ${payload.cashbacks.length} cashbacks.`);
+        setStep("success");
+        onSyncComplete();
+      } catch (err: any) {
+        setError(err.message || "Decryption failed.");
+        setStep("error");
+      }
+    }, 100);
   }
 
-  // ── Camera Scanner ────────────────────────────────────────────
+  // ── SENDER: Camera Scanner ───────────────────────────────────
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(t => t.stop());
@@ -161,7 +190,7 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
           if (/^\d{8}$/.test(value)) {
             stopCamera();
             setManualCode(value);
-            setStep("download-pin");
+            setStep("grant");
             return;
           }
         }
@@ -173,6 +202,24 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
     setTimeout(scan, 500);
   }
 
+  // ── SENDER: Upload ───────────────────────────────────────────
+  async function handleGrantAccess() {
+    setError("");
+    if (pin.length < 4) { setError("PIN must be at least 4 digits."); return; }
+    if (!verifySyncPin(pin)) { setError("Incorrect PIN."); return; }
+
+    setStep("uploading");
+    try {
+      const payload = generateSyncPayload(pin);
+      await uploadSyncData(manualCode, payload);
+      setSuccessMsg("Your vault data has been securely sent to the receiver.");
+      setStep("success");
+    } catch (err: any) {
+      setError(err.message || "Upload failed.");
+      setStep("error");
+    }
+  }
+
   // ── RENDER ────────────────────────────────────────────────────
   return (
     <div className="modal-overlay" style={{ zIndex: 9999 }} onClick={onClose}>
@@ -180,69 +227,22 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
         <div className="modal-header">
           <h3 style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "1rem" }}>
             <QrCode size={20} style={{ color: "var(--primary)" }} />
-            {mode === "generate" ? "Generate Sync Code" : "Receive Data"}
+            {mode === "generate" ? "Receive Data" : "Send Data"}
           </h3>
           <button className="modal-close" onClick={() => { stopCamera(); onClose(); }}><X size={20} /></button>
         </div>
 
         <div style={{ padding: "8px 0 24px", display: "flex", flexDirection: "column", gap: 16 }}>
 
-          {/* ── PIN Entry (Generate) ── */}
-          {step === "pin" && mode === "generate" && (
-            <>
-              <div style={{ textAlign: "center", padding: "8px 0" }}>
-                <Shield size={32} style={{ color: "var(--primary)", margin: "0 auto 8px" }} />
-                <p style={{ color: "var(--text2)", fontSize: "0.9rem", lineHeight: 1.5 }}>
-                  Enter your PIN to encrypt and sync your vault data.
-                </p>
-              </div>
-              <input
-                type="password"
-                className="settings-input"
-                placeholder="Enter your PIN"
-                value={pin}
-                onChange={e => { setPin(e.target.value); setError(""); }}
-                inputMode="numeric"
-                autoFocus
-                onKeyDown={e => e.key === "Enter" && handleGeneratePin()}
-                style={{ textAlign: "center", letterSpacing: 6, fontSize: "1.3rem", fontWeight: 700 }}
-              />
-              {error && <p style={{ color: "var(--danger)", fontSize: "0.85rem", textAlign: "center" }}>{error}</p>}
-              <button className="btn-primary" style={{ width: "100%" }} onClick={handleGeneratePin}>
-                <QrCode size={16} /> Generate Sync Code
-              </button>
-            </>
-          )}
-
-          {/* ── PIN Entry (Scan/Enter mode — choose method) ── */}
-          {step === "pin" && mode === "scan" && (
-            <>
-              <div style={{ textAlign: "center", padding: "8px 0" }}>
-                <QrCode size={32} style={{ color: "var(--primary)", margin: "0 auto 8px" }} />
-                <p style={{ color: "var(--text2)", fontSize: "0.9rem", lineHeight: 1.5 }}>
-                  How would you like to receive data?
-                </p>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <button className="btn-primary" style={{ width: "100%", gap: 8 }} onClick={startCamera}>
-                  <Camera size={16} /> Scan QR Code
-                </button>
-                <button className="btn-outline" style={{ width: "100%", gap: 8 }} onClick={() => setStep("enter-code")}>
-                  <Keyboard size={16} /> Enter Code Manually
-                </button>
-              </div>
-            </>
-          )}
-
-          {/* ── Loading ── */}
-          {step === "loading" && (
+          {/* ── RECEIVER: Init Loading ── */}
+          {step === "init" && (
             <div style={{ textAlign: "center", padding: "32px 0" }}>
               <Loader2 size={40} style={{ color: "var(--primary)", animation: "spin 1s linear infinite" }} />
-              <p style={{ color: "var(--text2)", marginTop: 12 }}>Encrypting & uploading your vault...</p>
+              <p style={{ color: "var(--text2)", marginTop: 12 }}>Generating secure code...</p>
             </div>
           )}
 
-          {/* ── QR Code Display ── */}
+          {/* ── RECEIVER: QR Code Display ── */}
           {step === "qr" && (
             <>
               <div style={{ textAlign: "center" }}>
@@ -252,7 +252,7 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
               </div>
 
               <div style={{ textAlign: "center" }}>
-                <p style={{ fontSize: "0.8rem", color: "var(--text3)", marginBottom: 8 }}>Or enter this code on the other device:</p>
+                <p style={{ fontSize: "0.8rem", color: "var(--text3)", marginBottom: 8 }}>Scan the QR or enter this code on the other device:</p>
                 <div style={{
                   display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
                   background: "var(--surface2)", borderRadius: 12, padding: "14px 20px"
@@ -278,16 +278,64 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
                 fontSize: "0.85rem", fontWeight: 600
               }}>
                 <Clock size={16} />
-                Expires in {formatTime(countdown)}
+                Waiting for data... ({formatTime(countdown)})
               </div>
 
               <p style={{ fontSize: "0.78rem", color: "var(--text3)", textAlign: "center", lineHeight: 1.5 }}>
-                Open FinAura on your other device → Settings → Velo's Quick Sync → Scan QR Code
+                Open FinAura on the other device → Settings → Velo's Quick Sync → Scan QR Code
               </p>
             </>
           )}
 
-          {/* ── Camera Scanner ── */}
+          {/* ── RECEIVER: Decrypt ── */}
+          {step === "decrypt" && (
+            <>
+              <div style={{ textAlign: "center", padding: "8px 0" }}>
+                <CheckCircle size={32} style={{ color: "var(--success)", margin: "0 auto 8px" }} />
+                <p style={{ color: "var(--text)", fontSize: "1rem", fontWeight: 600 }}>Data Received!</p>
+                <p style={{ color: "var(--text2)", fontSize: "0.85rem", marginTop: 4 }}>
+                  Enter the PIN from the sender's device to confirm and decrypt.
+                </p>
+              </div>
+              <input
+                type="password"
+                className="settings-input"
+                placeholder="Sender's PIN"
+                value={pin}
+                onChange={e => { setPin(e.target.value); setError(""); }}
+                inputMode="numeric"
+                autoFocus
+                style={{ textAlign: "center", letterSpacing: 6, fontSize: "1.2rem", fontWeight: 700 }}
+                onKeyDown={e => e.key === "Enter" && handleDecrypt()}
+              />
+              {error && <p style={{ color: "var(--danger)", fontSize: "0.85rem", textAlign: "center" }}>{error}</p>}
+              <button className="btn-primary" style={{ width: "100%" }} onClick={handleDecrypt} disabled={pin.length < 4}>
+                <Shield size={16} /> Decrypt & Import
+              </button>
+            </>
+          )}
+
+          {/* ── SENDER: Choose Method ── */}
+          {step === "choose-method" && (
+            <>
+              <div style={{ textAlign: "center", padding: "8px 0" }}>
+                <QrCode size={32} style={{ color: "var(--primary)", margin: "0 auto 8px" }} />
+                <p style={{ color: "var(--text2)", fontSize: "0.9rem", lineHeight: 1.5 }}>
+                  Scan the QR code from the receiving device.
+                </p>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <button className="btn-primary" style={{ width: "100%", gap: 8 }} onClick={startCamera}>
+                  <Camera size={16} /> Scan QR Code
+                </button>
+                <button className="btn-outline" style={{ width: "100%", gap: 8 }} onClick={() => setStep("enter-code")}>
+                  <Keyboard size={16} /> Enter Code Manually
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* ── SENDER: Camera Scanner ── */}
           {step === "camera" && (
             <>
               <div style={{ borderRadius: 16, overflow: "hidden", background: "#000", position: "relative" }}>
@@ -309,7 +357,7 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
             </>
           )}
 
-          {/* ── Manual Code Entry ── */}
+          {/* ── SENDER: Manual Code Entry ── */}
           {step === "enter-code" && (
             <>
               <div style={{ textAlign: "center", padding: "8px 0" }}>
@@ -327,70 +375,69 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
                 autoFocus
                 style={{ textAlign: "center", letterSpacing: 8, fontSize: "1.5rem", fontWeight: 700 }}
               />
-              <p style={{ fontSize: "0.8rem", color: "var(--text3)", textAlign: "center" }}>
-                Now enter the sender's PIN to decrypt the data:
-              </p>
-              <input
-                type="password"
-                className="settings-input"
-                placeholder="Enter sender's PIN"
-                value={pin}
-                onChange={e => { setPin(e.target.value); setError(""); }}
-                inputMode="numeric"
-                style={{ textAlign: "center", letterSpacing: 6, fontSize: "1.2rem", fontWeight: 700 }}
-                onKeyDown={e => e.key === "Enter" && handleScanPin()}
-              />
-              {error && <p style={{ color: "var(--danger)", fontSize: "0.85rem", textAlign: "center" }}>{error}</p>}
-              <button className="btn-primary" style={{ width: "100%" }} onClick={handleScanPin} disabled={manualCode.length !== 8 || pin.length < 4}>
-                <Shield size={16} /> Sync Now
+              <button className="btn-primary" style={{ width: "100%", marginTop: 12 }} onClick={() => setStep("grant")} disabled={manualCode.length !== 8}>
+                Continue
               </button>
             </>
           )}
 
-          {/* ── Download PIN (after QR scan) ── */}
-          {step === "download-pin" && (
+          {/* ── SENDER: Grant Access ── */}
+          {step === "grant" && (
             <>
               <div style={{ textAlign: "center", padding: "8px 0" }}>
-                <CheckCircle size={32} style={{ color: "var(--success)", margin: "0 auto 8px" }} />
-                <p style={{ color: "var(--text)", fontSize: "1rem", fontWeight: 600 }}>QR Code Scanned!</p>
+                <Shield size={32} style={{ color: "var(--primary)", margin: "0 auto 8px" }} />
+                <p style={{ color: "var(--text)", fontSize: "1rem", fontWeight: 600 }}>Sync Connection Found</p>
                 <p style={{ color: "var(--text2)", fontSize: "0.85rem", marginTop: 4 }}>
                   Code: <strong style={{ letterSpacing: 3, fontFamily: "monospace" }}>{manualCode}</strong>
                 </p>
+                <p style={{ color: "var(--text2)", fontSize: "0.85rem", marginTop: 16 }}>
+                  Enter your PIN to encrypt and send your vault data.
+                </p>
               </div>
-              <p style={{ fontSize: "0.85rem", color: "var(--text3)", textAlign: "center" }}>
-                Enter the sender's PIN to decrypt and import the data:
-              </p>
               <input
                 type="password"
                 className="settings-input"
-                placeholder="Enter sender's PIN"
+                placeholder="Enter your PIN"
                 value={pin}
                 onChange={e => { setPin(e.target.value); setError(""); }}
                 inputMode="numeric"
                 autoFocus
                 style={{ textAlign: "center", letterSpacing: 6, fontSize: "1.2rem", fontWeight: 700 }}
-                onKeyDown={e => e.key === "Enter" && handleScanPin()}
+                onKeyDown={e => e.key === "Enter" && handleGrantAccess()}
               />
               {error && <p style={{ color: "var(--danger)", fontSize: "0.85rem", textAlign: "center" }}>{error}</p>}
-              <button className="btn-primary" style={{ width: "100%" }} onClick={handleScanPin} disabled={pin.length < 4}>
-                <Shield size={16} /> Decrypt & Import
+              <button className="btn-primary" style={{ width: "100%" }} onClick={handleGrantAccess} disabled={pin.length < 4}>
+                <Send size={16} /> Encrypt & Send
               </button>
             </>
           )}
 
-          {/* ── Importing ── */}
+          {/* ── Loading (Importing or Uploading) ── */}
           {step === "importing" && (
             <div style={{ textAlign: "center", padding: "32px 0" }}>
               <Loader2 size={40} style={{ color: "var(--primary)", animation: "spin 1s linear infinite" }} />
-              <p style={{ color: "var(--text2)", marginTop: 12 }}>Downloading & importing data...</p>
+              <p style={{ color: "var(--text2)", marginTop: 12 }}>Decrypting & importing data...</p>
+            </div>
+          )}
+
+          {step === "uploading" && (
+            <div style={{ textAlign: "center", padding: "32px 0" }}>
+              <Loader2 size={40} style={{ color: "var(--primary)", animation: "spin 1s linear infinite" }} />
+              <p style={{ color: "var(--text2)", marginTop: 12 }}>Encrypting & sending data...</p>
             </div>
           )}
 
           {/* ── Success ── */}
           {step === "success" && (
-            <div style={{ textAlign: "center", padding: "16px 0" }}>
-              <CheckCircle size={48} style={{ color: "var(--success)", margin: "0 auto 12px" }} />
-              <p style={{ color: "var(--text)", fontSize: "1.1rem", fontWeight: 700, marginBottom: 8 }}>Sync Complete!</p>
+            <div style={{ textAlign: "center", padding: "16px 0", display: "flex", flexDirection: "column", alignItems: "center" }}>
+              {mode === "scan" ? (
+                <Lottie animationData={syncAnimation} loop={false} style={{ width: 140, height: 140, marginBottom: 8 }} />
+              ) : (
+                <CheckCircle size={48} style={{ color: "var(--success)", margin: "0 auto 12px" }} />
+              )}
+              <p style={{ color: "var(--text)", fontSize: "1.1rem", fontWeight: 700, marginBottom: 8 }}>
+                {mode === "scan" ? "Sent Successfully!" : "Sync Complete!"}
+              </p>
               <p style={{ color: "var(--text2)", fontSize: "0.85rem", lineHeight: 1.6 }}>{successMsg}</p>
               <button className="btn-primary" style={{ width: "100%", marginTop: 20 }} onClick={onClose}>
                 Done
@@ -404,7 +451,11 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
               <AlertTriangle size={48} style={{ color: "var(--danger)", margin: "0 auto 12px" }} />
               <p style={{ color: "var(--text)", fontSize: "1rem", fontWeight: 600, marginBottom: 8 }}>Sync Failed</p>
               <p style={{ color: "var(--text2)", fontSize: "0.85rem", lineHeight: 1.6 }}>{error}</p>
-              <button className="btn-primary" style={{ width: "100%", marginTop: 20 }} onClick={() => { setStep("pin"); setPin(""); setError(""); setManualCode(""); }}>
+              <button className="btn-primary" style={{ width: "100%", marginTop: 20 }} onClick={() => { 
+                if (mode === "generate") setStep("init");
+                else { setStep("choose-method"); setManualCode(""); }
+                setPin(""); setError(""); 
+              }}>
                 Try Again
               </button>
             </div>

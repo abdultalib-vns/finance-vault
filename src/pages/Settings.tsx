@@ -1070,15 +1070,15 @@ export default function Settings({
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
                   <div style={{ minWidth: 28, height: 28, borderRadius: '50%', background: 'var(--primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 700 }}>1</div>
-                  <div><strong>Generate</strong> — On Device A, tap "Generate QR Code" and enter your PIN. A QR code and an 8-digit code will appear.</div>
+                  <div><strong>Receive</strong> — On the receiving device (e.g., laptop), tap "Generate QR Code" to show a secure QR and 8-digit code.</div>
                 </div>
                 <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
                   <div style={{ minWidth: 28, height: 28, borderRadius: '50%', background: 'var(--primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 700 }}>2</div>
-                  <div><strong>Scan or Enter</strong> — On Device B, tap "Scan QR Code" and scan the QR code, or manually enter the 8-digit code.</div>
+                  <div><strong>Send</strong> — On the sending device (e.g., phone), tap "Scan QR Code", scan it, and enter your PIN to securely encrypt and upload your data.</div>
                 </div>
                 <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
                   <div style={{ minWidth: 28, height: 28, borderRadius: '50%', background: 'var(--primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 700 }}>3</div>
-                  <div><strong>Authenticate</strong> — Enter the same PIN that Device A uses to lock/unlock the app. This decrypts and imports all data.</div>
+                  <div><strong>Confirm</strong> — Back on the receiving device, enter the sender's PIN to decrypt and import the data.</div>
                 </div>
               </div>
 

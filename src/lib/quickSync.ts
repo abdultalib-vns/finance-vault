@@ -46,30 +46,56 @@ export function generateSyncPayload(pin: string): string {
   return encrypted;
 }
 
-// ── Upload encrypted data to relay ──────────────────────────────
-export async function uploadSyncData(encryptedData: string): Promise<string> {
-  const res = await fetch("/api/sync", {
+// ── Helper to safely parse API responses ──────────────────────────
+async function fetchJson(url: string, options: RequestInit) {
+  const res = await fetch(url, options);
+  const contentType = res.headers.get("content-type");
+  
+  if (!contentType || !contentType.includes("application/json")) {
+    throw new Error("API route not found. If testing locally, you must run 'vercel dev' instead of 'npm run dev' to use serverless functions.");
+  }
+  
+  const json = await res.json();
+  return { res, json };
+}
+
+// ── Initialize Sync Session (Receiver) ──────────────────────────
+export async function initSyncSession(): Promise<string> {
+  const { res, json } = await fetchJson("/api/sync", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "upload", data: encryptedData }),
+    body: JSON.stringify({ action: "init" }),
   });
 
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || "Upload failed.");
+  if (!res.ok) throw new Error(json.error || "Failed to initialize sync session.");
   return json.code;
 }
 
-// ── Download encrypted data from relay ──────────────────────────
-export async function downloadSyncData(code: string): Promise<string> {
-  const res = await fetch("/api/sync", {
+// ── Poll for Sync Data (Receiver) ───────────────────────────────
+export async function pollSyncData(code: string): Promise<string | null> {
+  const { res, json } = await fetchJson("/api/sync", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "download", code }),
+    body: JSON.stringify({ action: "poll", code }),
+  });
+  
+  if (res.status === 202) {
+    return null; // Pending
+  }
+  
+  if (!res.ok) throw new Error(json.error || "Polling failed.");
+  return json.data;
+}
+
+// ── Upload encrypted data to relay (Sender) ─────────────────────
+export async function uploadSyncData(code: string, encryptedData: string): Promise<void> {
+  const { res, json } = await fetchJson("/api/sync", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "upload", code, data: encryptedData }),
   });
 
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || "Download failed.");
-  return json.data;
+  if (!res.ok) throw new Error(json.error || "Upload failed.");
 }
 
 // ── Decrypt and import sync payload ─────────────────────────────
