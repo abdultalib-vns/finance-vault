@@ -87,10 +87,10 @@ export default function ChangePinSection() {
             <form onSubmit={handleReveal} style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 12 }}>
               <div className="admin-form-field">
                 <label className="admin-label">Enter PIN to Reveal</label>
-                <input type="password" inputMode="numeric" pattern="[0-9]*"
+                <input type="text" inputMode="numeric" pattern="[0-9]*"
                   className="admin-input" placeholder="Current admin PIN"
                   value={revealPin} onChange={(e) => setRevealPin(e.target.value.replace(/\D/g, ""))}
-                  maxLength={12} />
+                  maxLength={12} autoComplete="off" data-lpignore="true" data-1p-ignore style={{ WebkitTextSecurity: 'disc' } as any} />
               </div>
               {revealError && <p className="admin-error">{revealError}</p>}
               <button type="submit" className="admin-btn-ghost">👁 Reveal Recovery Key</button>
@@ -125,24 +125,24 @@ export default function ChangePinSection() {
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div className="admin-form-field">
               <label className="admin-label">Current PIN</label>
-              <input type="password" inputMode="numeric" pattern="[0-9]*"
+              <input type="text" inputMode="numeric" pattern="[0-9]*"
                 className="admin-input" placeholder="Enter current PIN"
                 value={currentPin} onChange={(e) => setCurrentPin(e.target.value.replace(/\D/g, ""))}
-                maxLength={12} />
+                maxLength={12} autoComplete="off" data-lpignore="true" data-1p-ignore style={{ WebkitTextSecurity: 'disc' } as any} />
             </div>
             <div className="admin-form-field">
               <label className="admin-label">New PIN</label>
-              <input type="password" inputMode="numeric" pattern="[0-9]*"
+              <input type="text" inputMode="numeric" pattern="[0-9]*"
                 className="admin-input" placeholder="Min 4 digits"
                 value={newPin} onChange={(e) => setNewPin(e.target.value.replace(/\D/g, ""))}
-                maxLength={12} />
+                maxLength={12} autoComplete="off" data-lpignore="true" data-1p-ignore style={{ WebkitTextSecurity: 'disc' } as any} />
             </div>
             <div className="admin-form-field">
               <label className="admin-label">Confirm New PIN</label>
-              <input type="password" inputMode="numeric" pattern="[0-9]*"
+              <input type="text" inputMode="numeric" pattern="[0-9]*"
                 className="admin-input" placeholder="Confirm new PIN"
                 value={confirmPin} onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, ""))}
-                maxLength={12} />
+                maxLength={12} autoComplete="off" data-lpignore="true" data-1p-ignore style={{ WebkitTextSecurity: 'disc' } as any} />
             </div>
             {error && <p className="admin-error">{error}</p>}
             <button type="submit" className="admin-btn-primary">Change PIN</button>

@@ -267,8 +267,8 @@ export default function AddItemForm({
       {type === "bank" && (
         <div className="form-group">
           <label>Account Number <span className="label-badge">Encrypted</span></label>
-          <input type="password" placeholder="Stored encrypted"
-            value={secret} onChange={(e) => setSecret(e.target.value)} />
+          <input type="text" placeholder="Stored encrypted"
+            value={secret} onChange={(e) => setSecret(e.target.value)} autoComplete="off" data-lpignore="true" data-1p-ignore style={{ WebkitTextSecurity: 'disc' } as any} />
         </div>
       )}
 
@@ -276,8 +276,8 @@ export default function AddItemForm({
       {type === "other" && (
         <div className="form-group">
           <label>Notes / Secret <span className="label-badge">Encrypted</span></label>
-          <input type="password" placeholder="e.g. password, PIN, notes"
-            value={secret} onChange={(e) => setSecret(e.target.value)} />
+          <input type="text" placeholder="e.g. password, PIN, notes"
+            value={secret} onChange={(e) => setSecret(e.target.value)} autoComplete="off" data-lpignore="true" data-1p-ignore style={{ WebkitTextSecurity: 'disc' } as any} />
         </div>
       )}
 

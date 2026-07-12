@@ -109,17 +109,17 @@ export default function AdminLogin({ onLogin }: Props) {
               </div>
               <div className="admin-form-field">
                 <label className="admin-label">Admin PIN</label>
-                <input type="password" inputMode="numeric" pattern="[0-9]*"
+                <input type="text" inputMode="numeric" pattern="[0-9]*"
                   className="admin-input" placeholder="Min 4 digits"
                   value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-                  maxLength={12} />
+                  maxLength={12} autoComplete="off" data-lpignore="true" data-1p-ignore style={{ WebkitTextSecurity: 'disc' } as any} />
               </div>
               <div className="admin-form-field">
                 <label className="admin-label">Confirm PIN</label>
-                <input type="password" inputMode="numeric" pattern="[0-9]*"
+                <input type="text" inputMode="numeric" pattern="[0-9]*"
                   className="admin-input" placeholder="Confirm PIN"
                   value={confirm} onChange={(e) => setConfirm(e.target.value.replace(/\D/g, ""))}
-                  maxLength={12} />
+                  maxLength={12} autoComplete="off" data-lpignore="true" data-1p-ignore style={{ WebkitTextSecurity: 'disc' } as any} />
               </div>
               {error && <p className="admin-error">{error}</p>}
               <button type="submit" className="admin-btn-primary">Create Admin PIN</button>
@@ -167,10 +167,10 @@ export default function AdminLogin({ onLogin }: Props) {
             <form onSubmit={handleLogin} className="admin-login-form">
               <div className="admin-form-field">
                 <label className="admin-label">Admin PIN</label>
-                <input type="password" inputMode="numeric" pattern="[0-9]*"
+                <input type="text" inputMode="numeric" pattern="[0-9]*"
                   className="admin-input" placeholder="Enter PIN"
                   value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-                  maxLength={12} autoFocus />
+                  maxLength={12} autoFocus autoComplete="off" data-lpignore="true" data-1p-ignore style={{ WebkitTextSecurity: 'disc' } as any} />
               </div>
               {error && <p className="admin-error">{error}</p>}
               <button type="submit" className="admin-btn-primary" disabled={loading}>
@@ -205,17 +205,17 @@ export default function AdminLogin({ onLogin }: Props) {
               </div>
               <div className="admin-form-field">
                 <label className="admin-label">New PIN</label>
-                <input type="password" inputMode="numeric" pattern="[0-9]*"
+                <input type="text" inputMode="numeric" pattern="[0-9]*"
                   className="admin-input" placeholder="Min 4 digits"
                   value={newPin} onChange={(e) => setNewPin(e.target.value.replace(/\D/g, ""))}
-                  maxLength={12} />
+                  maxLength={12} autoComplete="off" data-lpignore="true" data-1p-ignore style={{ WebkitTextSecurity: 'disc' } as any} />
               </div>
               <div className="admin-form-field">
                 <label className="admin-label">Confirm New PIN</label>
-                <input type="password" inputMode="numeric" pattern="[0-9]*"
+                <input type="text" inputMode="numeric" pattern="[0-9]*"
                   className="admin-input" placeholder="Confirm new PIN"
                   value={newPinConfirm} onChange={(e) => setNewPinConfirm(e.target.value.replace(/\D/g, ""))}
-                  maxLength={12} />
+                  maxLength={12} autoComplete="off" data-lpignore="true" data-1p-ignore style={{ WebkitTextSecurity: 'disc' } as any} />
               </div>
               {error && <p className="admin-error">{error}</p>}
               <button type="submit" className="admin-btn-primary">Reset PIN</button>

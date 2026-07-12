@@ -241,13 +241,17 @@ export default function BillPaymentSheet({
               <label className="bps-label">Enter your PIN</label>
               <input
                 ref={pinRef}
-                type="password"
+                type="text"
                 inputMode="numeric"
                 className="bps-pin-input"
                 placeholder="••••"
                 value={pin}
                 onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
                 maxLength={8}
+                autoComplete="off"
+                data-lpignore="true"
+                data-1p-ignore
+                style={{ WebkitTextSecurity: 'disc' } as any}
                 onKeyDown={(e) => { if (e.key === "Enter") handlePinSubmit(); }}
               />
               {pinError && <p className="bps-pin-error">{pinError}</p>}

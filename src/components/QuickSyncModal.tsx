@@ -305,14 +305,17 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
                 </p>
               </div>
               <input
-                type="password"
+                type="text"
                 className="settings-input"
                 placeholder="Sender's PIN"
                 value={pin}
                 onChange={e => { setPin(e.target.value); setError(""); }}
                 inputMode="numeric"
                 autoFocus
-                style={{ textAlign: "center", letterSpacing: 6, fontSize: "1.2rem", fontWeight: 700 }}
+                autoComplete="off"
+                data-lpignore="true"
+                data-1p-ignore
+                style={{ textAlign: "center", letterSpacing: 6, fontSize: "1.2rem", fontWeight: 700, WebkitTextSecurity: 'disc' } as any}
                 onKeyDown={e => e.key === "Enter" && handleDecrypt()}
               />
               {error && <p style={{ color: "var(--danger)", fontSize: "0.85rem", textAlign: "center" }}>{error}</p>}
@@ -405,14 +408,17 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
                 </p>
               </div>
               <input
-                type="password"
+                type="text"
                 className="settings-input"
                 placeholder="Enter your PIN"
                 value={pin}
                 onChange={e => { setPin(e.target.value); setError(""); }}
                 inputMode="numeric"
                 autoFocus
-                style={{ textAlign: "center", letterSpacing: 6, fontSize: "1.2rem", fontWeight: 700 }}
+                autoComplete="off"
+                data-lpignore="true"
+                data-1p-ignore
+                style={{ textAlign: "center", letterSpacing: 6, fontSize: "1.2rem", fontWeight: 700, WebkitTextSecurity: 'disc' } as any}
                 onKeyDown={e => e.key === "Enter" && handleGrantAccess()}
               />
               {error && <p style={{ color: "var(--danger)", fontSize: "0.85rem", textAlign: "center" }}>{error}</p>}

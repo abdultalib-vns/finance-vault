@@ -244,9 +244,10 @@ export default function AuthScreen({ onUnlock }: Props) {
           <>
             <p className="auth-subtitle">Create your Master PIN to secure your data</p>
             <form className="auth-form" onSubmit={handleNewUserSubmit}>
-              <input ref={pinRef} type="password" inputMode="numeric" maxLength={20}
-                autoComplete="new-password" data-lpignore="true"
+              <input ref={pinRef} type="text" inputMode="numeric" maxLength={20}
+                autoComplete="off" data-lpignore="true" data-1p-ignore
                 className="pin-input" placeholder="Enter PIN" autoFocus
+                style={{ WebkitTextSecurity: 'disc' } as any}
                 value={pin} onChange={(e) => { setPin(e.target.value); setError(""); }} />
               {error && <p className="auth-error">{error}</p>}
               <button type="submit" className="btn-primary auth-btn">Next</button>
@@ -260,9 +261,10 @@ export default function AuthScreen({ onUnlock }: Props) {
           <>
             <p className="auth-subtitle">Confirm your Master PIN</p>
             <form className="auth-form" onSubmit={handleNewUserSubmit}>
-              <input ref={pinRef} type="password" inputMode="numeric" maxLength={20}
-                autoComplete="new-password" data-lpignore="true"
+              <input ref={pinRef} type="text" inputMode="numeric" maxLength={20}
+                autoComplete="off" data-lpignore="true" data-1p-ignore
                 className="pin-input" placeholder="Confirm PIN" autoFocus
+                style={{ WebkitTextSecurity: 'disc' } as any}
                 value={confirmPin} onChange={(e) => { setConfirmPin(e.target.value); setError(""); }} />
               {error && <p className="auth-error">{error}</p>}
               <button type="submit" className="btn-primary auth-btn">Confirm PIN</button>
@@ -309,9 +311,10 @@ export default function AuthScreen({ onUnlock }: Props) {
           <>
             <p className="auth-subtitle">Enter your Master PIN to continue</p>
             <form className="auth-form" onSubmit={handleUnlockSubmit}>
-              <input ref={pinRef} type="password" inputMode="numeric" maxLength={20}
-                autoComplete="new-password" data-lpignore="true"
+              <input ref={pinRef} type="text" inputMode="numeric" maxLength={20}
+                autoComplete="off" data-lpignore="true" data-1p-ignore
                 className="pin-input" placeholder="Enter PIN" autoFocus
+                style={{ WebkitTextSecurity: 'disc' } as any}
                 value={pin} onChange={(e) => { setPin(e.target.value); setError(""); }} />
               {error && <p className="auth-error">{error}</p>}
               <button type="submit" className="btn-primary auth-btn">Unlock</button>
@@ -360,9 +363,10 @@ export default function AuthScreen({ onUnlock }: Props) {
           <>
             <p className="auth-subtitle">Create a new Master PIN</p>
             <form className="auth-form" onSubmit={handleRecoverNewPin}>
-              <input ref={pinRef} type="password" inputMode="numeric" maxLength={20}
-                autoComplete="new-password" data-lpignore="true"
+              <input ref={pinRef} type="text" inputMode="numeric" maxLength={20}
+                autoComplete="off" data-lpignore="true" data-1p-ignore
                 className="pin-input" placeholder="Enter New PIN" autoFocus
+                style={{ WebkitTextSecurity: 'disc' } as any}
                 value={newPin} onChange={(e) => { setNewPin(e.target.value); setError(""); }} />
               {error && <p className="auth-error">{error}</p>}
               <button type="submit" className="btn-primary auth-btn">Next</button>
@@ -375,9 +379,10 @@ export default function AuthScreen({ onUnlock }: Props) {
           <>
             <p className="auth-subtitle">Confirm your new Master PIN</p>
             <form className="auth-form" onSubmit={handleRecoverConfirm}>
-              <input ref={pinRef} type="password" inputMode="numeric" maxLength={20}
-                autoComplete="new-password" data-lpignore="true"
+              <input ref={pinRef} type="text" inputMode="numeric" maxLength={20}
+                autoComplete="off" data-lpignore="true" data-1p-ignore
                 className="pin-input" placeholder="Confirm New PIN" autoFocus
+                style={{ WebkitTextSecurity: 'disc' } as any}
                 value={confirmNewPin} onChange={(e) => { setConfirmNewPin(e.target.value); setError(""); }} />
               {error && <p className="auth-error">{error}</p>}
               <button type="submit" className="btn-primary auth-btn">Save New PIN</button>

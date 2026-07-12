@@ -6141,3 +6141,153 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   color: #10b981;
   font-weight: 600;
 }
+
+/* =========================================================================
+   DESKTOP & WIDE-SCREEN LAYOUT
+   ========================================================================= */
+@media (min-width: 1024px) {
+  /* Remove Mobile App constraints */
+  .app-shell {
+    max-width: 100% !important;
+  }
+  
+  .layout-wrapper {
+    flex-direction: row-reverse !important;
+  }
+  
+  /* Sidebar Navigation */
+  .bottom-nav {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 260px !important;
+    max-width: none !important;
+    height: 100% !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    padding: 32px 16px !important;
+    border-top: none !important;
+    border-right: 1px solid var(--border) !important;
+    gap: 8px !important;
+  }
+  
+  /* Add Logo to sidebar */
+  .bottom-nav::before {
+    content: "FinAura";
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary-light);
+    margin-bottom: 32px;
+    padding-left: 20px;
+    letter-spacing: -0.03em;
+  }
+  :root.dark-mode .bottom-nav::before {
+    color: #fff;
+  }
+
+  .nav-btn {
+    flex: none !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    padding: 14px 20px !important;
+    border-radius: 12px !important;
+    gap: 16px !important;
+    width: 100% !important;
+  }
+  
+  .nav-btn.active {
+    background: var(--primary) !important;
+    color: var(--primary-fg) !important;
+  }
+
+  .nav-label {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+  }
+
+  /* Main Content Area */
+  .screen-container {
+    flex: 1 !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding-bottom: 100px !important;
+  }
+  
+  .content {
+    padding: 32px !important;
+  }
+
+  /* Floating Action Buttons */
+  .fab-btn {
+    bottom: 40px !important;
+    right: 40px !important;
+    left: auto !important;
+    transform: none !important;
+  }
+  
+  .ai-fab-btn {
+    left: auto !important;
+    right: 120px !important;
+  }
+  
+  /* Grids for Desktop */
+  .summary-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 20px !important;
+  }
+  
+  .item-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+    align-items: start !important;
+  }
+
+  .monthly-row {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  .monthly-breakdown {
+    max-width: 600px;
+  }
+  
+  .chart-donut-wrap {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 60px !important;
+  }
+  
+  .chart-section {
+    padding: 32px !important;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  /* Modals */
+  .modal-sheet {
+    max-width: 480px !important;
+    margin: 40px auto !important;
+    border-radius: 24px !important;
+    max-height: calc(100vh - 80px) !important;
+    position: relative !important;
+    bottom: auto !important;
+    transform: none !important;
+  }
+  
+  .modal-overlay {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 24px !important;
+  }
+
+  /* Full screen settings */
+  .settings-section {
+    max-width: 600px;
+  }
+}

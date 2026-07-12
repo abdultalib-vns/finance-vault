@@ -220,7 +220,7 @@ function MainApp() {
         setTargetCardId(cardId);
         setTab("cards");
       }} />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+      <div className="layout-wrapper" style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
         <div className="screen-container">
           {tab === "dashboard" && (
             <Dashboard masterKey={masterKey} currency={currency} items={items} onItemsChange={setItems} onLock={handleLock} />

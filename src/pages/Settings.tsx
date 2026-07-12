@@ -705,7 +705,7 @@ export default function Settings({
               {showAiPinPrompt && (
                 <div className="pin-prompt-box" style={{ marginBottom: 12 }}>
                   <label className="settings-label">Enter PIN to view keys:</label>
-                  <input type="password" inputMode="numeric" className="settings-input" value={aiPin} onChange={(e) => setAiPin(e.target.value)} placeholder="PIN" />
+                  <input type="text" inputMode="numeric" className="settings-input" value={aiPin} onChange={(e) => setAiPin(e.target.value)} placeholder="PIN" autoComplete="off" data-lpignore="true" data-1p-ignore style={{ WebkitTextSecurity: 'disc' } as any} />
                   <div style={{display:'flex', gap:8, marginTop:12}}>
                     <button type="button" className="btn-outline" style={{flex:1}} onClick={() => setShowAiPinPrompt(false)}>Cancel</button>
                     <button type="button" className="btn-primary" style={{flex:1}} onClick={handleAiPinSubmit}>Unlock</button>
@@ -750,7 +750,7 @@ export default function Settings({
               ) : (
                 <div className="io-pin-block">
                   <p className="settings-label">Enter your PIN to confirm export</p>
-                  <input type="password" inputMode="numeric" className="settings-input" placeholder="Enter PIN" value={ioPin} onChange={(e) => setIoPin(e.target.value)} autoFocus />
+                  <input type="text" inputMode="numeric" className="settings-input" placeholder="Enter PIN" value={ioPin} onChange={(e) => setIoPin(e.target.value)} autoFocus autoComplete="off" data-lpignore="true" data-1p-ignore style={{ WebkitTextSecurity: 'disc' } as any} />
                   <div className="io-actions">
                     <button type="button" className="btn-primary" onClick={handleExport} disabled={ioLoading || !ioPin}>{ioLoading ? "Exporting…" : "Export"}</button>
                     <button type="button" className="btn-secondary" onClick={() => { setShowExportPin(false); setIoPin(""); }}>Cancel</button>
@@ -770,7 +770,7 @@ export default function Settings({
                 <div className="io-pin-block">
                   <p className="settings-label">File: <strong>{pendingFile?.name}</strong></p>
                   <p className="settings-label">Enter your PIN to confirm import</p>
-                  <input type="password" inputMode="numeric" className="settings-input" placeholder="Enter PIN" value={ioPin} onChange={(e) => setIoPin(e.target.value)} autoFocus />
+                  <input type="text" inputMode="numeric" className="settings-input" placeholder="Enter PIN" value={ioPin} onChange={(e) => setIoPin(e.target.value)} autoFocus autoComplete="off" data-lpignore="true" data-1p-ignore style={{ WebkitTextSecurity: 'disc' } as any} />
                   <div className="io-actions">
                     <button type="button" className="btn-primary" onClick={handleImport} disabled={ioLoading || !ioPin}>{ioLoading ? "Importing…" : "Import"}</button>
                     <button type="button" className="btn-secondary" onClick={() => { setShowImportPin(false); setPendingFile(null); setIoPin(""); }}>Cancel</button>
@@ -812,8 +812,8 @@ export default function Settings({
           <h3 className="settings-section-title"><Key size={20} /> Security</h3>
           <form className="settings-form" onSubmit={handleChangePin}>
             <p className="settings-label">Change Master PIN</p>
-            <input type="password" inputMode="numeric" placeholder="New PIN (min 4 digits)" value={newPin} onChange={(e) => setNewPin(e.target.value)} className="settings-input" />
-            <input type="password" inputMode="numeric" placeholder="Confirm New PIN" value={confirmPin} onChange={(e) => setConfirmPin(e.target.value)} className="settings-input" />
+            <input type="text" inputMode="numeric" placeholder="New PIN (min 4 digits)" value={newPin} onChange={(e) => setNewPin(e.target.value)} className="settings-input" autoComplete="off" data-lpignore="true" data-1p-ignore style={{ WebkitTextSecurity: 'disc' } as any} />
+            <input type="text" inputMode="numeric" placeholder="Confirm New PIN" value={confirmPin} onChange={(e) => setConfirmPin(e.target.value)} className="settings-input" autoComplete="off" data-lpignore="true" data-1p-ignore style={{ WebkitTextSecurity: 'disc' } as any} />
             {pinMsg && <p className={`settings-msg ${pinMsg.startsWith("Success:") ? "success" : "error"}`}>
                 {pinMsg.startsWith("Success:") ? <CheckCircle size={20} style={{display:"inline", verticalAlign:"middle", marginRight: 4}}/> : <AlertTriangle size={20} style={{display:"inline", verticalAlign:"middle", marginRight: 4}}/>}
                 {pinMsg.replace("Success: ", "").replace("Error: ", "")}
@@ -899,7 +899,7 @@ export default function Settings({
           ) : clearStep === "pin" ? (
             <div className="confirm-block">
               <p className="confirm-text">Enter your PIN to clear all data.</p>
-              <input type="password" inputMode="numeric" className="settings-input" value={clearPin} onChange={(e) => setClearPin(e.target.value)} placeholder="Enter PIN" />
+              <input type="text" inputMode="numeric" className="settings-input" value={clearPin} onChange={(e) => setClearPin(e.target.value)} placeholder="Enter PIN" autoComplete="off" data-lpignore="true" data-1p-ignore style={{ WebkitTextSecurity: 'disc' } as any} />
               {clearMsg && <p className="settings-msg error">{clearMsg}</p>}
               <div className="confirm-actions">
                 <button type="button" className="btn-danger" onClick={verifyClearPin}>Continue</button>
@@ -1102,7 +1102,7 @@ export default function Settings({
             </div>
             <div style={{ padding: "16px 0" }}>
               <input
-                type="password"
+                type="text"
                 className="settings-input"
                 placeholder="Enter 4-digit code"
                 value={devCode}
@@ -1110,8 +1110,11 @@ export default function Settings({
                 maxLength={4}
                 inputMode="numeric"
                 autoFocus
+                autoComplete="off"
+                data-lpignore="true"
+                data-1p-ignore
                 onKeyDown={(e) => e.key === "Enter" && handleDevCodeSubmit()}
-                style={{ textAlign: "center", letterSpacing: "8px", fontSize: "1.5rem", fontWeight: 700 }}
+                style={{ textAlign: "center", letterSpacing: "8px", fontSize: "1.5rem", fontWeight: 700, WebkitTextSecurity: 'disc' } as any}
               />
               {devCodeError && <p style={{ color: "var(--danger)", fontSize: "0.85rem", marginTop: 8, textAlign: "center" }}>{devCodeError}</p>}
             </div>

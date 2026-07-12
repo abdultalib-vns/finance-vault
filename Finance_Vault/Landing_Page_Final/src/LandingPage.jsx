@@ -7,7 +7,7 @@ import {
   ArrowRight, Sparkles, Lock, ChevronRight, Settings, TrendingUp,
   Zap, Target, BarChart3, Wallet, DollarSign, Users, Award,
   Play, Menu, X, Check, ArrowUpRight, Instagram, Youtube,
-  Clock, Heart, MessageCircle, Lightbulb, BookOpen, Layers
+  Clock, Heart, MessageCircle, Lightbulb, BookOpen, Layers, QrCode
 } from 'lucide-react';
 
 /* ════════════════════════════════════════════
@@ -69,6 +69,7 @@ export default function LandingPage() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
+  const [pricingCurrency, setPricingCurrency] = useState('USD');
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 30);
@@ -94,10 +95,9 @@ export default function LandingPage() {
   const faqs = [
     { q: 'What types of accounts can I track in FinAura?', a: 'FinAura supports 7 account types: Bank Accounts, Credit Cards, Fixed Deposits (FD), Recurring Deposits (RD), Mutual Funds, Pay Later services, and a custom "Other" category. Each type has tailored features — like maturity tracking for FDs, monthly installment management for RDs, and expense/bill generation for credit cards.' },
     { q: 'Is my financial data really secure?', a: 'Absolutely. FinAura uses AES-256 encryption for all sensitive data. Access is protected by a PIN code with biometric authentication (FaceID/TouchID) support. You also set up a security question during onboarding for account recovery. An auto-lock feature locks the app after a configurable idle period. Your data stays 100% on your device.' },
-    { q: 'Do I need to link my bank accounts?', a: 'No! FinAura is designed to work completely offline with manual entry. You add your accounts, balances, and transactions yourself — giving you full control. You can also export your entire vault as an encrypted .fvbackup file and import it on another device.' },
-    { q: 'How does expense tracking work for credit cards?', a: 'Each credit card has its own expense ledger where you log transactions with amounts, dates, due dates, and cashback earned. You can filter expenses by status (paid/unpaid/billed), generate monthly bills from selected expenses, and track your total cashback. Pay via integrated shortcuts to CRED, Google Pay, PhonePe, Paytm, and more.' },
-    { q: 'What currencies does FinAura support?', a: 'FinAura supports 150+ fiat currencies from around the world. You choose your preferred currency during onboarding or change it anytime in Settings. All balances, expenses, and analytics display in your selected currency.' },
-    { q: 'What happens if I lose my phone?', a: 'FinAura has a built-in vault export feature. You can export your entire financial data (accounts, expenses, bills, cashback entries, RD installments, and bank transactions) as an encrypted .fvbackup file. Import it on any new device to restore everything. We also support security question-based PIN recovery.' },
+    { q: 'Does FinAura AI read my entire vault?', a: 'No. FinAura AI only processes the exact natural language queries you send it (e.g., "I spent $20 on coffee"). Your entire vault data is NEVER sent to the AI. Additionally, your API keys (Gemini, Groq, OpenRouter) are stored strictly locally.' },
+    { q: 'How does Quick Sync work without a cloud database?', a: 'We use a highly secure "Pair & Pull" architecture. Your data is AES-encrypted with your PIN on the sender device, uploaded to a temporary 10-minute relay server, and then decrypted directly on the receiving device using the same PIN. The server never sees your raw data and deletes it instantly after a successful sync.' },
+    { q: 'Do I need to link my bank accounts?', a: 'No! FinAura is designed to work completely offline with manual entry or AI-assisted entry. You add your accounts, balances, and transactions yourself — giving you full control.' },
     { q: 'Can I use FinAura as a PWA?', a: 'Yes! FinAura is a Progressive Web App that can be installed directly to your home screen from the browser — no app store needed. It works like a native app with full offline support, biometric auth, and a beautiful splash screen.' }
   ];
 
@@ -166,10 +166,10 @@ export default function LandingPage() {
             <div className="flex-1 text-center lg:text-left">
               <h1 className="heading-display text-white text-[3rem] md:text-[3.75rem] lg:text-[4.25rem] mb-6">
                 Your Finances.<br />
-                <span style={{ color: '#FFD43B' }}>Locked & Secured.</span>
+                <span style={{ color: '#FFD43B' }}>AI-Powered & Secured.</span>
               </h1>
               <p className="text-white/80 text-lg md:text-xl mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
-                Track 7 account types — banks, cards, FDs, RDs, mutual funds & more. Manage expenses, monitor cashback, and keep everything encrypted in your personal finance vault.
+                Chat with your AI assistant to log expenses, track 7 account types, sync securely across devices via QR code, and keep everything encrypted in your personal finance vault.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6">
                 <a href="#" className="btn-primary text-base py-4 px-9 shadow-[0_8px_30px_rgba(64,192,87,0.4)]">
@@ -253,6 +253,16 @@ export default function LandingPage() {
                 </div>
               </div>
               {/* Floating decorative elements */}
+              <div className="absolute -top-4 -right-4 bg-white rounded-2xl p-3 shadow-2xl flex items-center gap-3 animate-float" style={{ animationDelay: '1s', zIndex: 20 }}>
+                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-gray-800">FinAura AI</p>
+                  <p className="text-[10px] text-gray-500">Log expenses by chatting</p>
+                </div>
+              </div>
+              
               <div className="absolute top-10 right-10 w-20 h-20 bg-[#FFD43B]/20 rounded-full blur-2xl" />
               <div className="absolute bottom-20 left-0 w-32 h-32 bg-[#40C057]/10 rounded-full blur-3xl" />
             </div>
@@ -277,9 +287,10 @@ export default function LandingPage() {
               <React.Fragment key={setIdx}>
                 {[
                   { name: '7 Account Types', sub: 'Bank • Card • FD • RD • MF' },
-                  { name: '150+ Currencies', sub: 'Global Support' },
+                  { name: '✨ FinAura AI', sub: 'Chat to log expenses' },
+                  { name: '📱 Quick Sync', sub: 'Cross-device via QR' },
                   { name: '🔒 AES-256', sub: 'Military Encryption' },
-                  { name: '📱 PWA Ready', sub: 'Install to Homescreen' },
+                  { name: '🌐 PWA Ready', sub: 'Install to Homescreen' },
                   { name: '🌙 Dark Mode', sub: 'OLED Optimized' },
                   { name: '💳 Cashback', sub: 'Track Every Reward' },
                   { name: '📊 3 Chart Types', sub: 'Donut • Bar • Horizontal' },
@@ -438,12 +449,15 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { icon: <Layers className="w-6 h-6" />, title: '7 Account Types', desc: 'Track Bank Accounts, Credit Cards, Fixed Deposits, Recurring Deposits, Mutual Funds, Pay Later services, and custom categories — each with tailored features.', color: '#3B5BDB', bg: '#E8ECFF' },
-              { icon: <CreditCard className="w-6 h-6" />, title: 'Expense & Bill Tracking', desc: 'Log card expenses with cashback, generate monthly bills, filter by paid/unpaid/billed status, and pay via CRED, GPay, PhonePe, Paytm & more.', color: '#8b5cf6', bg: '#F3E8FF' },
+              { icon: <Sparkles className="w-6 h-6" />, title: 'FinAura AI Assistant', desc: 'Log expenses naturally by chatting. Connects directly to Gemini, Groq, or OpenRouter with your local API key for absolute privacy.', color: '#10b981', bg: '#D1FAE5' },
+              { icon: <QrCode className="w-6 h-6" />, title: 'Velo\'s Quick Sync', desc: 'Sync your vault across devices seamlessly via QR code. End-to-end PIN encryption with a secure, temporary 10-minute relay.', color: '#3b82f6', bg: '#DBEAFE' },
+              { icon: <Layers className="w-6 h-6" />, title: '7 Account Types', desc: 'Track Bank Accounts, Credit Cards, FDs, RDs, Mutual Funds, Pay Later services, and custom categories — each with tailored features.', color: '#3B5BDB', bg: '#E8ECFF' },
+              { icon: <CreditCard className="w-6 h-6" />, title: 'Expense & Bill Tracking', desc: 'Log card expenses with cashback, generate monthly bills, filter by paid/unpaid/billed status, and pay via CRED, GPay, PhonePe, Paytm.', color: '#8b5cf6', bg: '#F3E8FF' },
+              { icon: <Smartphone className="w-6 h-6" />, title: 'Complete PWA', desc: 'Install FinAura directly to your iOS or Android homescreen. Works 100% offline, just like a native app, with zero cloud dependency.', color: '#f59e0b', bg: '#FEF3C7' },
               { icon: <BarChart3 className="w-6 h-6" />, title: 'Interactive Charts', desc: 'Visualize your finances with donut charts, bar charts, and horizontal bar charts. See asset allocation and spending breakdowns at a glance.', color: '#FFD43B', bg: '#FFF9DB' },
               { icon: <DollarSign className="w-6 h-6" />, title: 'Cashback Tracker', desc: 'A dedicated section to log cashback from any source, view per-source breakdowns, and track your total rewards earned across all cards.', color: '#40C057', bg: '#E8F5E9' },
               { icon: <Globe className="w-6 h-6" />, title: '150+ Currencies', desc: 'Choose from over 150 fiat currencies with smart locale formatting. Change your preferred currency anytime from Settings.', color: '#E64980', bg: '#FFF0F6' },
-              { icon: <Shield className="w-6 h-6" />, title: 'Military-Grade Security', desc: 'PIN + biometric auth (FaceID/TouchID), security question recovery, configurable auto-lock timeout, AES-256 encryption, and encrypted vault export/import.', color: '#1B2559', bg: '#E8ECFF' }
+              { icon: <Shield className="w-6 h-6" />, title: 'Military-Grade Security', desc: 'PIN + biometric auth (FaceID/TouchID), security question recovery, configurable auto-lock timeout, and AES-256 encrypted vault export.', color: '#1B2559', bg: '#E8ECFF' }
             ].map((f, i) => (
               <div key={i} className="card-elevated group">
                 <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300" style={{ background: f.bg, color: f.color }}>
@@ -564,29 +578,55 @@ export default function LandingPage() {
             <p className="text-lg text-[#5C5F66] leading-relaxed">Start for free. Upgrade when you're ready. No hidden fees, ever.</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-[1000px] mx-auto items-start">
+          <div className="flex justify-center mb-12">
+            <div className="bg-[#E8ECFF] p-1 rounded-full inline-flex">
+              <button 
+                onClick={() => setPricingCurrency('USD')} 
+                className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${pricingCurrency === 'USD' ? 'bg-[#3B5BDB] text-white shadow-md' : 'text-[#5C5F66] hover:text-[#1B2559]'}`}
+              >
+                USD ($)
+              </button>
+              <button 
+                onClick={() => setPricingCurrency('INR')} 
+                className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${pricingCurrency === 'INR' ? 'bg-[#3B5BDB] text-white shadow-md' : 'text-[#5C5F66] hover:text-[#1B2559]'}`}
+              >
+                INR (₹)
+              </button>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[1200px] mx-auto items-start">
             {[
               {
-                name: 'Free',
-                price: '$0',
-                period: '/forever',
+                name: 'Free Trial',
+                price: pricingCurrency === 'USD' ? '$0' : '₹0',
+                period: 'for 7 days',
+                desc: 'Try everything. No credit card required.',
+                features: ['FinAura AI Assistant', 'Velo\'s Quick Sync (QR)', 'All 7 account types', 'Expense & bill tracking', 'Interactive charts', 'PIN + biometric auth'],
+                btn: 'Start Free Trial',
+                featured: false
+              },
+              {
+                name: 'Basic',
+                price: pricingCurrency === 'USD' ? '$2.99' : '₹249',
+                period: '/month',
                 desc: 'Full-featured. No limits. No catch.',
-                features: ['All 7 account types', 'Unlimited accounts', 'Expense & bill tracking', 'Cashback tracker', '150+ currencies', 'Interactive charts', 'PIN + biometric auth', 'Vault export & import', 'Dark & light mode', 'PWA — install to homescreen'],
-                btn: 'Get Started Free',
+                features: ['FinAura AI Assistant', 'Velo\'s Quick Sync (QR)', 'All 7 account types', 'Unlimited accounts', 'Expense & bill tracking', 'Cashback tracker', '150+ currencies', 'Interactive charts', 'PIN + biometric auth', 'PWA — install to homescreen'],
+                btn: 'Get Started',
                 featured: false
               },
               {
                 name: 'Pro',
-                price: '$4.99',
+                price: pricingCurrency === 'USD' ? '$4.99' : '₹449',
                 period: '/month',
                 desc: 'Premium features coming soon.',
-                features: ['Everything in Free', 'Cloud-encrypted sync', 'Multi-device support', 'Custom categories & tags', 'Spending analytics & trends', 'Monthly financial reports', 'Priority support'],
+                features: ['Everything in Basic', 'Custom AI Prompting', 'Multi-device live sync', 'Custom categories & tags', 'Spending analytics & trends', 'Monthly financial reports', 'Priority support'],
                 btn: 'Join Waitlist',
                 featured: true
               },
               {
                 name: 'Family',
-                price: '$9.99',
+                price: pricingCurrency === 'USD' ? '$9.99' : '₹849',
                 period: '/month',
                 desc: 'Shared finances, private vaults.',
                 features: ['Everything in Pro', 'Up to 5 family members', 'Shared household budget', 'Individual private vaults', 'Family expense splitting', 'Combined net worth view', 'Dedicated support'],
