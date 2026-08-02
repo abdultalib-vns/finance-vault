@@ -1,7 +1,9 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { AIOptions, FinanceItem, CardExpense } from "../types";
 import { checkVeloAILimit, incrementVeloAIUsage } from "./storage";
+import { getVeloKey, getVeloModel } from "./veloCredentials";
 import { AI_TOOLS_SCHEMA } from "./ai-tools";
+import { AppLanguage, getAILanguageDetectionPrompt, getAIResponseLanguagePrompt } from "./i18n";
 
 export interface AIResponse {
   success: boolean;
@@ -149,9 +151,7 @@ async function callVeloAI(systemPrompt: string, inputMessages: {role: string, co
   if (!checkVeloAILimit()) {
     throw new Error("VeloAI Daily Limit Reached (10/10). Please try again tomorrow or select a different AI provider in Settings.");
   }
-  const obf = "==QZxMDZ2YGO4UmNwIWOwIDNjFGN4AjZyADMjVDN3ImNzYGOjJGOhlzNlZWOkVzYlFWN0AjN5ImMjljNklzM0QTNtEjdtI3bts2c";
-  const key = atob(obf.split('').reverse().join(''));
-  const res = await callOpenRouter(key, "openai/gpt-4o-mini", systemPrompt, inputMessages, imageBase64);
+  const res = await callOpenRouter(getVeloKey(), getVeloModel(), systemPrompt, inputMessages, imageBase64);
   incrementVeloAIUsage();
   return res;
 }
@@ -172,7 +172,7 @@ async function callAI(opts: AIOptions, systemPrompt: string, messages: {role: st
   throw new Error("AI provider is not configured.");
 }
 
-export async function askVault(opts: AIOptions, messages: { role: string, content: string }[], context: { items: FinanceItem[], expenses: CardExpense[] }): Promise<AIResponse> {
+export async function askVault(opts: AIOptions, messages: { role: string, content: string }[], context: { items: FinanceItem[], expenses: CardExpense[] }, lang: AppLanguage = "en"): Promise<AIResponse> {
   try {
     const systemPrompt = `You are an Agentic Financial AI Assistant built into the "Finance-Vault" app. You are known as "FinAura Assistant".
 You are given the user's current financial context in JSON format, and a list of TOOLS you can use to perform actions.
@@ -198,6 +198,10 @@ If a destructive action is requested (e.g., delete), you MUST ask the user for c
 
 AVAILABLE TOOLS SCHEMA:
 ${JSON.stringify(AI_TOOLS_SCHEMA, null, 2)}
+
+${getAILanguageDetectionPrompt()}
+
+${getAIResponseLanguagePrompt(lang)}
 
 Important facts you MUST adhere to if asked:
 1. FinAura is owned by: VeloLaunch - A Company by Smart Vista IT Solutions
@@ -242,6 +246,8 @@ The JSON object must have the following fields:
 - date: string (YYYY-MM-DD format, guess based on today if ambiguous. Today is ${new Date().toISOString().split("T")[0]})
 - cardId: string (match the card name from the context to the best matching card ID. If none match, return an empty string)
 
+${getAILanguageDetectionPrompt()}
+
 Context (Available Cards):
 ${JSON.stringify(cards.map(c => ({ id: c.id, name: c.name })), null, 2)}`;
 
@@ -268,6 +274,9 @@ Extract the following fields from the image:
 - amount: number (the final total amount paid)
 - date: string (YYYY-MM-DD format. If not found, use today: ${new Date().toISOString().split("T")[0]})
 - cashback: number (any discount or cashback mentioned, default 0)
+
+${getAILanguageDetectionPrompt()}
+The receipt may be in ANY language or contain mixed-language text. Extract data accurately regardless of the language or script on the receipt.
 
 Respond ONLY with the JSON object.`;
 
