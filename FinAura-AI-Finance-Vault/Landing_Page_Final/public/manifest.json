@@ -1,0 +1,30 @@
+{
+  "name": "FinAura | AI-Powered Personal Finance Vault",
+  "short_name": "FinAura",
+  "description": "Your privacy-first personal finance vault. Military-grade encryption, 100% local storage, and zero cloud tracking.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#1B2559",
+  "theme_color": "#1B2559",
+  "categories": [
+    "finance",
+    "productivity",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

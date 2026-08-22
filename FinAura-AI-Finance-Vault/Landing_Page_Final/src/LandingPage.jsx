@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Shield, Smartphone, EyeOff, Fingerprint, CloudOff, Box,
+  Shield, Smartphone, Download, EyeOff, Fingerprint, CloudOff, Box,
   Banknote, CreditCard, LineChart, Bitcoin, Home, Car, PiggyBank, MoreHorizontal,
   PieChart, Globe, Folder, Bell, Moon, FileText,
   ChevronDown, Star, CheckCircle, Github, Twitter, Linkedin,
@@ -68,6 +68,28 @@ function useScrollReveal() {
 export default function LandingPage() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [canInstall, setCanInstall] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeInstall = (e) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+      setCanInstall(true);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+  }, []);
+
+  const handleInstallApp = async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setCanInstall(false);
+    }
+    setInstallPrompt(null);
+  };
   const [openFaq, setOpenFaq] = useState(null);
   const [pricingCurrency, setPricingCurrency] = useState('USD');
 
@@ -152,6 +174,15 @@ export default function LandingPage() {
               <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium py-2 text-[#1B2559] hover:text-[#3B5BDB]">Pricing</a>
               <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium py-2 text-[#1B2559] hover:text-[#3B5BDB]">FAQ</a>
               <hr className="border-gray-200 my-1" />
+              {canInstall && (
+                <button
+                  onClick={handleInstallApp}
+                  className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-full font-bold text-sm bg-[#E8ECFF] text-[#3B5BDB] hover:bg-[#DBEAFE] transition-all"
+                >
+                  <Download className="w-4 h-4" />
+                  Install FinAura App
+                </button>
+              )}
               <a href="https://finaura-velolaunch.vercel.app/" className="btn-primary text-center w-full py-3.5 shadow-lg">
                 Get Started
               </a>
