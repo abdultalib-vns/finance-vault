@@ -127,8 +127,7 @@ export default function LandingPage() {
 
           {/* Right CTA */}
           <div className="hidden lg:flex items-center gap-5">
-            <a href="#" className={`text-[0.9375rem] font-semibold transition-colors ${isScrolled ? 'text-[#5C5F66] hover:text-[#1B2559]' : 'text-white/80 hover:text-white'}`}>Log In</a>
-            <a href="#" className="btn-primary text-[0.9375rem] py-3 px-7 pulse-glow">Start Free Trial</a>
+            <a href="https://finaura-velolaunch.vercel.app/" className="btn-primary text-[0.9375rem] py-3 px-7 pulse-glow">Get Started</a>
           </div>
 
           {/* Mobile Menu */}
@@ -146,8 +145,7 @@ export default function LandingPage() {
               <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium py-2 hover:text-[#3B5BDB]">Pricing</a>
               <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium py-2 hover:text-[#3B5BDB]">FAQ</a>
               <hr className="border-gray-200" />
-              <a href="#" className="text-base font-semibold py-2">Log In</a>
-              <a href="#" className="btn-primary text-center">Start Free Trial</a>
+              <a href="https://finaura-velolaunch.vercel.app/" className="btn-primary text-center">Get Started</a>
             </div>
           </div>
         )}
@@ -172,7 +170,7 @@ export default function LandingPage() {
                 Chat with your AI assistant to log expenses, track 7 account types, sync securely across devices via QR code, and keep everything encrypted in your personal finance vault.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6">
-                <a href="#" className="btn-primary text-base py-4 px-9 shadow-[0_8px_30px_rgba(64,192,87,0.4)]">
+                <a href="https://finaura-velolaunch.vercel.app/" className="btn-primary text-base py-4 px-9 shadow-[0_8px_30px_rgba(64,192,87,0.4)]">
                   Open Your Vault — Free
                 </a>
                 <a href="#how-it-works" className="btn-white text-base py-4 px-9">
@@ -390,7 +388,7 @@ export default function LandingPage() {
               <p className="text-lg text-[#5C5F66] mb-8 leading-relaxed">
                 Everything lives on your device. No accounts to hack, no servers to breach. Just you and your encrypted vault.
               </p>
-              <a href="#" className="btn-primary">
+              <a href="https://finaura-velolaunch.vercel.app/" className="btn-primary">
                 Open Your Vault — Free
               </a>
             </div>
@@ -654,7 +652,7 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <button className={`w-full py-4 rounded-full font-bold text-[0.9375rem] transition-all hover:scale-[1.02] active:scale-[0.98] ${plan.featured
+                <button onClick={() => window.location.href = "https://finaura-velolaunch.vercel.app/"} className={`w-full py-4 rounded-full font-bold text-[0.9375rem] transition-all hover:scale-[1.02] active:scale-[0.98] ${plan.featured
                     ? 'bg-[#40C057] text-white shadow-[0_4px_14px_rgba(64,192,87,0.4)] hover:bg-[#2F9E44]'
                     : 'bg-[#1B2559] text-white hover:bg-[#2B3A8E]'
                   }`}>
@@ -710,7 +708,7 @@ export default function LandingPage() {
             Track every account, log every expense, monitor every cashback — all encrypted on your device. FinAura is completely free to use.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
-            <a href="#" className="btn-primary text-base py-4 px-10 shadow-[0_8px_30px_rgba(64,192,87,0.4)]">
+            <a href="https://finaura-velolaunch.vercel.app/" className="btn-primary text-base py-4 px-10 shadow-[0_8px_30px_rgba(64,192,87,0.4)]">
               Open Your Vault — Free
             </a>
             <a href="#features" className="btn-secondary text-base py-4 px-8">
