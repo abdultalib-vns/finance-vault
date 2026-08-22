@@ -514,7 +514,7 @@ export default function Settings({
         <h2 className="header-title">Settings</h2>
         <div style={{ display: "flex", alignItems: "center" }}>
           <button onClick={() => setShowVeloApps(true)} style={{ background: "none", border: "none", color: "var(--text2)", cursor: "pointer", display: "flex", alignItems: "center", marginRight: 12 }}><Grid3x3 size={24} /></button>
-          <a href="https://finaura-velolaunch.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', height: '32px', marginRight: 8, background: 'linear-gradient(135deg, #3B5BDB, #40C057)', borderRadius: '8px', padding: '0 12px', textDecoration: 'none', opacity: 0.9, transition: 'opacity 0.2s ease' }} onMouseOver={e => e.currentTarget.style.opacity = "1"} onMouseOut={e => e.currentTarget.style.opacity = "0.9"}>
+          <a href="https://finaura-landingpage.vercel.app" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', height: '32px', marginRight: 8, background: 'linear-gradient(135deg, #3B5BDB, #40C057)', borderRadius: '8px', padding: '0 12px', textDecoration: 'none', opacity: 0.9, transition: 'opacity 0.2s ease' }} onMouseOver={e => e.currentTarget.style.opacity = "1"} onMouseOut={e => e.currentTarget.style.opacity = "0.9"}>
             <span style={{ color: '#fff', fontSize: '13px', fontWeight: 600, letterSpacing: '0.3px' }}>Landing Page</span>
           </a>
           <a href="https://velolaunch.lovable.app" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', height: '32px' }}>
