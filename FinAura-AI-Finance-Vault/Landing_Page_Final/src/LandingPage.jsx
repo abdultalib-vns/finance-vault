@@ -128,7 +128,7 @@ export default function LandingPage() {
           {/* Right Action Buttons */}
           <div className="flex items-center gap-3">
             {/* Direct Get Started button */}
-            <a href="https://finaura-velolaunch.vercel.app/" className="hidden sm:inline-flex btn-primary text-xs sm:text-sm lg:text-[0.9375rem] py-2.5 px-5 sm:py-3 sm:px-6 lg:px-7 pulse-glow">
+            <a href="https://finaura-velolaunch.vercel.app/" className="hidden lg:inline-flex btn-primary text-[0.9375rem] py-3 px-7 pulse-glow">
               Get Started
             </a>
 
@@ -164,14 +164,14 @@ export default function LandingPage() {
           2. HERO SECTION
           ══════════════════════════════════════════ */}
       <section className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #1B2559 0%, #2B3A8E 40%, #3B5BDB 100%)' }}>
-        <div className="container-main relative z-10 pt-28 sm:pt-36 md:pt-40 lg:pt-44 pb-20 sm:pb-24 lg:pb-32">
+        <div className="container-main relative z-10 pt-36 sm:pt-40 md:pt-44 lg:pt-48 pb-20 sm:pb-24 lg:pb-32">
           <div
             ref={heroReveal.ref}
             className={`flex flex-col lg:flex-row items-center gap-10 sm:gap-12 lg:gap-16 transition-all duration-1000 ${heroReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
           >
             {/* Left: Copy */}
             <div className="flex-1 text-center lg:text-left w-full">
-              <h1 className="heading-display text-white text-[2.25rem] sm:text-[3rem] md:text-[3.5rem] lg:text-[4.25rem] mb-5 sm:mb-6 leading-[1.12]">
+              <h1 className="heading-display text-white text-[2rem] sm:text-[2.75rem] md:text-[3.25rem] lg:text-[4rem] mb-5 sm:mb-6 leading-[1.15]">
                 Your Finances.<br />
                 <span style={{ color: '#FFD43B' }}>AI-Powered & Secured.</span>
               </h1>
