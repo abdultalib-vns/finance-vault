@@ -195,7 +195,7 @@ export default function LandingPage() {
           2. HERO SECTION
           ══════════════════════════════════════════ */}
       <section className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #1B2559 0%, #2B3A8E 40%, #3B5BDB 100%)' }}>
-        <div className="container-main relative z-10 pt-44 sm:pt-48 md:pt-52 lg:pt-56 pb-20 sm:pb-24 lg:pb-32" style={{ minHeight: "100vh" }}>
+        <div className="container-main relative z-10 pb-20 sm:pb-24 lg:pb-32" style={{ minHeight: "100vh", paddingTop: "clamp(140px, 18vw, 200px)" }}>
           <div
             ref={heroReveal.ref}
             className={`flex flex-col lg:flex-row items-center gap-10 sm:gap-12 lg:gap-16 transition-all duration-1000 ${heroReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
