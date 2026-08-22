@@ -399,13 +399,28 @@ details summary { list-style: none; }
 /* ═══════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════ */
-@media (max-width: 640px) {
-  .heading-display {
-    font-size: 2.5rem !important;
+@media (max-width: 768px) {
+  .container-main {
+    padding: 0 16px;
   }
+  .btn-primary, .btn-secondary, .btn-white {
+    padding: 12px 24px;
+    font-size: 0.9375rem;
+  }
+  .card-elevated {
+    padding: 1.75rem 1.25rem;
+    border-radius: 16px;
+  }
+  .card-stat {
+    padding: 1.5rem 1rem;
+    border-radius: 16px;
+  }
+}
+
+@media (max-width: 640px) {
   .phone-mockup {
-    width: 220px;
-    height: 440px;
+    width: 260px;
+    height: 500px;
     border-width: 6px;
     border-radius: 36px;
   }

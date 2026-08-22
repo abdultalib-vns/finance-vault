@@ -107,14 +107,14 @@ export default function LandingPage() {
       {/* ══════════════════════════════════════════
           1. NAVIGATION
           ══════════════════════════════════════════ */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-[0_1px_3px_rgba(0,0,0,0.08)] py-3' : 'bg-transparent py-5'}`}>
+      <nav className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-[0_1px_3px_rgba(0,0,0,0.08)] py-3' : 'bg-transparent py-4 sm:py-5'}`}>
         <div className="container-main flex justify-between items-center">
           {/* Logo */}
-          <a href="#" className="flex items-center gap-3 group">
-            <div className="w-12 h-12 flex items-center justify-center group-hover:scale-105 transition-transform shadow-md rounded-2xl overflow-hidden bg-white">
+          <a href="#" className="flex items-center gap-2.5 sm:gap-3 group">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 flex items-center justify-center group-hover:scale-105 transition-transform shadow-md rounded-2xl overflow-hidden bg-white flex-shrink-0">
               <img src="/icon-512.png" alt="FinAura Logo" className="w-full h-full object-cover" />
             </div>
-            <span className={`text-[1.5rem] font-bold tracking-tight transition-colors ${isScrolled ? 'text-[#1B2559]' : 'text-white'}`}>FinAura</span>
+            <span className={`text-xl sm:text-2xl font-bold tracking-tight transition-colors ${isScrolled ? 'text-[#1B2559]' : 'text-white'}`}>FinAura</span>
           </a>
 
           {/* Desktop Nav */}
@@ -125,27 +125,36 @@ export default function LandingPage() {
             <a href="#faq" className={`text-[0.9375rem] font-medium transition-colors ${isScrolled ? 'text-[#5C5F66] hover:text-[#1B2559]' : 'text-white/80 hover:text-white'}`}>FAQ</a>
           </div>
 
-          {/* Right CTA */}
-          <div className="hidden lg:flex items-center gap-5">
-            <a href="https://finaura-velolaunch.vercel.app/" className="btn-primary text-[0.9375rem] py-3 px-7 pulse-glow">Get Started</a>
-          </div>
+          {/* Right Action Buttons */}
+          <div className="flex items-center gap-3">
+            {/* Direct Get Started button */}
+            <a href="https://finaura-velolaunch.vercel.app/" className="hidden sm:inline-flex btn-primary text-xs sm:text-sm lg:text-[0.9375rem] py-2.5 px-5 sm:py-3 sm:px-6 lg:px-7 pulse-glow">
+              Get Started
+            </a>
 
-          {/* Mobile Menu */}
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className={`lg:hidden p-2 transition-colors ${isScrolled ? 'text-[#1B2559]' : 'text-white'}`}>
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+            {/* Mobile / Tablet Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className={`lg:hidden p-2 rounded-xl transition-colors ${isScrolled ? 'text-[#1B2559] hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Dropdown */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-white border-t border-gray-100 shadow-xl">
+          <div className="lg:hidden bg-white border-t border-gray-100 shadow-2xl">
             <div className="container-main py-6 flex flex-col gap-4">
-              <a href="#features" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium py-2 hover:text-[#3B5BDB]">Features</a>
-              <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium py-2 hover:text-[#3B5BDB]">How It Works</a>
-              <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium py-2 hover:text-[#3B5BDB]">Pricing</a>
-              <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium py-2 hover:text-[#3B5BDB]">FAQ</a>
-              <hr className="border-gray-200" />
-              <a href="https://finaura-velolaunch.vercel.app/" className="btn-primary text-center">Get Started</a>
+              <a href="#features" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium py-2 text-[#1B2559] hover:text-[#3B5BDB]">Features</a>
+              <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium py-2 text-[#1B2559] hover:text-[#3B5BDB]">How It Works</a>
+              <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium py-2 text-[#1B2559] hover:text-[#3B5BDB]">Pricing</a>
+              <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium py-2 text-[#1B2559] hover:text-[#3B5BDB]">FAQ</a>
+              <hr className="border-gray-200 my-1" />
+              <a href="https://finaura-velolaunch.vercel.app/" className="btn-primary text-center w-full py-3.5 shadow-lg">
+                Get Started
+              </a>
             </div>
           </div>
         )}
@@ -155,40 +164,40 @@ export default function LandingPage() {
           2. HERO SECTION
           ══════════════════════════════════════════ */}
       <section className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #1B2559 0%, #2B3A8E 40%, #3B5BDB 100%)' }}>
-        <div className="container-main relative z-10 pt-36 pb-24 lg:pt-44 lg:pb-32">
+        <div className="container-main relative z-10 pt-28 sm:pt-36 md:pt-40 lg:pt-44 pb-20 sm:pb-24 lg:pb-32">
           <div
             ref={heroReveal.ref}
-            className={`flex flex-col lg:flex-row items-center gap-12 lg:gap-16 transition-all duration-1000 ${heroReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+            className={`flex flex-col lg:flex-row items-center gap-10 sm:gap-12 lg:gap-16 transition-all duration-1000 ${heroReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
           >
             {/* Left: Copy */}
-            <div className="flex-1 text-center lg:text-left">
-              <h1 className="heading-display text-white text-[3rem] md:text-[3.75rem] lg:text-[4.25rem] mb-6">
+            <div className="flex-1 text-center lg:text-left w-full">
+              <h1 className="heading-display text-white text-[2.25rem] sm:text-[3rem] md:text-[3.5rem] lg:text-[4.25rem] mb-5 sm:mb-6 leading-[1.12]">
                 Your Finances.<br />
                 <span style={{ color: '#FFD43B' }}>AI-Powered & Secured.</span>
               </h1>
-              <p className="text-white/80 text-lg md:text-xl mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
+              <p className="text-white/85 text-base sm:text-lg md:text-xl mb-8 sm:mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
                 Chat with your AI assistant to log expenses, track 7 account types, sync securely across devices via QR code, and keep everything encrypted in your personal finance vault.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6">
-                <a href="https://finaura-velolaunch.vercel.app/" className="btn-primary text-base py-4 px-9 shadow-[0_8px_30px_rgba(64,192,87,0.4)]">
+              <div className="flex flex-col sm:flex-row gap-3.5 sm:gap-4 justify-center lg:justify-start mb-6">
+                <a href="https://finaura-velolaunch.vercel.app/" className="btn-primary text-base py-3.5 sm:py-4 px-8 sm:px-9 shadow-[0_8px_30px_rgba(64,192,87,0.4)]">
                   Open Your Vault — Free
                 </a>
-                <a href="#how-it-works" className="btn-white text-base py-4 px-9">
+                <a href="#how-it-works" className="btn-white text-base py-3.5 sm:py-4 px-8 sm:px-9">
                   See How It Works
                   <ArrowRight className="w-4 h-4" />
                 </a>
               </div>
-              <p className="text-white/50 text-sm font-medium">100% free. No cloud. No tracking. Install as a PWA.</p>
+              <p className="text-white/60 text-xs sm:text-sm font-medium">100% free. No cloud. No tracking. Install as a PWA.</p>
             </div>
 
             {/* Right: Phone Mockup */}
-            <div className="flex-1 flex justify-center lg:justify-end relative">
+            <div className="flex-1 flex justify-center lg:justify-end relative w-full mt-6 lg:mt-0">
               <div className="animate-float">
                 <div className="phone-mockup">
                   <div className="phone-notch" />
-                  <div className="h-full w-full bg-[#f8f9fa] flex flex-col pt-14 pb-6 px-5 relative overflow-hidden">
+                  <div className="h-full w-full bg-[#f8f9fa] flex flex-col pt-12 sm:pt-14 pb-6 px-4 sm:px-5 relative overflow-hidden">
                     {/* Status bar */}
-                    <div className="flex justify-between items-center mb-5 px-1">
+                    <div className="flex justify-between items-center mb-4 sm:mb-5 px-1">
                       <div className="text-[10px] font-semibold text-gray-400">9:41</div>
                       <div className="flex gap-1">
                         <div className="w-3 h-3 rounded-full bg-gray-300" />
@@ -196,17 +205,17 @@ export default function LandingPage() {
                       </div>
                     </div>
                     {/* Balance */}
-                    <div className="bg-[#1B2559] rounded-2xl p-5 mb-4 text-white">
+                    <div className="bg-[#1B2559] rounded-2xl p-4 sm:p-5 mb-3 sm:mb-4 text-white">
                       <p className="text-[10px] font-medium text-white/60 uppercase tracking-widest mb-1">Net Worth</p>
-                      <h3 className="text-2xl font-bold tracking-tight">₹12,48,500<span className="text-white/40">.00</span></h3>
+                      <h3 className="text-xl sm:text-2xl font-bold tracking-tight">₹12,48,500<span className="text-white/40">.00</span></h3>
                       <div className="flex items-center gap-1 mt-2">
                         <TrendingUp className="w-3 h-3 text-[#40C057]" />
                         <span className="text-[10px] font-semibold text-[#40C057]">7 accounts tracked</span>
                       </div>
                     </div>
                     {/* Donut Chart Mockup */}
-                    <div className="bg-white rounded-2xl p-4 mb-4 shadow-sm border border-gray-100">
-                      <div className="flex justify-between items-center mb-3">
+                    <div className="bg-white rounded-2xl p-3 sm:p-4 mb-3 sm:mb-4 shadow-sm border border-gray-100">
+                      <div className="flex justify-between items-center mb-2 sm:mb-3">
                         <span className="text-[10px] font-semibold text-gray-500">Asset Breakdown</span>
                         <span className="text-[10px] font-semibold text-[#3B5BDB]">Donut</span>
                       </div>
@@ -229,40 +238,41 @@ export default function LandingPage() {
                       </div>
                     </div>
                     {/* Account Items */}
-                    <div className="space-y-2.5">
+                    <div className="space-y-2 sm:space-y-2.5">
                       {[
                         { emoji: '🏦', name: 'HDFC Savings', label: 'Bank', amount: '₹3,45,000', color: '#3b82f6' },
                         { emoji: '💳', name: 'ICICI Card', label: 'Card', amount: '₹12,500', color: '#8b5cf6' },
                         { emoji: '📈', name: 'SBI FD', label: 'Fixed Dep.', amount: '₹5,00,000', color: '#f59e0b' }
                       ].map((item, i) => (
-                        <div key={i} className="bg-white rounded-xl p-2.5 flex items-center justify-between shadow-sm border border-gray-50">
+                        <div key={i} className="bg-white rounded-xl p-2 sm:p-2.5 flex items-center justify-between shadow-sm border border-gray-50">
                           <div className="flex items-center gap-2">
-                            <div className="w-7 h-7 rounded-lg flex items-center justify-center text-[12px]" style={{ background: `${item.color}15` }}>{item.emoji}</div>
+                            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg flex items-center justify-center text-[11px] sm:text-[12px]" style={{ background: `${item.color}15` }}>{item.emoji}</div>
                             <div>
-                              <p className="text-[10px] font-bold text-gray-800">{item.name}</p>
-                              <p className="text-[8px] font-medium" style={{ color: item.color }}>{item.label}</p>
+                              <p className="text-[9px] sm:text-[10px] font-bold text-gray-800">{item.name}</p>
+                              <p className="text-[7px] sm:text-[8px] font-medium" style={{ color: item.color }}>{item.label}</p>
                             </div>
                           </div>
-                          <span className="text-[10px] font-bold text-gray-800">{item.amount}</span>
+                          <span className="text-[9px] sm:text-[10px] font-bold text-gray-800">{item.amount}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                 </div>
               </div>
+
               {/* Floating decorative elements */}
-              <div className="absolute -top-4 -right-4 bg-white rounded-2xl p-3 shadow-2xl flex items-center gap-3 animate-float" style={{ animationDelay: '1s', zIndex: 20 }}>
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                  <Sparkles className="w-5 h-5" />
+              <div className="absolute -top-3 right-2 sm:-right-2 bg-white rounded-2xl p-2.5 sm:p-3 shadow-2xl flex items-center gap-2.5 sm:gap-3 animate-float" style={{ animationDelay: '1s', zIndex: 20 }}>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
+                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-800">FinAura AI</p>
-                  <p className="text-[10px] text-gray-500">Log expenses by chatting</p>
+                  <p className="text-[11px] sm:text-xs font-bold text-gray-800">FinAura AI</p>
+                  <p className="text-[9px] sm:text-[10px] text-gray-500">Log expenses by chatting</p>
                 </div>
               </div>
 
-              <div className="absolute top-10 right-10 w-20 h-20 bg-[#FFD43B]/20 rounded-full blur-2xl" />
-              <div className="absolute bottom-20 left-0 w-32 h-32 bg-[#40C057]/10 rounded-full blur-3xl" />
+              <div className="absolute top-10 right-10 w-20 h-20 bg-[#FFD43B]/20 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute bottom-20 left-0 w-32 h-32 bg-[#40C057]/10 rounded-full blur-3xl pointer-events-none" />
             </div>
           </div>
         </div>
