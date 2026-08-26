@@ -402,8 +402,21 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
                     </div>
                   </div>
 
+                  {/* Mobile Legend (Original Clean Layout) */}
+                  <div className="chart-legend mobile-only-legend">
+                    {chartData.map(d => (
+                      <div key={d.label} className="legend-item">
+                        <span className="legend-dot" style={{ background: d.color }} />
+                        <span className="legend-label">{d.label}</span>
+                        <span className="legend-val tabular-nums" style={d.label === "Dues" ? { color: "var(--danger)" } : undefined}>
+                          {d.label === "Dues" ? `−${formatAmount(d.value, currency)}` : formatAmount(d.value, currency)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
                   {/* Structured Asset Breakdown Table on Desktop */}
-                  <div className="chart-legend desktop-legend-table-wrap">
+                  <div className="chart-legend desktop-legend-table-wrap desktop-only-table">
                     <table className="desktop-legend-table">
                       <thead>
                         <tr>
@@ -419,7 +432,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
                               <span className="legend-dot" style={{ background: d.color }} />
                               <span>{d.label}</span>
                             </td>
-                            <td className="legend-val-cell tabular-nums" style={d.label === "Dues" ? { color: "var(--danger)" } : undefined}>
+                            <td className="legend-val-cell tabular-nums text-right" style={d.label === "Dues" ? { color: "var(--danger)" } : undefined}>
                               {d.label === "Dues" ? `−${formatAmount(d.value, currency)}` : formatAmount(d.value, currency)}
                             </td>
                             <td className="legend-pct-cell tabular-nums text-right">

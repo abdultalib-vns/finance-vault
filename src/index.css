@@ -6161,7 +6161,8 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
 .desktop-card-header,
 .desktop-card-title,
 .desktop-legend-table-wrap thead,
-.empty-allocation-card {
+.empty-allocation-card,
+.desktop-only-table {
   display: none !important;
 }
 
@@ -6241,6 +6242,8 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   .desktop-card-title { display: block !important; }
   .desktop-legend-table-wrap thead { display: table-header-group !important; }
   .empty-allocation-card { display: flex !important; }
+  .desktop-only-table { display: flex !important; }
+  .mobile-only-legend { display: none !important; }
   .desktop-settings-grid { display: grid !important; }
   .settings-right-col { display: flex !important; }
   .desktop-split-row { display: flex !important; }
@@ -6773,14 +6776,33 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
     text-transform: uppercase !important;
     letter-spacing: 0.05em !important;
     color: var(--dt-text-secondary) !important;
-    padding-bottom: 8px !important;
+    padding: 6px 12px !important;
     border-bottom: 1px solid var(--dt-border) !important;
   }
 
   .desktop-legend-table td {
-    padding: 8px 0 !important;
+    padding: 8px 12px !important;
     font-size: 0.84rem !important;
     border-bottom: 1px solid var(--dt-border) !important;
+  }
+
+  .desktop-legend-table th:first-child,
+  .desktop-legend-table td:first-child {
+    padding-left: 4px !important;
+    text-align: left !important;
+  }
+
+  .desktop-legend-table th:nth-child(2),
+  .desktop-legend-table td:nth-child(2) {
+    text-align: right !important;
+    padding-right: 16px !important;
+  }
+
+  .desktop-legend-table th:last-child,
+  .desktop-legend-table td:last-child {
+    padding-right: 4px !important;
+    text-align: right !important;
+    width: 65px !important;
   }
 
   .legend-class-cell {
@@ -6799,6 +6821,7 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   .legend-pct-cell {
     color: var(--dt-text-secondary) !important;
     font-weight: 500 !important;
+    text-align: right !important;
   }
 
   /* Segmented Chart Switcher */
