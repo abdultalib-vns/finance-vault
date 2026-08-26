@@ -1,0 +1,432 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>FinAura - Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-container": "#0b0c10",
+                      "surface-container-lowest": "#0c0e0f",
+                      "silver-gradient-end": "#9498A0",
+                      "secondary-fixed": "#e3e2e6",
+                      "on-tertiary": "#2f3034",
+                      "silver-gradient-start": "#C9CDD3",
+                      "secondary-fixed-dim": "#c7c6ca",
+                      "surface-container": "#1e2021",
+                      "on-error-container": "#ffdad6",
+                      "inverse-on-surface": "#2f3132",
+                      "surface": "#121415",
+                      "terracotta-red": "#D9736B",
+                      "primary-fixed": "#e3e2e5",
+                      "text-secondary": "#9B9DA6",
+                      "surface-container-highest": "#333536",
+                      "secondary": "#c7c6ca",
+                      "primary": "#c7c6c9",
+                      "primary-fixed-dim": "#c7c6c9",
+                      "border-hairline": "#232428",
+                      "on-background": "#e2e2e3",
+                      "text-tertiary": "#5C5E68",
+                      "on-secondary-fixed": "#1b1b1f",
+                      "outline-variant": "#45474a",
+                      "background": "#121415",
+                      "primary-container": "#0b0c0e",
+                      "surface-container-low": "#1a1c1d",
+                      "secondary-container": "#46464a",
+                      "on-primary-container": "#7a7a7c",
+                      "slate-gray": "#8B8FA3",
+                      "surface-tint": "#c7c6c9",
+                      "on-primary-fixed-variant": "#464749",
+                      "on-primary": "#303033",
+                      "on-error": "#690005",
+                      "sage-green": "#5FBF95",
+                      "error-container": "#93000a",
+                      "on-tertiary-fixed-variant": "#46464b",
+                      "on-surface": "#e2e2e3",
+                      "inverse-primary": "#5e5e61",
+                      "on-surface-variant": "#c6c6ca",
+                      "tertiary-fixed": "#e3e2e7",
+                      "on-secondary-container": "#b5b4b9",
+                      "outline": "#909094",
+                      "muted-indigo": "#7C8CE0",
+                      "on-tertiary-fixed": "#1a1b1f",
+                      "on-tertiary-container": "#7a7a7f",
+                      "on-secondary-fixed-variant": "#46464a",
+                      "surface-variant": "#333536",
+                      "surface-dim": "#121415",
+                      "tertiary": "#c7c6cb",
+                      "on-primary-fixed": "#1b1c1e",
+                      "on-secondary": "#2f3033",
+                      "error": "#ffb4ab",
+                      "surface-container-high": "#282a2b",
+                      "tertiary-fixed-dim": "#c7c6cb",
+                      "muted-gold": "#C9A227",
+                      "surface-bright": "#38393a",
+                      "inverse-surface": "#e2e2e3"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "lg": "24px",
+                      "md": "16px",
+                      "base": "8px",
+                      "sidebar-width": "240px",
+                      "max-content-width": "1360px",
+                      "xs": "4px",
+                      "xl": "32px",
+                      "sm": "12px"
+              },
+              "fontFamily": {
+                      "display-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "data-md": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "label-caps": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "data-lg": ["Inter"],
+                      "body-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "data-md": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                      "headline-md": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "data-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .silver-gradient {
+            background: linear-gradient(135deg, theme('colors.silver-gradient-start') 0%, theme('colors.silver-gradient-end') 100%);
+        }
+        .text-silver-gradient {
+            background: linear-gradient(135deg, theme('colors.silver-gradient-start') 0%, theme('colors.silver-gradient-end') 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .brushed-metal-bg {
+            background-color: theme('colors.surface');
+            background-image: 
+                linear-gradient(90deg, rgba(255,255,255,0.02) 0%, transparent 50%, rgba(255,255,255,0.02) 100%),
+                repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: theme('colors.border-hairline'); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: theme('colors.surface-container-highest'); }
+    </style>
+</head>
+<body class="bg-background text-on-surface h-screen w-screen overflow-hidden flex font-body-md">
+<!-- SideNavBar (Shared Component) -->
+<nav class="hidden md:flex flex-col h-full py-xl px-md bg-background dark:bg-background text-primary dark:text-primary-fixed-dim font-body-md text-body-md fixed left-0 top-0 w-[240px] border-r border-border-hairline z-20">
+<div class="flex items-center gap-3 mb-xl px-sm">
+<img alt="FinAura Brand Logo" class="w-8 h-8 rounded-sm object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhqx3APs6dLjKxldhUqF4UIfIhQFHHnTu2PFefj6aWHvUHMLTsBXzadZdREJsSpDSsmH2auLrWxYOdqWKXMmJQy-LbWcP7ocCzBjyLSNCP85IhdVKRfimm8AJx7T5HCgC71x0tF71yrBL1HI6c97ZL3xag9cgQvyNyB6QNgbf20NaZlzuLb3Lx6CmYe4SeLmtwF3zuRPmP4DbsoxefXCQUuSJO78FBSphISaV_wemHkNNhuwJQrJMg">
+<div>
+<h1 class="font-display-lg text-display-lg font-semibold text-on-surface text-lg leading-tight">FinAura</h1>
+<span class="font-label-caps text-label-caps text-text-secondary">Premium Tier</span>
+</div>
+</div>
+<ul class="flex flex-col gap-2 flex-grow mt-md">
+<li>
+<a class="flex items-center gap-3 px-sm py-2.5 rounded-lg text-text-secondary font-medium hover:text-on-surface hover:bg-surface-container-highest transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+                    Dashboard
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-sm py-2.5 rounded-lg text-text-secondary font-medium hover:text-on-surface hover:bg-surface-container-highest transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="account_balance_wallet">account_balance_wallet</span>
+                    Investments
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-sm py-2.5 rounded-lg text-text-secondary font-medium hover:text-on-surface hover:bg-surface-container-highest transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="payments">payments</span>
+                    Wallet
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-sm py-2.5 rounded-lg text-text-secondary font-medium hover:text-on-surface hover:bg-surface-container-highest transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="monitoring">monitoring</span>
+                    Market Insights
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-sm py-2.5 rounded-lg text-on-surface border-l-2 border-silver-gradient-start font-semibold bg-surface-container-low hover:bg-surface-container-highest transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings" data-weight="fill">settings</span>
+                    Settings
+                </a>
+</li>
+</ul>
+<div class="mt-auto border-t border-border-hairline pt-md flex flex-col gap-2">
+<a class="flex items-center gap-3 px-sm py-2 rounded-lg text-text-secondary font-medium hover:text-on-surface hover:bg-surface-container-highest transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="help">help</span>
+                Help Center
+            </a>
+<a class="flex items-center gap-3 px-sm py-2 rounded-lg text-text-secondary font-medium hover:text-on-surface hover:bg-surface-container-highest transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="logout">logout</span>
+                Logout
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-0 md:ml-[240px] h-full flex flex-col relative overflow-hidden bg-background">
+<!-- TopAppBar (Shared Component) - Suppressed per rules: Settings is a top-level dest, but typically doesn't need secondary portfolio nav. We'll use a clean page header instead. -->
+<header class="h-[64px] px-lg border-b border-border-hairline flex items-center justify-between shrink-0 bg-surface/80 backdrop-blur-md z-10 sticky top-0">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Settings</h2>
+<div class="flex items-center gap-4">
+<button class="text-text-secondary hover:text-primary transition-colors h-8 w-8 flex items-center justify-center rounded-full hover:bg-surface-container-highest">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+</div>
+</header>
+<!-- Scrollable Content Canvas -->
+<div class="flex-1 overflow-y-auto p-4 md:p-lg lg:p-xl">
+<div class="max-w-[max-content-width] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-lg pb-xl">
+<!-- Left Column: Profile & Navigation Summary -->
+<div class="lg:col-span-4 flex flex-col gap-lg">
+<!-- Profile Card -->
+<div class="bg-surface rounded-xl border border-border-hairline p-lg relative overflow-hidden group">
+<!-- Top bevel effect -->
+<div class="absolute top-0 left-0 right-0 h-[1px] bg-surface-container-highest z-10"></div>
+<div class="flex flex-col items-center text-center">
+<div class="relative mb-md">
+<div class="w-20 h-20 rounded-full border-2 border-border-hairline p-1 bg-surface-container-low">
+<img class="w-full h-full rounded-full object-cover" data-alt="A highly detailed close up of an abstract brushed metal sphere reflecting a soft studio light in a dark premium environment, minimal aesthetic with muted color palette and sharp details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlb6WAI0Q9MgRQfXCznXVRfV5Yyu5U1tV9T2BDGzT8eYQGRCKoQnQaagcDYd02Ib_4XzXYzzjjTktq1ry6Vu7hpsJKWzw6PJv_QXCkBi-q0wgj5BAP9dLChTLBTFXnc_r49KrX2ZndtMgCs35Gzt-LRJIobRtu3-oubju6nfMpsPM1RrlPWpZf5afZleFmhUqDasavHlOdPA3nv1bGQoekn86XXIC810oHZd3HIiSoR52us--bZPkV">
+</div>
+<div class="absolute bottom-0 right-0 w-6 h-6 silver-gradient rounded-full flex items-center justify-center border-2 border-surface">
+<span class="material-symbols-outlined text-[14px] text-surface-container-lowest font-bold">verified</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Eleanor Vance</h3>
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-low border border-border-hairline">
+<img alt="FinAura Logo" class="w-3.5 h-3.5 opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhqx3APs6dLjKxldhUqF4UIfIhQFHHnTu2PFefj6aWHvUHMLTsBXzadZdREJsSpDSsmH2auLrWxYOdqWKXMmJQy-LbWcP7ocCzBjyLSNCP85IhdVKRfimm8AJx7T5HCgC71x0tF71yrBL1HI6c97ZL3xag9cgQvyNyB6QNgbf20NaZlzuLb3Lx6CmYe4SeLmtwF3zuRPmP4DbsoxefXCQUuSJO78FBSphISaV_wemHkNNhuwJQrJMg">
+<span class="font-label-caps text-label-caps text-silver-gradient-start">FinAura Premium</span>
+</div>
+</div>
+<div class="mt-xl pt-md border-t border-border-hairline grid grid-cols-2 gap-4 text-center">
+<div>
+<div class="font-label-caps text-label-caps text-text-secondary mb-1">MEMBER SINCE</div>
+<div class="font-data-md text-data-md text-on-surface">2021</div>
+</div>
+<div>
+<div class="font-label-caps text-label-caps text-text-secondary mb-1">CONNECTED ACCTS</div>
+<div class="font-data-md text-data-md text-on-surface">4</div>
+</div>
+</div>
+<button class="w-full mt-lg py-2.5 rounded-lg border border-border-hairline bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-body-md font-medium transition-colors">
+                            Edit Profile
+                        </button>
+</div>
+<!-- Quick Links / Settings Nav (Desktop only visualization) -->
+<div class="hidden lg:flex flex-col gap-2">
+<a class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low border border-border-hairline text-on-surface" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-silver-gradient-start">tune</span>
+<span class="font-body-md font-medium">Preferences</span>
+</div>
+<span class="material-symbols-outlined text-text-secondary text-[18px]">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-highest text-text-secondary hover:text-on-surface transition-colors border border-transparent" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">security</span>
+<span class="font-body-md font-medium">Security &amp; Privacy</span>
+</div>
+</a>
+<a class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-highest text-text-secondary hover:text-on-surface transition-colors border border-transparent" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-body-md font-medium">Notifications</span>
+</div>
+</a>
+<a class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-highest text-text-secondary hover:text-on-surface transition-colors border border-transparent" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">credit_card</span>
+<span class="font-body-md font-medium">Billing &amp; Plan</span>
+</div>
+</a>
+</div>
+</div>
+<!-- Right Column: Settings Details -->
+<div class="lg:col-span-8 flex flex-col gap-lg">
+<!-- Section: Appearance -->
+<div class="bg-surface rounded-xl border border-border-hairline p-lg relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-[1px] bg-surface-container-highest z-10"></div>
+<div class="flex items-center gap-3 mb-xl border-b border-border-hairline pb-4">
+<div class="w-8 h-8 rounded bg-surface-container-low border border-border-hairline flex items-center justify-center">
+<span class="material-symbols-outlined text-silver-gradient-start text-[18px]">palette</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Appearance</h3>
+</div>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<h4 class="font-body-lg text-body-lg text-on-surface mb-1">Theme</h4>
+<p class="font-body-sm text-body-sm text-text-secondary">Select your preferred interface mode.</p>
+</div>
+<!-- Segmented Pill Control -->
+<div class="flex items-center bg-surface-container-lowest border border-border-hairline p-1 rounded-full h-10 min-w-[200px]">
+<button class="flex-1 flex items-center justify-center gap-2 h-full rounded-full text-text-secondary hover:text-on-surface transition-colors font-body-md font-medium">
+<span class="material-symbols-outlined text-[16px]">light_mode</span>
+                                    Light
+                                </button>
+<button class="flex-1 flex items-center justify-center gap-2 h-full rounded-full bg-surface-container-highest text-on-surface shadow-sm border border-border-hairline transition-colors font-body-md font-medium">
+<span class="material-symbols-outlined text-[16px]">dark_mode</span>
+                                    Dark
+                                </button>
+<button class="flex-1 flex items-center justify-center gap-2 h-full rounded-full text-text-secondary hover:text-on-surface transition-colors font-body-md font-medium">
+<span class="material-symbols-outlined text-[16px]">desktop_windows</span>
+                                    System
+                                </button>
+</div>
+</div>
+</div>
+<!-- Section: AI Assistant Settings -->
+<div class="bg-surface rounded-xl border border-border-hairline p-lg relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-[1px] bg-surface-container-highest z-10"></div>
+<div class="flex items-center gap-3 mb-xl border-b border-border-hairline pb-4">
+<div class="w-8 h-8 rounded bg-surface-container-low border border-border-hairline flex items-center justify-center">
+<span class="material-symbols-outlined text-silver-gradient-start text-[18px]">smart_toy</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">AI Assistant Settings</h3>
+</div>
+<div class="mb-md">
+<h4 class="font-body-lg text-body-lg text-on-surface mb-1">Intelligence Provider</h4>
+<p class="font-body-sm text-body-sm text-text-secondary mb-4">Select the underlying model for FinAura insights.</p>
+<!-- Radio Card List -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<label class="cursor-pointer relative group">
+<input checked="" class="peer sr-only" name="ai_provider" type="radio">
+<div class="rounded-lg border-2 border-border-hairline bg-surface p-4 peer-checked:border-silver-gradient-start peer-checked:bg-surface-container-low transition-all h-full">
+<div class="flex items-start justify-between mb-2">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-sm bg-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-silver-gradient-start">bolt</span>
+</div>
+<span class="font-data-md text-data-md text-on-surface">FinAura Quantum</span>
+</div>
+<div class="w-4 h-4 rounded-full border border-border-hairline peer-checked:border-silver-gradient-start flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-silver-gradient-start opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary">Proprietary financial model optimized for high-speed market analysis.</p>
+</div>
+</label>
+<label class="cursor-pointer relative group">
+<input class="peer sr-only" name="ai_provider" type="radio">
+<div class="rounded-lg border-2 border-border-hairline bg-surface p-4 peer-checked:border-silver-gradient-start peer-checked:bg-surface-container-low transition-all h-full">
+<div class="flex items-start justify-between mb-2">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-sm bg-surface-container-lowest flex items-center justify-center border border-border-hairline">
+<span class="material-symbols-outlined text-[14px] text-text-secondary">public</span>
+</div>
+<span class="font-data-md text-data-md text-on-surface">Global GPT-4</span>
+</div>
+<div class="w-4 h-4 rounded-full border border-border-hairline flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-silver-gradient-start opacity-0 transition-opacity"></div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary">General intelligence model for broader context reasoning.</p>
+</div>
+</label>
+</div>
+</div>
+<div class="flex items-center justify-between pt-md border-t border-border-hairline">
+<div>
+<h4 class="font-body-md text-body-md font-medium text-on-surface">Auto-Analyze Portfolio</h4>
+<p class="font-body-sm text-body-sm text-text-secondary">Run daily background checks on asset allocation.</p>
+</div>
+<!-- Toggle switch -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value="">
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface after:border-border-hairline after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-silver-gradient-start"></div>
+</label>
+</div>
+</div>
+<!-- Section: Display Currency -->
+<div class="bg-surface rounded-xl border border-border-hairline p-lg relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-[1px] bg-surface-container-highest z-10"></div>
+<div class="flex items-center gap-3 mb-xl border-b border-border-hairline pb-4">
+<div class="w-8 h-8 rounded bg-surface-container-low border border-border-hairline flex items-center justify-center">
+<span class="material-symbols-outlined text-silver-gradient-start text-[18px]">currency_exchange</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Regional &amp; Display</h3>
+</div>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<h4 class="font-body-lg text-body-lg text-on-surface mb-1">Base Currency</h4>
+<p class="font-body-sm text-body-sm text-text-secondary">All portfolio values will be converted to this currency.</p>
+</div>
+<!-- Clean Dropdown -->
+<div class="relative min-w-[200px]">
+<select class="appearance-none w-full bg-surface-container-low border border-border-hairline text-on-surface font-body-md rounded-lg py-2 pl-4 pr-10 focus:outline-none focus:border-silver-gradient-start transition-colors cursor-pointer">
+<option selected="" value="USD">USD - US Dollar</option>
+<option value="EUR">EUR - Euro</option>
+<option value="GBP">GBP - British Pound</option>
+<option value="JPY">JPY - Japanese Yen</option>
+<option value="CHF">CHF - Swiss Franc</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-text-secondary">
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: Backup & Restore -->
+<div class="bg-surface rounded-xl border border-border-hairline p-lg relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-[1px] bg-surface-container-highest z-10"></div>
+<div class="flex items-center gap-3 mb-xl border-b border-border-hairline pb-4">
+<div class="w-8 h-8 rounded bg-surface-container-low border border-border-hairline flex items-center justify-center">
+<span class="material-symbols-outlined text-silver-gradient-start text-[18px]">backup</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Data Management</h3>
+</div>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<h4 class="font-body-lg text-body-lg text-on-surface mb-1">Backup Vault</h4>
+<p class="font-body-sm text-body-sm text-text-secondary">Last backup: Today, 08:42 AM (Encrypted)</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 rounded-lg bg-surface border border-border-hairline text-on-surface hover:bg-surface-container-highest transition-colors font-body-md font-medium">
+                                    Restore
+                                </button>
+<button class="px-4 py-2 rounded-lg silver-gradient text-surface-container-lowest font-body-md font-semibold hover:opacity-90 transition-opacity shadow-sm border border-transparent border-t-white/20">
+                                    Backup Now
+                                </button>
+</div>
+</div>
+</div>
+<!-- Unified Action Footer -->
+<div class="flex justify-end gap-3 mt-4">
+<button class="px-6 py-2.5 rounded-lg bg-surface border border-border-hairline text-on-surface hover:bg-surface-container-highest transition-colors font-body-md font-medium">
+                            Cancel
+                        </button>
+<button class="px-6 py-2.5 rounded-lg silver-gradient text-surface-container-lowest font-body-md font-semibold hover:opacity-90 transition-opacity shadow-sm border border-transparent border-t-white/20">
+                            Save Changes
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

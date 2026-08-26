@@ -1,0 +1,423 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>FinAura - Banks &amp; Investments</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#0b0c10",
+                        "surface-container-lowest": "#0c0e0f",
+                        "silver-gradient-end": "#9498A0",
+                        "secondary-fixed": "#e3e2e6",
+                        "on-tertiary": "#2f3034",
+                        "silver-gradient-start": "#C9CDD3",
+                        "secondary-fixed-dim": "#c7c6ca",
+                        "surface-container": "#1e2021",
+                        "on-error-container": "#ffdad6",
+                        "inverse-on-surface": "#2f3132",
+                        "surface": "#121415",
+                        "terracotta-red": "#D9736B",
+                        "primary-fixed": "#e3e2e5",
+                        "text-secondary": "#9B9DA6",
+                        "surface-container-highest": "#333536",
+                        "secondary": "#c7c6ca",
+                        "primary": "#c7c6c9",
+                        "primary-fixed-dim": "#c7c6c9",
+                        "border-hairline": "#232428",
+                        "on-background": "#e2e2e3",
+                        "text-tertiary": "#5C5E68",
+                        "on-secondary-fixed": "#1b1b1f",
+                        "outline-variant": "#45474a",
+                        "background": "#121415",
+                        "primary-container": "#0b0c0e",
+                        "surface-container-low": "#1a1c1d",
+                        "secondary-container": "#46464a",
+                        "on-primary-container": "#7a7a7c",
+                        "slate-gray": "#8B8FA3",
+                        "surface-tint": "#c7c6c9",
+                        "on-primary-fixed-variant": "#464749",
+                        "on-primary": "#303033",
+                        "on-error": "#690005",
+                        "sage-green": "#5FBF95",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#46464b",
+                        "on-surface": "#e2e2e3",
+                        "inverse-primary": "#5e5e61",
+                        "on-surface-variant": "#c6c6ca",
+                        "tertiary-fixed": "#e3e2e7",
+                        "on-secondary-container": "#b5b4b9",
+                        "outline": "#909094",
+                        "muted-indigo": "#7C8CE0",
+                        "on-tertiary-fixed": "#1a1b1f",
+                        "on-tertiary-container": "#7a7a7f",
+                        "on-secondary-fixed-variant": "#46464a",
+                        "surface-variant": "#333536",
+                        "surface-dim": "#121415",
+                        "tertiary": "#c7c6cb",
+                        "on-primary-fixed": "#1b1c1e",
+                        "on-secondary": "#2f3033",
+                        "error": "#ffb4ab",
+                        "surface-container-high": "#282a2b",
+                        "tertiary-fixed-dim": "#c7c6cb",
+                        "muted-gold": "#C9A227",
+                        "surface-bright": "#38393a",
+                        "inverse-surface": "#e2e2e3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "md": "16px",
+                        "base": "8px",
+                        "sidebar-width": "240px",
+                        "max-content-width": "1360px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "sm": "12px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "data-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "data-lg": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "data-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "headline-md": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "data-lg": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .brushed-metal {
+                background: linear-gradient(135deg, rgba(201,205,211,0.1) 0%, rgba(148,152,160,0.1) 100%);
+            }
+            .brushed-metal-btn {
+                background: linear-gradient(180deg, theme('colors.silver-gradient-start') 0%, theme('colors.silver-gradient-end') 100%);
+            }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex selection:bg-silver-gradient-start selection:text-tertiary-container">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full py-xl px-md fixed left-0 top-0 w-[240px] bg-background dark:bg-background border-r border-border-hairline z-20">
+<div class="flex items-center gap-sm mb-xl px-sm">
+<img alt="FinAura Brand Logo" class="w-8 h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhqx3APs6dLjKxldhUqF4UIfIhQFHHnTu2PFefj6aWHvUHMLTsBXzadZdREJsSpDSsmH2auLrWxYOdqWKXMmJQy-LbWcP7ocCzBjyLSNCP85IhdVKRfimm8AJx7T5HCgC71x0tF71yrBL1HI6c97ZL3xag9cgQvyNyB6QNgbf20NaZlzuLb3Lx6CmYe4SeLmtwF3zuRPmP4DbsoxefXCQUuSJO78FBSphISaV_wemHkNNhuwJQrJMg">
+<div>
+<h1 class="font-display-lg text-display-lg font-semibold text-on-surface !text-xl !leading-tight">FinAura</h1>
+<p class="font-label-caps text-label-caps text-text-secondary !text-[10px]">Premium Tier</p>
+</div>
+</div>
+<ul class="flex flex-col gap-xs flex-grow">
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-md text-text-secondary font-medium hover:text-on-surface hover:bg-surface-container-highest transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span>Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-md text-on-surface border-l-2 border-silver-gradient-start font-semibold bg-surface-container-low transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<span>Investments</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-md text-text-secondary font-medium hover:text-on-surface hover:bg-surface-container-highest transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">payments</span>
+<span>Wallet</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-md text-text-secondary font-medium hover:text-on-surface hover:bg-surface-container-highest transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">monitoring</span>
+<span>Market Insights</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-md text-text-secondary font-medium hover:text-on-surface hover:bg-surface-container-highest transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span>Settings</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto border-t border-border-hairline pt-md flex flex-col gap-xs">
+<a class="flex items-center gap-sm px-sm py-sm rounded-md text-text-secondary font-medium hover:text-on-surface hover:bg-surface-container-highest transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">help</span>
+<span>Help Center</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-sm rounded-md text-text-secondary font-medium hover:text-on-surface hover:bg-surface-container-highest transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 md:ml-[240px] flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center h-[64px] px-lg w-full bg-surface dark:bg-surface border-b border-border-hairline sticky top-0 z-10">
+<div class="flex items-center gap-lg">
+<nav class="hidden lg:flex gap-md">
+<a class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-1 cursor-pointer transition-opacity active:opacity-80" href="#">Portfolio</a>
+<a class="font-label-caps text-label-caps text-text-secondary hover:text-on-surface hover:text-primary transition-colors cursor-pointer active:opacity-80" href="#">Analytic</a>
+<a class="font-label-caps text-label-caps text-text-secondary hover:text-on-surface hover:text-primary transition-colors cursor-pointer active:opacity-80" href="#">Tax</a>
+<a class="font-label-caps text-label-caps text-text-secondary hover:text-on-surface hover:text-primary transition-colors cursor-pointer active:opacity-80" href="#">Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="text-text-secondary hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-text-secondary hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">history</span>
+</button>
+<button class="text-text-secondary hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Page Content -->
+<main class="flex-1 p-md md:p-lg lg:p-xl max-w-[max-content-width] mx-auto w-full flex flex-col gap-xl">
+<!-- Total Net Worth Header -->
+<section class="flex flex-col items-center justify-center py-lg">
+<h2 class="font-label-caps text-label-caps text-text-secondary mb-xs tracking-widest uppercase">Total Net Worth</h2>
+<div class="font-display-lg text-display-lg font-bold text-on-surface tabular-nums tracking-tight">
+                    $1,245,678.<span class="text-text-secondary text-2xl">90</span>
+</div>
+<div class="flex items-center gap-1 mt-xs text-sage-green font-data-md text-data-md bg-sage-green/10 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span>+2.4% this month</span>
+</div>
+</section>
+<!-- Compact Stat Tiles (4-column) -->
+<section class="grid grid-cols-2 lg:grid-cols-4 gap-md">
+<!-- Bank Balance -->
+<div class="bg-surface-container-low border border-border-hairline rounded-lg p-md flex flex-col gap-sm relative overflow-hidden group hover:border-surface-tint transition-colors">
+<div class="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"></div>
+<div class="flex justify-between items-center z-10">
+<span class="material-symbols-outlined text-text-secondary text-[20px]">account_balance</span>
+<span class="font-label-caps text-label-caps text-text-secondary uppercase">Bank Balance</span>
+</div>
+<div class="font-data-lg text-data-lg text-on-surface tabular-nums z-10 mt-auto">
+                        $245k
+                    </div>
+</div>
+<!-- Fixed Deposits -->
+<div class="bg-surface-container-low border border-border-hairline rounded-lg p-md flex flex-col gap-sm relative overflow-hidden group hover:border-surface-tint transition-colors">
+<div class="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"></div>
+<div class="flex justify-between items-center z-10">
+<span class="material-symbols-outlined text-text-secondary text-[20px]">lock_clock</span>
+<span class="font-label-caps text-label-caps text-text-secondary uppercase">Fixed Deposits</span>
+</div>
+<div class="font-data-lg text-data-lg text-on-surface tabular-nums z-10 mt-auto">
+                        $450k
+                    </div>
+</div>
+<!-- Recurring Deposits -->
+<div class="bg-surface-container-low border border-border-hairline rounded-lg p-md flex flex-col gap-sm relative overflow-hidden group hover:border-surface-tint transition-colors">
+<div class="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"></div>
+<div class="flex justify-between items-center z-10">
+<span class="material-symbols-outlined text-text-secondary text-[20px]">update</span>
+<span class="font-label-caps text-label-caps text-text-secondary uppercase">Recur Deposits</span>
+</div>
+<div class="font-data-lg text-data-lg text-on-surface tabular-nums z-10 mt-auto">
+                        $120k
+                    </div>
+</div>
+<!-- Mutual Funds -->
+<div class="bg-surface-container-low border border-border-hairline rounded-lg p-md flex flex-col gap-sm relative overflow-hidden group hover:border-surface-tint transition-colors">
+<div class="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"></div>
+<div class="flex justify-between items-center z-10">
+<span class="material-symbols-outlined text-text-secondary text-[20px]">pie_chart</span>
+<span class="font-label-caps text-label-caps text-text-secondary uppercase">Mutual Funds</span>
+</div>
+<div class="font-data-lg text-data-lg text-on-surface tabular-nums z-10 mt-auto">
+                        $430k
+                    </div>
+</div>
+</section>
+<!-- Segmented Pill Tabs -->
+<section class="flex justify-center">
+<div class="bg-surface-container-highest p-1 rounded-full flex inline-flex border border-border-hairline">
+<button class="px-xl py-2 rounded-full font-label-caps text-label-caps bg-surface-container-lowest text-on-surface shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] border border-border-hairline transition-all">Overview</button>
+<button class="px-xl py-2 rounded-full font-label-caps text-label-caps text-text-secondary hover:text-on-surface transition-all">Accounts</button>
+<button class="px-xl py-2 rounded-full font-label-caps text-label-caps text-text-secondary hover:text-on-surface transition-all">Invest</button>
+<button class="px-xl py-2 rounded-full font-label-caps text-label-caps text-text-secondary hover:text-on-surface transition-all">Txns</button>
+</div>
+</section>
+<!-- 2-Column Row (Returns vs Allocation) -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-lg">
+<!-- Returns & Gains -->
+<div class="bg-surface border border-border-hairline rounded-xl p-lg flex flex-col gap-md relative shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
+<div class="flex justify-between items-center border-b border-border-hairline pb-sm">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Returns &amp; Gains</h3>
+<span class="material-symbols-outlined text-text-secondary">more_horiz</span>
+</div>
+<div class="flex-1 flex flex-col justify-center gap-lg py-md">
+<div class="flex items-end justify-between">
+<div>
+<p class="font-label-caps text-label-caps text-text-secondary mb-1">YTD Realized Gains</p>
+<p class="font-display-lg text-display-lg text-sage-green tabular-nums">+$42,105</p>
+</div>
+<div class="text-right">
+<p class="font-label-caps text-label-caps text-text-secondary mb-1">IRR</p>
+<p class="font-data-lg text-data-lg text-on-surface tabular-nums">14.2%</p>
+</div>
+</div>
+<!-- Simple bar chart visualization -->
+<div class="h-32 flex items-end gap-2 w-full mt-4">
+<div class="flex-1 bg-surface-container-high rounded-t-sm h-[30%] relative group">
+<div class="absolute inset-0 bg-muted-indigo/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex-1 bg-surface-container-high rounded-t-sm h-[45%] relative group">
+<div class="absolute inset-0 bg-muted-indigo/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex-1 bg-surface-container-high rounded-t-sm h-[25%] relative group">
+<div class="absolute inset-0 bg-muted-indigo/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex-1 bg-surface-container-high rounded-t-sm h-[60%] relative group">
+<div class="absolute inset-0 bg-muted-indigo/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex-1 bg-sage-green/40 rounded-t-sm h-[85%] relative group border-t border-sage-green/60">
+<div class="absolute inset-0 bg-sage-green/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex-1 bg-sage-green rounded-t-sm h-[100%] relative group shadow-[0_0_10px_rgba(95,191,149,0.2)]">
+<div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Asset Breakdown -->
+<div class="bg-surface border border-border-hairline rounded-xl p-lg flex flex-col gap-md relative shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
+<div class="flex justify-between items-center border-b border-border-hairline pb-sm">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Asset Breakdown</h3>
+<span class="material-symbols-outlined text-text-secondary">pie_chart_outline</span>
+</div>
+<div class="flex-1 flex flex-col justify-center gap-md py-md">
+<!-- Equity -->
+<div class="flex flex-col gap-xs">
+<div class="flex justify-between font-body-sm text-body-sm">
+<span class="text-on-surface">Equities (Mutual Funds)</span>
+<span class="text-text-secondary tabular-nums">45%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-muted-indigo w-[45%] rounded-full"></div>
+</div>
+</div>
+<!-- Fixed Income -->
+<div class="flex flex-col gap-xs">
+<div class="flex justify-between font-body-sm text-body-sm">
+<span class="text-on-surface">Fixed Income (FDs/RDs)</span>
+<span class="text-text-secondary tabular-nums">35%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-slate-gray w-[35%] rounded-full"></div>
+</div>
+</div>
+<!-- Liquid -->
+<div class="flex flex-col gap-xs">
+<div class="flex justify-between font-body-sm text-body-sm">
+<span class="text-on-surface">Liquid (Bank Balance)</span>
+<span class="text-text-secondary tabular-nums">15%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-sage-green w-[15%] rounded-full"></div>
+</div>
+</div>
+<!-- Alternatives -->
+<div class="flex flex-col gap-xs">
+<div class="flex justify-between font-body-sm text-body-sm">
+<span class="text-on-surface">Alternatives (Gold/Real Estate)</span>
+<span class="text-text-secondary tabular-nums">5%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-muted-gold w-[5%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Connected Institutions List -->
+<section class="bg-surface border border-border-hairline rounded-xl overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] mb-xl">
+<div class="p-md border-b border-border-hairline flex justify-between items-center bg-surface-container-lowest">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Connected Institutions</h3>
+<button class="font-label-caps text-label-caps text-primary hover:text-on-surface transition-colors">+ Add Account</button>
+</div>
+<div class="flex flex-col">
+<!-- Row 1 -->
+<div class="flex items-center justify-between p-md border-b border-border-hairline hover:bg-surface-container-low transition-colors group cursor-pointer">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-md bg-white flex items-center justify-center p-1 border border-border-hairline">
+<img class="w-full h-full object-contain mix-blend-multiply opacity-90" data-alt="A highly detailed, modern, minimalist vector logo of a premium corporate bank, featuring sharp geometric lines in deep navy blue on a pristine white background. High contrast, clean corporate identity style, centered composition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuArzGgM4zlRkL-K_YT_vknzb2fdkykRZTRNiKbQccCuzUdYVqGmlm0pgZFeArhqfDxo8ivyjhlpLyTz95rhDv61Q_h2cu675k6ZoFBNu0UZD6mopCGaTZ9izzxKknoXXxmxP-Pb0iIv_xZ3M96yA8kF_WRCWgFCTThkKSSuPIW8c9xBg9cw6SYUDq1PmHOBdQdO5NEVWAJXmASPnBVzsRj7dx3O2jJY7qVxcTpVIc-MHb2y1bMMNX3C">
+</div>
+<div>
+<p class="font-data-md text-data-md text-on-surface">Chase Sapphire</p>
+<p class="font-body-sm text-body-sm text-text-secondary">Checking •••• 4209</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-data-md text-data-md text-on-surface tabular-nums">$142,500.00</p>
+<p class="font-body-sm text-body-sm text-sage-green">Sync Active</p>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="flex items-center justify-between p-md border-b border-border-hairline hover:bg-surface-container-low transition-colors group cursor-pointer">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-md bg-white flex items-center justify-center p-1 border border-border-hairline">
+<img class="w-full h-full object-contain mix-blend-multiply opacity-90" data-alt="A sharp, minimalist vector logo of a wealth management firm, utilizing a sleek metallic silver and dark slate color palette. The design incorporates a subtle upward trend abstract icon. Clean corporate aesthetic, centered on white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIYB0e5QwFtJU3aCw-hXLfhhJ9VPpScaOInZDS0AMlsJHkZuxvYfrkb6rfn2ugG8fuPzvpsOMjFMBz6oFqFBWL18XrJuOJa_nLvthDxHWoA-qFyt-hZUUMBkBHkV6l8EEURm1Q2i3MeU4JwUg0_uVQ-UYfDtLhOo8xxzW_aIc3-3p37Z9APeebsGLqTHttEoqQjPrKERo-ZUEm_o9UV1_xBzT8wyOWJP2nmGFj_cdMGiREf0NTUc8t">
+</div>
+<div>
+<p class="font-data-md text-data-md text-on-surface">Vanguard Brokerage</p>
+<p class="font-body-sm text-body-sm text-text-secondary">Investment •••• 8812</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-data-md text-data-md text-on-surface tabular-nums">$845,210.50</p>
+<p class="font-body-sm text-body-sm text-sage-green">Sync Active</p>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="flex items-center justify-between p-md hover:bg-surface-container-low transition-colors group cursor-pointer">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-md bg-white flex items-center justify-center p-1 border border-border-hairline">
+<img class="w-full h-full object-contain mix-blend-multiply opacity-90" data-alt="A minimalist, modern vector logo for an online savings bank. Features a simple, bold monogram in vibrant muted indigo against a clean white background. High-end fintech brand identity style, crisp edges, centered." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPfWbvxGYCdEAyxoDsH6kzfYqV1_7o36bq04MGoH_xp_Tml5CYO1yJuhxzk1dlfkF7NPULw4FOpuNJBFEsoz8w6M3PatR06ytjhA01FebKJ8M92gl595AQKH_aNBqBrJA9NgsHo0KBcxZux3uNl1btccyKnCV9qbr7L6Jnk-3ZhdxCm9tc-jLSzjYYLt0KEJp1F-gPDORFrbi2ts5uXM9WaNpUMVFmWjXqCznqP8QXe1Dahs1Kw1Mn">
+</div>
+<div>
+<p class="font-data-md text-data-md text-on-surface">Marcus High Yield</p>
+<p class="font-body-sm text-body-sm text-text-secondary">Savings •••• 1104</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-data-md text-data-md text-on-surface tabular-nums">$257,968.40</p>
+<p class="font-body-sm text-body-sm text-text-tertiary">Updated 2h ago</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+</body></html>

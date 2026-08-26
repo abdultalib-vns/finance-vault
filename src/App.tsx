@@ -21,6 +21,8 @@ import aiAnimation from "../public/FinAura_AI_Lottie.json";
 import { loadItems, loadCurrency, loadIdleTimeout, loadTheme, saveTheme, loadPinHash, loadAIOptions, loadExpenses } from "./lib/storage";
 import { getCurrency } from "./lib/currency";
 import { FinanceItem, NavTab, Currency } from "./types";
+import MobileLandscapeBlocker from "./components/MobileLandscapeBlocker";
+import HelpGuideModal from "./components/HelpGuideModal";
 import { startSession, endSession, trackTabVisit, applyAdminTheme, loadAdminTheme, loadAdminConfigFromServer, seedDefaultCardTemplates, loadGlobalConfig } from "./admin/adminStorage";
 import { GlobalAppConfig } from "./admin/adminTypes";
 
@@ -47,11 +49,16 @@ export default function App() {
     return () => window.removeEventListener("hashchange", handler);
   }, []);
 
-  if (isAdmin && import.meta.env.VITE_ENABLE_ADMIN === "true") return <AdminApp />;
-
-  // key={Date.now()} forces MainApp to fully remount after returning from admin,
-  // so it re-reads all localStorage (theme, card templates, popup ads, etc.)
-  return <MainApp key={isAdmin ? "admin" : "main"} />;
+  return (
+    <>
+      <MobileLandscapeBlocker />
+      {isAdmin && import.meta.env.VITE_ENABLE_ADMIN === "true" ? (
+        <AdminApp />
+      ) : (
+        <MainApp key={isAdmin ? "admin" : "main"} />
+      )}
+    </>
+  );
 }
 
 function MainApp() {
@@ -72,6 +79,7 @@ function MainApp() {
   const initialConfigVersion = useRef(globalConfig.configVersion || 1);
   const [targetCardId, setTargetCardId] = useState<string | null>(null);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const [showHelpGuide, setShowHelpGuide] = useState(false);
   const aiOpts = loadAIOptions();
 
   const handleSplashDone = useCallback(() => setShowSplash(false), []);
@@ -248,10 +256,11 @@ function MainApp() {
               theme={theme}
               onThemeChange={setTheme}
               onReload={handleReload}
+              onOpenHelp={() => setShowHelpGuide(true)}
             />
           )}
         </div>
-        <BottomNav active={tab} onChange={handleTabChange} />
+        <BottomNav active={tab} onChange={handleTabChange} onLock={handleLock} onOpenHelp={() => setShowHelpGuide(true)} />
 
         {tab !== "settings" && (
           <button 
@@ -289,6 +298,9 @@ function MainApp() {
             onClose={() => setShowAIAssistant(false)}
             onDataChanged={() => setItems(loadItems())}
           />
+        )}
+        {showHelpGuide && (
+          <HelpGuideModal onClose={() => setShowHelpGuide(false)} />
         )}
       </div>
     </div>

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FinAura - Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "secondary": "#5a5e66",
+                "surface-container-low": "#f6f3f2",
+                "surface-container-lowest": "#ffffff",
+                "terracotta": "#D9736B",
+                "surface-tint": "#5d5e61",
+                "on-secondary-fixed": "#181c22",
+                "on-surface-variant": "#44474a",
+                "tertiary-fixed": "#e0e2eb",
+                "tertiary-container": "#181c22",
+                "on-error": "#ffffff",
+                "error-container": "#ffdad6",
+                "background": "#fafafa",
+                "on-error-container": "#93000a",
+                "muted-gold": "#C9A227",
+                "muted-indigo": "#7C8CE0",
+                "on-tertiary-fixed-variant": "#43474e",
+                "secondary-fixed-dim": "#c3c6d0",
+                "surface-bright": "#fcf8f8",
+                "primary-fixed": "#e2e2e5",
+                "primary-container": "#1a1c1e",
+                "on-secondary": "#ffffff",
+                "primary-fixed-dim": "#c6c6c9",
+                "primary": "#000101",
+                "on-primary-fixed-variant": "#454749",
+                "tertiary": "#000001",
+                "tertiary-fixed-dim": "#c4c6cf",
+                "surface-container-highest": "#e5e2e1",
+                "on-primary-container": "#838486",
+                "on-secondary-fixed-variant": "#43474e",
+                "on-primary": "#ffffff",
+                "inverse-primary": "#c6c6c9",
+                "on-background": "#1c1b1b",
+                "error": "#ba1a1a",
+                "surface-variant": "#e5e2e1",
+                "surface-container-high": "#ebe7e7",
+                "outline-variant": "#c5c6ca",
+                "border-hairline": "#EBEBED",
+                "inverse-surface": "#313030",
+                "on-tertiary": "#ffffff",
+                "surface-elevated": "#F5F5F7",
+                "surface": "#ffffff",
+                "on-surface": "#1c1b1b",
+                "on-tertiary-fixed": "#181c22",
+                "secondary-container": "#dfe2ec",
+                "on-primary-fixed": "#1a1c1e",
+                "surface-container": "#f1eded",
+                "sage-green": "#5FBF95",
+                "silver-accent": "#9498A0",
+                "surface-dim": "#ddd9d9",
+                "on-tertiary-container": "#81848c",
+                "on-secondary-container": "#60646c",
+                "inverse-on-surface": "#f4f0ef",
+                "secondary-fixed": "#dfe2ec",
+                "outline": "#75777a"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+        },
+        "spacing": {
+                "max-content-width": "1360px",
+                "md": "16px",
+                "xs": "4px",
+                "sm": "12px",
+                "base": "8px",
+                "sidebar-width": "240px",
+                "lg": "24px",
+                "xl": "32px"
+        },
+        "fontFamily": {
+                "body-md": [
+                        "Inter"
+                ],
+                "label-caps": [
+                        "Inter"
+                ],
+                "body-lg": [
+                        "Inter"
+                ],
+                "data-md": [
+                        "Inter"
+                ],
+                "data-lg": [
+                        "Inter"
+                ],
+                "headline-md": [
+                        "Inter"
+                ],
+                "display-lg": [
+                        "Inter"
+                ],
+                "body-sm": [
+                        "Inter"
+                ],
+                "headline-sm": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "body-md": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-caps": [
+                        "12px",
+                        {
+                                "lineHeight": "16px",
+                                "letterSpacing": "0.04em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-lg": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "data-md": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "data-lg": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-md": [
+                        "28px",
+                        {
+                                "lineHeight": "36px",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "display-lg": [
+                        "36px",
+                        {
+                                "lineHeight": "44px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-sm": [
+                        "13px",
+                        {
+                                "lineHeight": "18px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-sm": [
+                        "20px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "600"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        .tabular-nums { font-variant-numeric: tabular-nums; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full w-[240px] bg-background border-r border-border-hairline flex flex-col py-xl px-md z-50">
+<div class="flex items-center gap-md mb-xl">
+<img alt="FinAura Logo" class="w-8 h-8 rounded-full border border-border-hairline" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhqx3APs6dLjKxldhUqF4UIfIhQFHHnTu2PFefj6aWHvUHMLTsBXzadZdREJsSpDSsmH2auLrWxYOdqWKXMmJQy-LbWcP7ocCzBjyLSNCP85IhdVKRfimm8AJx7T5HCgC71x0tF71yrBL1HI6c97ZL3xag9cgQvyNyB6QNgbf20NaZlzuLb3Lx6CmYe4SeLmtwF3zuRPmP4DbsoxefXCQUuSJO78FBSphISaV_wemHkNNhuwJQrJMg"/>
+<div>
+<h1 class="font-display-lg text-display-lg font-semibold text-on-surface text-lg">FinAura</h1>
+<p class="font-body-sm text-body-sm text-secondary">Premium Tier</p>
+</div>
+</div>
+<div class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface border-l-2 border-silver-accent font-semibold bg-surface-container-low transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary font-medium hover:text-on-surface hover:bg-surface-elevated transition-colors duration-200 active:scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+                Investments
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary font-medium hover:text-on-surface hover:bg-surface-elevated transition-colors duration-200 active:scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+                Wallet
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary font-medium hover:text-on-surface hover:bg-surface-elevated transition-colors duration-200 active:scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
+                Market Insights
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary font-medium hover:text-on-surface hover:bg-surface-elevated transition-colors duration-200 active:scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Settings
+            </a>
+</div>
+<div class="mt-auto space-y-1 pt-4 border-t border-border-hairline">
+<a class="flex items-center gap-3 px-3 py-2 text-secondary font-medium hover:text-on-surface hover:bg-surface-elevated transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                Help Center
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary font-medium hover:text-on-surface hover:bg-surface-elevated transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                Logout
+            </a>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="flex justify-between items-center h-[64px] px-lg ml-[240px] w-[calc(100%-240px)] bg-surface border-b border-border-hairline fixed top-0 z-40">
+<div class="flex items-center gap-6">
+<span class="material-symbols-outlined text-secondary cursor-pointer hover:text-on-surface" data-icon="search">search</span>
+<nav class="hidden md:flex gap-6">
+<a class="font-label-caps text-label-caps text-secondary hover:text-on-surface transition-colors" href="#">Portfolio</a>
+<a class="font-label-caps text-label-caps text-secondary hover:text-on-surface transition-colors" href="#">Analytic</a>
+<a class="font-label-caps text-label-caps text-secondary hover:text-on-surface transition-colors" href="#">Tax</a>
+<a class="font-label-caps text-label-caps text-secondary hover:text-on-surface transition-colors" href="#">Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-4 text-secondary">
+<span class="material-symbols-outlined cursor-pointer hover:text-on-surface transition-colors active:opacity-80" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-on-surface transition-colors active:opacity-80" data-icon="history">history</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-on-surface transition-colors active:opacity-80" data-icon="account_circle">account_circle</span>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-[240px] pt-[64px] min-h-screen p-lg max-w-[max-content-width] mx-auto">
+<div class="mb-lg flex justify-between items-end">
+<h2 class="font-headline-md text-headline-md">Dashboard Overview</h2>
+</div>
+<!-- KPI Row -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-lg mb-lg">
+<div class="bg-surface border border-border-hairline rounded-lg p-md flex flex-col justify-between h-[120px]">
+<div class="font-label-caps text-label-caps text-secondary uppercase">Total Savings</div>
+<div class="flex items-end justify-between">
+<div class="font-data-lg text-data-lg tabular-nums">$142,500.00</div>
+<div class="flex items-center text-sage-green font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px]" data-icon="trending_up">trending_up</span>
+<span class="ml-1">2.4%</span>
+</div>
+</div>
+</div>
+<div class="bg-surface border border-border-hairline rounded-lg p-md flex flex-col justify-between h-[120px]">
+<div class="font-label-caps text-label-caps text-secondary uppercase">Outstanding Dues</div>
+<div class="flex items-end justify-between">
+<div class="font-data-lg text-data-lg tabular-nums">$12,450.00</div>
+<div class="flex items-center text-terracotta font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px]" data-icon="trending_down">trending_down</span>
+<span class="ml-1">1.2%</span>
+</div>
+</div>
+</div>
+<div class="bg-surface border border-border-hairline rounded-lg p-md flex flex-col justify-between h-[120px]">
+<div class="font-label-caps text-label-caps text-secondary uppercase">Net Worth Change</div>
+<div class="flex items-end justify-between">
+<div class="font-data-lg text-data-lg tabular-nums">+4.8%</div>
+<div class="flex items-center text-sage-green font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px]" data-icon="trending_up">trending_up</span>
+<span class="ml-1">YTD</span>
+</div>
+</div>
+</div>
+<div class="bg-surface border border-border-hairline rounded-lg p-md flex flex-col justify-between h-[120px]">
+<div class="font-label-caps text-label-caps text-secondary uppercase">Active Cards</div>
+<div class="flex items-end justify-between">
+<div class="font-data-lg text-data-lg tabular-nums">4</div>
+<div class="flex items-center text-secondary font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px]" data-icon="credit_card">credit_card</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 60/40 Split Content -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Left Column: Net Worth Allocation -->
+<div class="lg:col-span-7 bg-surface border border-border-hairline rounded-xl p-lg">
+<h3 class="font-data-md text-data-md mb-6">Net Worth Allocation</h3>
+<div class="flex flex-col md:flex-row items-center gap-xl">
+<!-- Donut Chart Placeholder (CSS driven) -->
+<div class="relative w-[200px] h-[200px] flex-shrink-0 rounded-full flex items-center justify-center border-[12px] border-surface-container-high" style="background: conic-gradient(
+                            #5FBF95 0% 45%, 
+                            #9498A0 45% 70%, 
+                            #7C8CE0 70% 85%, 
+                            #D9736B 85% 95%, 
+                            #e5e2e1 95% 100%
+                         );">
+<div class="absolute inset-0 bg-surface rounded-full m-[12px]"></div>
+<div class="relative z-10 text-center">
+<div class="font-label-caps text-label-caps text-secondary">TOTAL</div>
+<div class="font-data-md text-data-md tabular-nums">$184,200</div>
+</div>
+</div>
+<!-- Right Aligned Legend Table -->
+<div class="flex-1 w-full">
+<table class="w-full text-right">
+<thead>
+<tr class="border-b border-border-hairline">
+<th class="text-left font-label-caps text-label-caps text-secondary pb-2 font-normal">Asset Class</th>
+<th class="font-label-caps text-label-caps text-secondary pb-2 font-normal">Value</th>
+<th class="font-label-caps text-label-caps text-secondary pb-2 font-normal w-24">% Total</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm tabular-nums">
+<tr class="border-b border-border-hairline/50 hover:bg-surface-elevated transition-colors">
+<td class="text-left py-3 flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-sage-green"></div>
+                                        Bank Accounts
+                                    </td>
+<td class="py-3">$82,890</td>
+<td class="py-3 text-secondary">45%</td>
+</tr>
+<tr class="border-b border-border-hairline/50 hover:bg-surface-elevated transition-colors">
+<td class="text-left py-3 flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-silver-accent"></div>
+                                        Fixed Deposits
+                                    </td>
+<td class="py-3">$46,050</td>
+<td class="py-3 text-secondary">25%</td>
+</tr>
+<tr class="border-b border-border-hairline/50 hover:bg-surface-elevated transition-colors">
+<td class="text-left py-3 flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-muted-indigo"></div>
+                                        Recurring Dep.
+                                    </td>
+<td class="py-3">$27,630</td>
+<td class="py-3 text-secondary">15%</td>
+</tr>
+<tr class="border-b border-border-hairline/50 hover:bg-surface-elevated transition-colors">
+<td class="text-left py-3 flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-terracotta"></div>
+                                        Dues
+                                    </td>
+<td class="py-3">-$18,420</td>
+<td class="py-3 text-secondary">10%</td>
+</tr>
+<tr class="hover:bg-surface-elevated transition-colors">
+<td class="text-left py-3 flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary-container"></div>
+                                        Credit Cards
+                                    </td>
+<td class="py-3">-$9,210</td>
+<td class="py-3 text-secondary">5%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Right Column: Monthly Summary & Sparkline -->
+<div class="lg:col-span-5 bg-surface border border-border-hairline rounded-xl p-lg flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-data-md text-data-md">Monthly Summary</h3>
+<!-- Month Switcher -->
+<div class="flex items-center bg-surface-container-low border border-border-hairline rounded-full px-2 py-1 text-secondary font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[14px] cursor-pointer hover:text-on-surface" data-icon="chevron_left">chevron_left</span>
+<span class="px-2">Oct 2023</span>
+<span class="material-symbols-outlined text-[14px] cursor-pointer hover:text-on-surface" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-baseline border-b border-border-hairline pb-2">
+<span class="font-body-md text-body-md text-secondary">Closing Balance</span>
+<span class="font-data-md text-data-md tabular-nums text-sage-green">$15,240.50</span>
+</div>
+<div class="flex justify-between items-baseline border-b border-border-hairline pb-2">
+<span class="font-body-md text-body-md text-secondary">Upcoming Dues</span>
+<span class="font-data-md text-data-md tabular-nums text-terracotta">-$2,150.00</span>
+</div>
+<div class="flex justify-between items-baseline pt-2">
+<span class="font-body-md text-body-md font-semibold">Projected Net</span>
+<span class="font-data-lg text-data-lg tabular-nums">$13,090.50</span>
+</div>
+</div>
+</div>
+<div class="mt-8">
+<h4 class="font-label-caps text-label-caps text-secondary mb-4 uppercase">6-Month Trend</h4>
+<!-- Sparkline SVG Placeholder -->
+<div class="h-[60px] w-full border-b border-border-hairline/50 relative flex items-end justify-between px-2 pb-1">
+<!-- CSS drawn sparkline representation -->
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<polyline fill="none" points="0,80 20,70 40,75 60,40 80,50 100,20" stroke="#7C8CE0" stroke-width="2"></polyline>
+</svg>
+<span class="font-label-caps text-label-caps text-secondary z-10 bg-surface px-1">May</span>
+<span class="font-label-caps text-label-caps text-secondary z-10 bg-surface px-1">Oct</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

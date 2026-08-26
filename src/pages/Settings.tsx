@@ -1,4 +1,4 @@
-import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff, User, Camera, Edit2, Save, Grid3x3, Code, Database, Cpu, RotateCcw, Bug, Terminal, Layers, Zap, QrCode, ScanLine } from "lucide-react";
+import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff, User, Camera, Edit2, Save, Grid3x3, Code, Database, Cpu, RotateCcw, Bug, Terminal, Layers, Zap, QrCode, ScanLine, ShieldCheck, HelpCircle, BookOpen } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { hashPin } from "../lib/crypto";
 import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses, saveAIOptions, loadAIOptions, getVeloAIUsageCount, loadUserProfile, saveUserProfile, saveExpenses, saveCashbacks, saveBankExpenses, saveBills } from "../lib/storage";
@@ -34,6 +34,7 @@ interface Props {
   theme: "light" | "dark";
   onThemeChange: (t: "light" | "dark") => void;
   onReload: () => void;
+  onOpenHelp?: () => void;
 }
 
 export default function Settings({
@@ -42,6 +43,7 @@ export default function Settings({
   idleMinutes, onIdleMinutesChange,
   theme, onThemeChange,
   onReload,
+  onOpenHelp,
 }: Props) {
   const [newPin, setNewPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
@@ -514,8 +516,8 @@ export default function Settings({
         <h2 className="header-title">Settings</h2>
         <div style={{ display: "flex", alignItems: "center" }}>
           <button onClick={() => setShowVeloApps(true)} style={{ background: "none", border: "none", color: "var(--text2)", cursor: "pointer", display: "flex", alignItems: "center", marginRight: 12 }}><Grid3x3 size={24} /></button>
-          <a href="https://finaura-landingpage.vercel.app" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', height: '32px', marginRight: 8, background: 'linear-gradient(135deg, #3B5BDB, #40C057)', borderRadius: '8px', padding: '0 12px', textDecoration: 'none', opacity: 0.9, transition: 'opacity 0.2s ease' }} onMouseOver={e => e.currentTarget.style.opacity = "1"} onMouseOut={e => e.currentTarget.style.opacity = "0.9"}>
-            <span style={{ color: '#fff', fontSize: '13px', fontWeight: 600, letterSpacing: '0.3px' }}>Landing Page</span>
+          <a href="https://finaura-landingpage.vercel.app" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', height: '32px', marginRight: 8, background: 'linear-gradient(135deg, #F59E0B, #DC2626)', boxShadow: '0 2px 10px rgba(220, 38, 38, 0.25)', borderRadius: '8px', padding: '0 12px', textDecoration: 'none', opacity: 0.95, transition: 'all 0.2s ease' }} onMouseOver={e => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "translateY(-1px)"; }} onMouseOut={e => { e.currentTarget.style.opacity = "0.95"; e.currentTarget.style.transform = "translateY(0)"; }}>
+            <span style={{ color: '#fff', fontSize: '13px', fontWeight: 700, letterSpacing: '0.4px', textShadow: '0 1px 2px rgba(0,0,0,0.2)' }}>👑 UPGRADE</span>
           </a>
           <a href="https://velolaunch.lovable.app" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', height: '32px' }}>
             <img src={veloLaunchLogo} alt="VeloLaunch" style={{ display: 'block', height: "100%", width: 'auto', objectFit: "contain", opacity: 0.9, transition: "opacity 0.2s ease" }} onMouseOver={e => e.currentTarget.style.opacity = "1"} onMouseOut={e => e.currentTarget.style.opacity = "0.9"} />
@@ -524,8 +526,8 @@ export default function Settings({
       </header>
       {showVeloApps && <VeloAppsModal onClose={() => setShowVeloApps(false)} />}
       <div className="content">
-        {/* ── User Profile Section ── */}
-        <div className="settings-section" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px", background: "var(--surface)", borderRadius: "12px", marginBottom: "20px" }}>
+        {/* ── Mobile Profile Section (hidden on desktop ≥1024px) ── */}
+        <div className="mobile-only-profile settings-section" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px", background: "var(--surface)", borderRadius: "12px", marginBottom: "20px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
             <div style={{ width: 60, height: 60, borderRadius: "50%", background: "var(--surface2)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
               {profile?.photo ? (
@@ -544,18 +546,64 @@ export default function Settings({
           </button>
         </div>
 
-        <div className="settings-section">
-          <h3 className="settings-section-title">Appearance</h3>
-          <p className="settings-label">Theme</p>
-          <div className="theme-toggle">
-            <button type="button" className={`theme-btn ${theme === "light" ? "active" : ""}`} onClick={() => onThemeChange("light")}><Sun size={16} /> Light</button>
-            <button type="button" className={`theme-btn ${theme === "dark" ? "active" : ""}`} onClick={() => onThemeChange("dark")}><Moon size={16} /> Dark</button>
-          </div>
-        </div>
+        <div className="desktop-settings-grid">
+          {/* ── Left Column: Profile Card & Vault Status (desktop only) ── */}
+          <div className="settings-left-col">
+            <div className="desktop-profile-card">
+              <div className="desktop-avatar-wrap">
+                {profile?.photo ? (
+                  <img src={profile.photo} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : (
+                  <User size={36} color="var(--text2)" />
+                )}
+              </div>
+              <h3 className="desktop-profile-name">{profile?.name || "No Name Set"}</h3>
+              {profile?.email && <p className="desktop-profile-email">{profile.email}</p>}
+              <div className="desktop-profile-badge">
+                <ShieldCheck size={14} /> Vault Member
+              </div>
 
-        <div className="settings-section">
-          <h3 className="settings-section-title"><Bot size={20} /> AI Assistant Settings</h3>
-          <p className="settings-hint">Configure your AI provider to enable smart features like Receipt Scanning, Natural Language Entry, and the Vault Assistant.</p>
+              <div className="desktop-profile-stats">
+                <div className="desktop-stat-block">
+                  <span className="desktop-stat-lbl">Accounts</span>
+                  <span className="desktop-stat-val">{items.length} Active</span>
+                </div>
+                <div className="desktop-stat-block">
+                  <span className="desktop-stat-lbl">Encryption</span>
+                  <span className="desktop-stat-val">AES-256</span>
+                </div>
+              </div>
+
+              <button className="btn-secondary" style={{ width: "100%", gap: 8, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={handleProfileEditOpen}>
+                <Edit2 size={16} /> Edit Profile
+              </button>
+            </div>
+
+            <div className="settings-section desktop-security-badge-card">
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                <ShieldCheck size={18} color="var(--primary)" />
+                <h4 style={{ margin: 0, fontSize: "0.95rem", fontWeight: 600, color: "var(--text)" }}>Zero-Knowledge Vault</h4>
+              </div>
+              <p className="settings-hint" style={{ margin: 0, fontSize: "0.8rem", lineHeight: 1.45 }}>
+                Your financial data, secrets, and credentials remain encrypted client-side on your device.
+              </p>
+            </div>
+          </div>
+
+          {/* ── Right Column: All Settings Sections ── */}
+          <div className="settings-right-col">
+            <div className="settings-section">
+              <h3 className="settings-section-title">Appearance</h3>
+              <p className="settings-label">Theme</p>
+              <div className="theme-toggle">
+                <button type="button" className={`theme-btn ${theme === "light" ? "active" : ""}`} onClick={() => onThemeChange("light")}><Sun size={16} /> Light</button>
+                <button type="button" className={`theme-btn ${theme === "dark" ? "active" : ""}`} onClick={() => onThemeChange("dark")}><Moon size={16} /> Dark</button>
+              </div>
+            </div>
+
+            <div className="settings-section">
+              <h3 className="settings-section-title"><Bot size={20} /> AI Assistant Settings</h3>
+              <p className="settings-hint">Configure your AI provider to enable smart features like Receipt Scanning, Natural Language Entry, and the Vault Assistant.</p>
           
           <div className="form-group" style={{ marginTop: 12 }}>
             <label className="settings-label">AI Provider</label>
@@ -952,6 +1000,21 @@ export default function Settings({
           </form>
         </div>
 
+        {onOpenHelp && (
+          <div className="settings-section">
+            <h3 className="settings-section-title"><BookOpen size={20} /> Help &amp; User Guide</h3>
+            <p className="settings-hint">Explore comprehensive step-by-step guides, zero-knowledge security architecture, AI scanning tutorials, and frequently asked questions.</p>
+            <button 
+              type="button" 
+              className="btn-primary" 
+              style={{ width: "100%", marginTop: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
+              onClick={onOpenHelp}
+            >
+              <HelpCircle size={18} /> Open Help &amp; Documentation
+            </button>
+          </div>
+        )}
+
         <div className="settings-section">
           <h3 className="settings-section-title"><Info size={20} /> About FinAura</h3>
           <div className="about-block">
@@ -971,6 +1034,8 @@ export default function Settings({
           Developed by Velo Launch <br /> A Company by <a href="https://smartvistaitsolutions.in" target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 600 }} onClick={(e) => e.stopPropagation()}>Smart Vista IT Solutions</a>
         </div>
       </div>
+    </div>
+  </div>
 
       {showProfileModal && (
         <div className="modal-overlay" onClick={() => setShowProfileModal(false)}>

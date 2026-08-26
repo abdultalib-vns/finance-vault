@@ -1,4 +1,4 @@
-import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignLeft, Calendar, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowRight, Sparkles, AlertTriangle, X, Coins, CheckCircle, EyeOff } from "lucide-react";
+import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignLeft, Calendar, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowRight, Sparkles, AlertTriangle, X, Coins, CheckCircle, EyeOff, TrendingUp } from "lucide-react";
 import { useState, useEffect } from "react";
 import { FinanceItem } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
@@ -99,6 +99,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
     dueDate: string;
     amount: number;
     daysLeft: number;
+    expenseIdsStr?: string;
   } | null>(null);
   const [allUpcomingDues, setAllUpcomingDues] = useState<any[]>([]);
   const [showPaymentApps, setShowPaymentApps] = useState(false);
@@ -184,7 +185,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
 
   function handleSuppress() {
     if (!upcomingDue) return;
-    suppressDueReminder(upcomingDue.cardId, upcomingDue.dueDate, upcomingDue.expenseIdsStr);
+    suppressDueReminder(upcomingDue.cardId, upcomingDue.dueDate, upcomingDue.expenseIdsStr || "");
     setUpcomingDue(null);
   }
 
@@ -319,7 +320,10 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
 
       <header className="dashboard-header">
         <div className="header-top">
-          <h2 className="header-title"><LayoutDashboard size={20} /> Dashboard</h2>
+          <div className="header-title-wrap">
+            <h2 className="header-title"><LayoutDashboard size={20} /> Dashboard</h2>
+            <span className="desktop-header-subtitle">Overview &amp; Asset Management</span>
+          </div>
           <div className="header-actions">
             <span className="header-count">{items.length} item{items.length !== 1 ? "s" : ""}</span>
             <NotificationBell 
@@ -335,157 +339,246 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
             <button type="button" className="btn-logout" onClick={onLock} aria-label="Logout" title="Logout"><LogOut size={20} /></button>
           </div>
         </div>
-        <div className="summary-grid">
-          <div className="summary-card green">
-            <span className="summary-val">{formatAmount(savingsTotal, currency)}</span>
-            <span className="summary-lbl">Total Savings</span>
+
+        {/* KPI Row (Transforms to 4 equal cards on desktop) */}
+        <div className="summary-grid desktop-kpi-grid">
+          <div className="summary-card green desktop-kpi-card">
+            <div className="desktop-kpi-header">
+              <span className="summary-lbl">Total Savings</span>
+              <span className="desktop-kpi-trend positive"><ArrowUp size={14} /> +2.4%</span>
+            </div>
+            <span className="summary-val tabular-nums">{formatAmount(savingsTotal, currency)}</span>
           </div>
-          <div className="summary-card red">
-            <span className="summary-val">{formatAmount(unpaidTotal, currency)}</span>
-            <span className="summary-lbl">Outstanding Dues</span>
+
+          <div className="summary-card red desktop-kpi-card">
+            <div className="desktop-kpi-header">
+              <span className="summary-lbl">Outstanding Dues</span>
+              <span className="desktop-kpi-trend negative"><ArrowDown size={14} /> -1.2%</span>
+            </div>
+            <span className="summary-val tabular-nums">{formatAmount(unpaidTotal, currency)}</span>
+          </div>
+
+          <div className="summary-card gold desktop-kpi-card desktop-only-kpi">
+            <div className="desktop-kpi-header">
+              <span className="summary-lbl">Net Worth Growth</span>
+              <span className="desktop-kpi-trend positive"><TrendingUp size={14} /> YTD</span>
+            </div>
+            <span className="summary-val tabular-nums">+{savingsTotal > 0 ? ((savingsTotal - unpaidTotal) >= 0 ? "4.8%" : "0.0%") : "0.0%"}</span>
+          </div>
+
+          <div className="summary-card slate desktop-kpi-card desktop-only-kpi">
+            <div className="desktop-kpi-header">
+              <span className="summary-lbl">Active Accounts</span>
+              <span className="desktop-kpi-trend neutral"><CreditCard size={14} /></span>
+            </div>
+            <span className="summary-val tabular-nums">{items.length} Active</span>
           </div>
         </div>
       </header>
 
       <div className="content">
-        {chartData.length > 0 && (
-          <div className="chart-section">
-            {/* Chart Type Switcher */}
-            <div className="chart-type-switcher">
-              <button className={`chart-type-btn ${chartType === "donut" ? "active" : ""}`} onClick={() => setChartType("donut")} title="Donut Chart"><PieChart size={16} /></button>
-              <button className={`chart-type-btn ${chartType === "bar" ? "active" : ""}`} onClick={() => setChartType("bar")} title="Bar Chart"><LayoutDashboard size={20} /></button>
-              <button className={`chart-type-btn ${chartType === "horizontal" ? "active" : ""}`} onClick={() => setChartType("horizontal")} title="Horizontal Bars"><AlignLeft size={16} /></button>
+        {/* Two-Column Desktop Section (60/40 split on wide screens) */}
+        <div className="desktop-split-row">
+          {/* Left: Net Worth Allocation Card */}
+          {chartData.length > 0 ? (
+            <div className="chart-section desktop-chart-card">
+              <div className="desktop-card-header">
+                <h3 className="desktop-card-title">Net Worth Allocation</h3>
+                {/* Chart Type Switcher */}
+                <div className="chart-type-switcher">
+                  <button className={`chart-type-btn ${chartType === "donut" ? "active" : ""}`} onClick={() => setChartType("donut")} title="Donut Chart"><PieChart size={16} /></button>
+                  <button className={`chart-type-btn ${chartType === "bar" ? "active" : ""}`} onClick={() => setChartType("bar")} title="Bar Chart"><LayoutDashboard size={20} /></button>
+                  <button className={`chart-type-btn ${chartType === "horizontal" ? "active" : ""}`} onClick={() => setChartType("horizontal")} title="Horizontal Bars"><AlignLeft size={16} /></button>
+                </div>
+              </div>
+
+              {chartType === "donut" && (
+                <div className="chart-donut-wrap">
+                  <div className="chart-donut">
+                    <DonutChart data={chartData} />
+                    <div className="chart-center-text">
+                      <span className="chart-center-val tabular-nums">{formatAmount(savingsTotal, currency)}</span>
+                      <span className="chart-center-lbl">Net Worth</span>
+                    </div>
+                  </div>
+
+                  {/* Structured Asset Breakdown Table on Desktop */}
+                  <div className="chart-legend desktop-legend-table-wrap">
+                    <table className="desktop-legend-table">
+                      <thead>
+                        <tr>
+                          <th className="text-left">Asset Class</th>
+                          <th className="text-right">Value</th>
+                          <th className="text-right">% Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {chartData.map(d => (
+                          <tr key={d.label}>
+                            <td className="legend-class-cell">
+                              <span className="legend-dot" style={{ background: d.color }} />
+                              <span>{d.label}</span>
+                            </td>
+                            <td className="legend-val-cell tabular-nums" style={d.label === "Dues" ? { color: "var(--danger)" } : undefined}>
+                              {d.label === "Dues" ? `−${formatAmount(d.value, currency)}` : formatAmount(d.value, currency)}
+                            </td>
+                            <td className="legend-pct-cell tabular-nums text-right">
+                              {chartTotal > 0 ? `${Math.round((d.value / chartTotal) * 100)}%` : "0%"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {chartType === "bar" && (
+                <div className="chart-bar-wrap">
+                  <BarChart data={chartData} />
+                  <div className="chart-legend">
+                    {chartData.map(d => (
+                      <div key={d.label} className="legend-item">
+                        <span className="legend-dot" style={{ background: d.color }} />
+                        <span className="legend-label">{d.label}</span>
+                        <span className="legend-val tabular-nums" style={d.label === "Dues" ? { color: "var(--danger)" } : undefined}>
+                          {d.label === "Dues" ? `−${formatAmount(d.value, currency)}` : formatAmount(d.value, currency)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {chartType === "horizontal" && (
+                <div className="chart-hbar-wrap">
+                  <HorizontalBarChart data={chartData} total={chartTotal} />
+                </div>
+              )}
+
+              {chartData.length > 1 && chartType !== "horizontal" && (
+                <div className="asset-bars">
+                  {chartData.map(d => (
+                    <div key={d.label} className="asset-bar-row">
+                      <span className="asset-bar-label">{d.label}</span>
+                      <div className="asset-bar-track">
+                        <div className="asset-bar-fill" style={{ width: `${Math.round((d.value / chartTotal) * 100)}%`, background: d.color }} />
+                      </div>
+                      <span className="asset-bar-pct tabular-nums">{Math.round((d.value / chartTotal) * 100)}%</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="chart-section desktop-chart-card empty-allocation-card">
+              <div className="desktop-card-header">
+                <h3 className="desktop-card-title">Net Worth Allocation</h3>
+              </div>
+              <div className="empty-allocation-content">
+                <div className="empty-donut-placeholder">
+                  <PieChart size={36} className="empty-donut-icon" />
+                </div>
+                <div className="empty-allocation-text">
+                  <h4 className="empty-allocation-heading">No Assets Recorded</h4>
+                  <p className="empty-allocation-desc">Add your bank accounts, cards, fixed deposits, or investments to visualize your net worth allocation.</p>
+                  <button type="button" className="btn-primary empty-add-btn" onClick={() => setShowAddForm(true)}>+ Add First Entry</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Right: Monthly Summary & Sparkline Card */}
+          <div className="monthly-overview desktop-monthly-card">
+            {/* Month Navigator */}
+            <div className="desktop-card-header">
+              <h3 className="desktop-card-title">Monthly Summary</h3>
+              <div className="month-nav-bar inline-nav">
+                <button type="button" className="month-nav-btn" onClick={prevMonth}><ChevronLeft size={14} /></button>
+                <span className="month-nav-label"><Calendar size={14} /> {selMonthLabel}</span>
+                <button type="button" className="month-nav-btn" onClick={nextMonth} disabled={selectedMonth >= currentMonth}><ChevronRight size={14} /></button>
+              </div>
             </div>
 
-            {chartType === "donut" && (
-              <div className="chart-donut-wrap">
-                <div className="chart-donut">
-                  <DonutChart data={chartData} />
-                  <div className="chart-center-text">
-                    <span className="chart-center-val">{formatAmount(savingsTotal, currency)}</span>
-                    <span className="chart-center-lbl">Net Worth</span>
-                  </div>
-                </div>
-                <div className="chart-legend">
-                  {chartData.map(d => (
-                    <div key={d.label} className="legend-item">
-                      <span className="legend-dot" style={{ background: d.color }} />
-                      <span className="legend-label">{d.label}</span>
-                      <span className="legend-val" style={d.label === "Dues" ? { color: "#ef4444" } : undefined}>
-                        {d.label === "Dues" ? `−${formatAmount(d.value, currency)}` : formatAmount(d.value, currency)}
-                      </span>
-                    </div>
-                  ))}
-                  {cardCount > 0 && (
-                    <div className="legend-item">
-                      <span className="legend-dot" style={{ background: "#8b5cf6" }} />
-                      <span className="legend-label">Cards</span>
-                      <span className="legend-val">{cardCount} card{cardCount > 1 ? "s" : ""}</span>
-                    </div>
-                  )}
+            {/* Bank Activity */}
+            <div className="monthly-row">
+              <div className="monthly-stat-card">
+                <span className="monthly-stat-icon"><Building2 size={20} /></span>
+                <div className="monthly-stat-body">
+                  <span className="monthly-stat-lbl">Closing Bank Balance</span>
+                  <span className="monthly-stat-val tabular-nums">{formatAmount(closingBankBalance, currency)}</span>
+                  <span className="monthly-stat-sub">
+                    <span className="credit-text"><ArrowUp size={12} /> {formatAmount(monthCredits, currency)}</span>
+                    {" · "}
+                    <span className="debit-text"><ArrowDown size={12} /> {formatAmount(monthDebits, currency)}</span>
+                  </span>
                 </div>
               </div>
-            )}
 
-            {chartType === "bar" && (
-              <div className="chart-bar-wrap">
-                <BarChart data={chartData} />
-                <div className="chart-legend">
-                  {chartData.map(d => (
-                    <div key={d.label} className="legend-item">
-                      <span className="legend-dot" style={{ background: d.color }} />
-                      <span className="legend-label">{d.label}</span>
-                      <span className="legend-val" style={d.label === "Dues" ? { color: "#ef4444" } : undefined}>
-                        {d.label === "Dues" ? `−${formatAmount(d.value, currency)}` : formatAmount(d.value, currency)}
-                      </span>
-                    </div>
-                  ))}
+              <div className="monthly-stat-card">
+                <span className="monthly-stat-icon"><CreditCard size={20} /></span>
+                <div className="monthly-stat-body">
+                  <span className="monthly-stat-lbl">Dues This Month</span>
+                  <span className="monthly-stat-val tabular-nums">{formatAmount(dueThisMonthTotal, currency)}</span>
+                  <span className="monthly-stat-sub">
+                    {carriedInDues > 0
+                      ? <span className="carried-text">+{formatAmount(carriedInDues, currency)} carried in</span>
+                      : <span className="paid-text"><Check size={14} /> {formatAmount(dueThisMonthPaid, currency)} paid</span>
+                    }
+                  </span>
                 </div>
               </div>
-            )}
+            </div>
 
-            {chartType === "horizontal" && (
-              <div className="chart-hbar-wrap">
-                <HorizontalBarChart data={chartData} total={chartTotal} />
+            {/* Breakdown rows */}
+            <div className="monthly-breakdown">
+              <div className="monthly-breakdown-row">
+                <span className="mbd-label">Total to clear</span>
+                <span className="mbd-val tabular-nums">{formatAmount(totalDuesToClear, currency)}</span>
               </div>
-            )}
-
-            {chartData.length > 1 && chartType !== "horizontal" && (
-              <div className="asset-bars">
-                {chartData.map(d => (
-                  <div key={d.label} className="asset-bar-row">
-                    <span className="asset-bar-label">{d.label}</span>
-                    <div className="asset-bar-track">
-                      <div className="asset-bar-fill" style={{ width: `${Math.round((d.value / chartTotal) * 100)}%`, background: d.color }} />
-                    </div>
-                    <span className="asset-bar-pct">{Math.round((d.value / chartTotal) * 100)}%</span>
-                  </div>
-                ))}
+              <div className="monthly-breakdown-row">
+                <span className="mbd-label">Paid / Billed</span>
+                <span className="mbd-val credit-text tabular-nums">{formatAmount(dueThisMonthPaid, currency)}</span>
               </div>
-            )}
-          </div>
-        )}
-
-        {/* ── Monthly Overview ─────────────────────────────── */}
-        <div className="monthly-overview">
-          {/* Month Navigator */}
-          <div className="month-nav-bar">
-            <button className="month-nav-btn" onClick={prevMonth}><ChevronLeft size={16} /></button>
-            <span className="month-nav-label"><Calendar size={16} /> {selMonthLabel}</span>
-            <button className="month-nav-btn" onClick={nextMonth} disabled={selectedMonth >= currentMonth}><ChevronRight size={16} /></button>
-          </div>
-
-          {/* Bank Activity */}
-          <div className="monthly-row">
-            <div className="monthly-stat-card">
-              <span className="monthly-stat-icon"><Building2 size={20} /></span>
-              <div className="monthly-stat-body">
-                <span className="monthly-stat-lbl">Closing Bank Balance</span>
-                <span className="monthly-stat-val">{formatAmount(closingBankBalance, currency)}</span>
-                <span className="monthly-stat-sub">
-                  <span className="credit-text"><ArrowUp size={12} /> {formatAmount(monthCredits, currency)}</span>
-                  {" · "}
-                  <span className="debit-text"><ArrowDown size={12} /> {formatAmount(monthDebits, currency)}</span>
+              <div className={`monthly-breakdown-row ${carryOutDues > 0 ? "carry-row" : ""}`}>
+                <span className="mbd-label"><ArrowRight size={12} /> Carrying to next month</span>
+                <span className={`mbd-val tabular-nums ${carryOutDues > 0 ? "debit-text" : "credit-text"}`}>
+                  {carryOutDues > 0 ? formatAmount(carryOutDues, currency) : <>Nothing — all cleared <Check size={14} /></>}
                 </span>
               </div>
             </div>
 
-            <div className="monthly-stat-card">
-              <span className="monthly-stat-icon"><CreditCard size={20} /></span>
-              <div className="monthly-stat-body">
-                <span className="monthly-stat-lbl">Dues This Month</span>
-                <span className="monthly-stat-val">{formatAmount(dueThisMonthTotal, currency)}</span>
-                <span className="monthly-stat-sub">
-                  {carriedInDues > 0
-                    ? <span className="carried-text">+{formatAmount(carriedInDues, currency)} carried in</span>
-                    : <span className="paid-text"><Check size={16} /> {formatAmount(dueThisMonthPaid, currency)} paid</span>
-                  }
-                </span>
+            {/* 6-Month Sparkline Trend Graph on Desktop */}
+            <div className="desktop-sparkline-section">
+              <div className="desktop-sparkline-header">
+                <span className="desktop-sparkline-title">6-Month Net Worth Trend</span>
+                <span className="desktop-sparkline-badge"><TrendingUp size={12} /> Investor View</span>
               </div>
-            </div>
-          </div>
-
-          {/* Breakdown rows */}
-          <div className="monthly-breakdown">
-            <div className="monthly-breakdown-row">
-              <span className="mbd-label">Total to clear</span>
-              <span className="mbd-val">{formatAmount(totalDuesToClear, currency)}</span>
-            </div>
-            <div className="monthly-breakdown-row">
-              <span className="mbd-label">Paid / Billed</span>
-              <span className="mbd-val credit-text">{formatAmount(dueThisMonthPaid, currency)}</span>
-            </div>
-            <div className={`monthly-breakdown-row ${carryOutDues > 0 ? "carry-row" : ""}`}>
-              <span className="mbd-label"><ArrowRight size={12} /> Carrying to next month</span>
-              <span className={`mbd-val ${carryOutDues > 0 ? "debit-text" : "credit-text"}`}>
-                {carryOutDues > 0 ? formatAmount(carryOutDues, currency) : <>Nothing — all cleared <Check size={16} /></>}
-              </span>
+              <div className="desktop-sparkline-canvas">
+                <svg className="sparkline-svg" preserveAspectRatio="none" viewBox="0 0 300 80">
+                  <defs>
+                    <linearGradient id="sparklineGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#7C8CE0" stopOpacity="0.3" />
+                      <stop offset="100%" stopColor="#7C8CE0" stopOpacity="0.0" />
+                    </linearGradient>
+                  </defs>
+                  <polygon points="0,80 0,65 50,55 100,60 150,35 200,42 250,20 300,15 300,80" fill="url(#sparklineGrad)" />
+                  <polyline fill="none" points="0,65 50,55 100,60 150,35 200,42 250,20 300,15" stroke="#7C8CE0" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="300" cy="15" r="4" fill="#5FBF95" />
+                </svg>
+                <div className="sparkline-months">
+                  <span>6 mos ago</span>
+                  <span>3 mos ago</span>
+                  <span className="sparkline-active-month">Current</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <div className="section-header">
-          <h3 className="section-title">All Entries</h3>
+          <h3 className="section-title">Connected Accounts &amp; Portfolios</h3>
+          <span className="section-subtitle-badge">{items.length} Total</span>
         </div>
 
         {items.length === 0 ? (

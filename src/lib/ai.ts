@@ -151,7 +151,10 @@ async function callVeloAI(systemPrompt: string, inputMessages: {role: string, co
   if (!checkVeloAILimit()) {
     throw new Error("VeloAI Daily Limit Reached (10/10). Please try again tomorrow or select a different AI provider in Settings.");
   }
-  const res = await callOpenRouter(getVeloKey(), getVeloModel(), systemPrompt, inputMessages, imageBase64);
+  const k = getVeloKey();
+  const m = getVeloModel();
+  console.log("[VeloAI Debug] key length:", k.length, "model:", m);
+  const res = await callOpenRouter(k, m, systemPrompt, inputMessages, imageBase64);
   incrementVeloAIUsage();
   return res;
 }

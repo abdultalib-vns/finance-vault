@@ -6,7 +6,7 @@ export default function UpdatePrompt() {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
   } = useRegisterSW({
-    onRegistered(r) {
+    onRegistered(r?: ServiceWorkerRegistration) {
       console.log('SW Registered: ', r);
       // Periodically check for updates every 5 minutes
       if (r) {
@@ -15,7 +15,7 @@ export default function UpdatePrompt() {
         }, 5 * 60 * 1000);
       }
     },
-    onRegisterError(error) {
+    onRegisterError(error: any) {
       console.log('SW registration error', error);
     },
   });

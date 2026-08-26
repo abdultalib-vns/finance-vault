@@ -57,33 +57,96 @@ export default function Cashback({ currency }: Props) {
     persist(entries.filter((e) => e.id !== id));
   }
 
+  // Calculate this month's cashback
+  const currentMonthStr = new Date().toISOString().slice(0, 7);
+  const thisMonthCashback = entries
+    .filter(e => e.date.startsWith(currentMonthStr))
+    .reduce((s, e) => s + e.amount, 0);
+
+  const bestSource = sourceSorted[0] ? sourceSorted[0][0] : "None";
+
   return (
     <div className="screen">
       <header className="page-header">
-        <h2 className="header-title"><Gift size={20} /> Cashback Tracker</h2>
+        <div className="page-header-row">
+          <div>
+            <h2 className="header-title"><Gift size={20} /> Cashback Tracker</h2>
+            <span className="desktop-header-subtitle">Rewards, Rebates &amp; Performance</span>
+          </div>
+        </div>
       </header>
 
-      <div className="cashback-hero">
-        <span className="cashback-hero-label">Total Cashback Earned</span>
-        <span className="cashback-hero-amount">{formatAmount(totalCashback, currency)}</span>
+      {/* 4-KPI Row (Transforms to 4 equal cards on desktop) */}
+      <div className="summary-grid desktop-kpi-grid cashback-kpi-grid">
+        <div className="summary-card gold desktop-kpi-card">
+          <div className="desktop-kpi-header">
+            <span className="summary-lbl">Total Earned</span>
+            <span className="desktop-kpi-trend positive"><Gift size={14} /> All Time</span>
+          </div>
+          <span className="summary-val tabular-nums">{formatAmount(totalCashback, currency)}</span>
+        </div>
+
+        <div className="summary-card green desktop-kpi-card">
+          <div className="desktop-kpi-header">
+            <span className="summary-lbl">This Month</span>
+            <span className="desktop-kpi-trend positive">Active</span>
+          </div>
+          <span className="summary-val tabular-nums">{formatAmount(thisMonthCashback, currency)}</span>
+        </div>
+
+        <div className="summary-card slate desktop-kpi-card desktop-only-kpi">
+          <div className="desktop-kpi-header">
+            <span className="summary-lbl">Best Source</span>
+            <span className="desktop-kpi-trend neutral">Top Earner</span>
+          </div>
+          <span className="summary-val desktop-kpi-text">{bestSource}</span>
+        </div>
+
+        <div className="summary-card slate desktop-kpi-card desktop-only-kpi">
+          <div className="desktop-kpi-header">
+            <span className="summary-lbl">Total Rewards</span>
+            <span className="desktop-kpi-trend neutral">Entries</span>
+          </div>
+          <span className="summary-val tabular-nums">{entries.length} Logged</span>
+        </div>
       </div>
 
-      {sourceSorted.length > 0 && (
-        <div className="cb-source-list">
-          {sourceSorted.map(([src, amt]) => (
-            <div key={src} className="cb-source-row">
-              <span className="cb-source-name">{src}</span>
-              <span className="cb-source-amt">{formatAmount(amt, currency)}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
       <div className="content">
-        {!showForm ? (
-          <button className="btn-primary" onClick={() => setShowForm(true)}>+ Add Cashback</button>
-        ) : (
-          <form className="expense-form" onSubmit={handleAdd}>
+        {/* Ranked Cashback by Card / Source */}
+        {sourceSorted.length > 0 && (
+          <div className="desktop-card cb-ranked-card">
+            <h3 className="desktop-card-title">Cashback by Source</h3>
+            <div className="cb-source-list">
+              {sourceSorted.map(([src, amt]) => {
+                const pct = totalCashback > 0 ? Math.round((amt / totalCashback) * 100) : 0;
+                return (
+                  <div key={src} className="cb-source-row">
+                    <div className="cb-source-info">
+                      <span className="cb-source-name">{src}</span>
+                      <span className="cb-source-pct tabular-nums">{pct}%</span>
+                    </div>
+                    <div className="cb-source-bar-wrap">
+                      <div className="cb-source-bar-fill" style={{ width: `${pct}%` }} />
+                    </div>
+                    <span className="cb-source-amt tabular-nums">+{formatAmount(amt, currency)}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        <div className="section-header desktop-action-header">
+          <h3 className="section-title">Cashback History</h3>
+          {!showForm && (
+            <button type="button" className="btn-primary desktop-header-btn" onClick={() => setShowForm(true)}>
+              + Add Cashback
+            </button>
+          )}
+        </div>
+
+        {showForm && (
+          <form className="expense-form desktop-card" onSubmit={handleAdd}>
             <h3 className="form-title">Add Cashback</h3>
             {error && <p className="form-error">{error}</p>}
 
@@ -115,7 +178,7 @@ export default function Cashback({ currency }: Props) {
             </div>
 
             <div className="form-actions">
-              <button type="submit" className="btn-primary">Save</button>
+              <button type="submit" className="btn-primary">Save Entry</button>
               <button type="button" className="btn-secondary" onClick={() => setShowForm(false)}>Cancel</button>
             </div>
           </form>
@@ -128,28 +191,25 @@ export default function Cashback({ currency }: Props) {
             <p className="empty-sub">Track cashback from credit cards, apps, and offers.</p>
           </div>
         ) : (
-          <>
-            <h3 className="section-title">History</h3>
-            <ul className="expense-list">
-              {entries.map((e) => (
-                <li key={e.id} className="expense-item">
-                  <div className="expense-item-top">
-                    <div className="expense-item-left">
-                      <span className="expense-desc">{e.source}</span>
-                      <span className="expense-date">{fmtDate(e.date)}{e.note ? ` · ${e.note}` : ""}</span>
-                    </div>
-                    <div className="expense-item-right">
-                      <span className="expense-amount cashback-val">+{formatAmount(e.amount, currency)}</span>
-                    </div>
+          <ul className="expense-list desktop-grid-2">
+            {entries.map((e) => (
+              <li key={e.id} className="expense-item desktop-card">
+                <div className="expense-item-top">
+                  <div className="expense-item-left">
+                    <span className="expense-desc">{e.source}</span>
+                    <span className="expense-date">{fmtDate(e.date)}{e.note ? ` · ${e.note}` : ""}</span>
                   </div>
-                  <div className="expense-item-bottom">
-                    <span />
-                    <button className="exp-action-btn del" onClick={() => deleteEntry(e.id)}>Delete</button>
+                  <div className="expense-item-right">
+                    <span className="expense-amount cashback-val tabular-nums">+{formatAmount(e.amount, currency)}</span>
                   </div>
-                </li>
-              ))}
-            </ul>
-          </>
+                </div>
+                <div className="expense-item-bottom">
+                  <span />
+                  <button type="button" className="exp-action-btn del" onClick={() => deleteEntry(e.id)}>Delete</button>
+                </div>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </div>

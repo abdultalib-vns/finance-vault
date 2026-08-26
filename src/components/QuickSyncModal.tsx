@@ -67,42 +67,44 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
 
   // Polling & Countdown for Receiver
   useEffect(() => {
-    if (step === "qr" && syncCode) {
-      // Countdown
-      countdownRef.current = window.setInterval(() => {
-        setCountdown(prev => {
-          if (prev <= 1) {
-            if (countdownRef.current) clearInterval(countdownRef.current);
-            if (pollRef.current) clearInterval(pollRef.current);
-            setStep("error");
-            setError("Sync code has expired. Please generate a new one.");
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-
-      // Polling
-      pollRef.current = window.setInterval(async () => {
-        try {
-          const data = await pollSyncData(syncCode);
-          if (data) {
-            // Data received!
-            if (pollRef.current) clearInterval(pollRef.current);
-            if (countdownRef.current) clearInterval(countdownRef.current);
-            setEncryptedData(data);
-            setStep("decrypt");
-          }
-        } catch (err) {
-          // Silent fail for polling errors, keep trying unless it's a hard error
-        }
-      }, 3000);
-
-      return () => { 
-        if (countdownRef.current) clearInterval(countdownRef.current); 
-        if (pollRef.current) clearInterval(pollRef.current); 
-      };
+    if (step !== "qr" || !syncCode) {
+      return undefined;
     }
+
+    // Countdown
+    countdownRef.current = window.setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          if (countdownRef.current) clearInterval(countdownRef.current);
+          if (pollRef.current) clearInterval(pollRef.current);
+          setStep("error");
+          setError("Sync code has expired. Please generate a new one.");
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    // Polling
+    pollRef.current = window.setInterval(async () => {
+      try {
+        const data = await pollSyncData(syncCode);
+        if (data) {
+          // Data received!
+          if (pollRef.current) clearInterval(pollRef.current);
+          if (countdownRef.current) clearInterval(countdownRef.current);
+          setEncryptedData(data);
+          setStep("decrypt");
+        }
+      } catch (err) {
+        // Silent fail for polling errors, keep trying unless it's a hard error
+      }
+    }, 3000);
+
+    return () => { 
+      if (countdownRef.current) clearInterval(countdownRef.current); 
+      if (pollRef.current) clearInterval(pollRef.current); 
+    };
   }, [step, syncCode]);
 
   const formatTime = (secs: number) => {
