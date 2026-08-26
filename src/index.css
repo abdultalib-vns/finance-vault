@@ -6158,12 +6158,17 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
 .settings-left-col,
 .desktop-security-badge-card,
 .desktop-kpi-header .desktop-kpi-trend,
-.desktop-card-header,
 .desktop-card-title,
 .desktop-legend-table-wrap thead,
 .empty-allocation-card,
 .desktop-only-table {
   display: none !important;
+}
+
+.desktop-card-header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
 }
 
 /* Wrapper divs that exist for desktop grid layout but must be
