@@ -1,7 +1,7 @@
 import { LayoutDashboard, Building2, CheckCircle, Calendar, ChevronRight, Plus, DollarSign, Coins, TrendingUp, Minus, EyeOff, Eye, ClipboardList, Clock } from "lucide-react";
 import React, { useState, useMemo } from "react";
 import { FinanceItem, BankExpense } from "../types";
-import { Currency, formatAmount } from "../lib/currency";
+import { Currency, formatAmount, formatCompactAmount } from "../lib/currency";
 import { decryptData } from "../lib/crypto";
 import { loadBankExpenses, saveBankExpenses, saveItems, loadItems } from "../lib/storage";
 import RDDetail from "../components/RDDetail";
@@ -198,7 +198,7 @@ function OverviewTab({ items, currency, showAmounts, onSelectFD, onSelectRD }: {
       {/* Net Worth Card */}
       <div className="overview-hero">
         <span className="overview-hero-label"><Coins size={20} /> Total Net Worth</span>
-        <span className="overview-hero-amount">{showAmounts ? formatAmount(grandTotal, currency) : MASK}</span>
+        <span className="overview-hero-amount">{showAmounts ? formatCompactAmount(grandTotal, currency) : MASK}</span>
       </div>
 
       {/* Quick Stats Grid */}

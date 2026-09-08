@@ -1,7 +1,7 @@
 import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignLeft, Calendar, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowRight, Sparkles, AlertTriangle, X, Coins, CheckCircle, EyeOff, TrendingUp } from "lucide-react";
 import { useState, useEffect } from "react";
 import { FinanceItem } from "../types";
-import { Currency, formatAmount } from "../lib/currency";
+import { Currency, formatAmount, formatCompactAmount } from "../lib/currency";
 import { saveItems, loadExpenses, saveExpenses, loadBankExpenses, saveBankExpenses, suppressDueReminder, isDueReminderSuppressed, loadPayAndRecordEnabled } from "../lib/storage";
 import AddItemForm from "../components/AddItemForm";
 import ItemCard from "../components/ItemCard";
@@ -348,7 +348,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
               <span className="summary-lbl">Total Savings</span>
               <span className="desktop-kpi-trend positive"><ArrowUp size={14} /> +2.4%</span>
             </div>
-            <span className="summary-val tabular-nums">{formatAmount(savingsTotal, currency)}</span>
+            <span className="summary-val tabular-nums">{formatCompactAmount(savingsTotal, currency)}</span>
           </div>
 
           <div className="summary-card red desktop-kpi-card">
@@ -356,7 +356,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
               <span className="summary-lbl">Outstanding Dues</span>
               <span className="desktop-kpi-trend negative"><ArrowDown size={14} /> -1.2%</span>
             </div>
-            <span className="summary-val tabular-nums">{formatAmount(unpaidTotal, currency)}</span>
+            <span className="summary-val tabular-nums">{formatCompactAmount(unpaidTotal, currency)}</span>
           </div>
 
           <div className="summary-card gold desktop-kpi-card desktop-only-kpi">
@@ -398,7 +398,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
                   <div className="chart-donut">
                     <DonutChart data={chartData} />
                     <div className="chart-center-text">
-                      <span className="chart-center-val tabular-nums">{formatAmount(savingsTotal, currency)}</span>
+                      <span className="chart-center-val tabular-nums">{formatCompactAmount(savingsTotal, currency)}</span>
                       <span className="chart-center-lbl">Net Worth</span>
                     </div>
                   </div>

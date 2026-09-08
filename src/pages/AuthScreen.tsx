@@ -1,6 +1,9 @@
-import { customAlert, customConfirm } from "../components/CustomAlert";
-import { Lock, AlertTriangle , Key, Smartphone,  } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { customAlert } from "../components/CustomAlert";
+import { 
+  Lock, AlertTriangle, Key, Smartphone, Fingerprint, 
+  ShieldCheck, ArrowRight, Eye, EyeOff, Delete, Sparkles, Shield
+} from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 import { hashPin } from "../lib/crypto";
 import {
   loadPinHash, savePinHash,
@@ -50,9 +53,11 @@ export default function AuthScreen({ onUnlock }: Props) {
   const [newPin, setNewPin] = useState("");
   const [confirmNewPin, setConfirmNewPin] = useState("");
   const [error, setError] = useState("");
+  const [isShaking, setIsShaking] = useState(false);
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [bioReady, setBioReady] = useState(false);
   const [bioLoading, setBioLoading] = useState(false);
+  const [showPlainPin, setShowPlainPin] = useState(false);
   const [installPromptEvent, setInstallPromptEvent] = useState<any>(null);
   const [showInstallPopup, setShowInstallPopup] = useState(false);
 
@@ -113,10 +118,43 @@ export default function AuthScreen({ onUnlock }: Props) {
     }
   }
 
+  function triggerError(msg: string) {
+    setError(msg);
+    setIsShaking(true);
+    setTimeout(() => setIsShaking(false), 500);
+  }
+
   function clearFields() {
     setPin(""); setConfirmPin(""); setSecAnswer("");
     setRecoverAnswer(""); setNewPin(""); setConfirmNewPin("");
     setError("");
+  }
+
+  // ── KEYPAD ACTIONS ─────────────────────────────────────────────
+  function handleDigitPress(digit: string) {
+    setError("");
+    if (step === "pin-enter" || step === "unlock") {
+      if (pin.length < 12) setPin((prev) => prev + digit);
+    } else if (step === "pin-confirm") {
+      if (confirmPin.length < 12) setConfirmPin((prev) => prev + digit);
+    } else if (step === "recover-pin") {
+      if (newPin.length < 12) setNewPin((prev) => prev + digit);
+    } else if (step === "recover-confirm") {
+      if (confirmNewPin.length < 12) setConfirmNewPin((prev) => prev + digit);
+    }
+  }
+
+  function handleDeletePress() {
+    setError("");
+    if (step === "pin-enter" || step === "unlock") {
+      setPin((prev) => prev.slice(0, -1));
+    } else if (step === "pin-confirm") {
+      setConfirmPin((prev) => prev.slice(0, -1));
+    } else if (step === "recover-pin") {
+      setNewPin((prev) => prev.slice(0, -1));
+    } else if (step === "recover-confirm") {
+      setConfirmNewPin((prev) => prev.slice(0, -1));
+    }
   }
 
   // ── NEW USER FLOW ──────────────────────────────────────────────
@@ -125,7 +163,10 @@ export default function AuthScreen({ onUnlock }: Props) {
     setError("");
 
     if (step === "pin-enter") {
-      if (pin.length < 4) { setError("PIN must be at least 4 digits."); return; }
+      if (pin.length < 4) { 
+        triggerError("PIN must be at least 4 digits."); 
+        return; 
+      }
       setStep("pin-confirm");
       setConfirmPin("");
       return;
@@ -133,7 +174,7 @@ export default function AuthScreen({ onUnlock }: Props) {
 
     if (step === "pin-confirm") {
       if (confirmPin !== pin) {
-        setError("PINs do not match. Try again.");
+        triggerError("PINs do not match. Try again.");
         setPin(""); setConfirmPin(""); setStep("pin-enter");
         return;
       }
@@ -143,8 +184,14 @@ export default function AuthScreen({ onUnlock }: Props) {
     }
 
     if (step === "security-setup") {
-      if (!secAnswer.trim()) { setError("Please enter an answer."); return; }
-      if (secAnswer.trim().length < 2) { setError("Answer is too short."); return; }
+      if (!secAnswer.trim()) { 
+        triggerError("Please enter an answer."); 
+        return; 
+      }
+      if (secAnswer.trim().length < 2) { 
+        triggerError("Answer is too short."); 
+        return; 
+      }
       savePinHash(hashPin(pin));
       saveSecurityQuestion(secQIdx);
       saveSecurityAnswerHash(hashPin(secAnswer.trim().toLowerCase()));
@@ -153,18 +200,23 @@ export default function AuthScreen({ onUnlock }: Props) {
   }
 
   // ── EXISTING USER UNLOCK ───────────────────────────────────────
-  function handleUnlockSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  function handleUnlockSubmit(e?: React.FormEvent) {
+    if (e) e.preventDefault();
     setError("");
+
+    if (!pin) {
+      triggerError("Please enter your Master PIN.");
+      return;
+    }
 
     if (hashPin(pin) !== existingHash) {
       const next = failedAttempts + 1;
       setFailedAttempts(next);
       setPin("");
       if (next >= MAX_ATTEMPTS) {
-        setError(`Incorrect PIN. ${MAX_ATTEMPTS} failed attempts reached.`);
+        triggerError(`Incorrect PIN. ${MAX_ATTEMPTS} failed attempts reached.`);
       } else {
-        setError(`Incorrect PIN. ${MAX_ATTEMPTS - next} attempt${MAX_ATTEMPTS - next !== 1 ? "s" : ""} left.`);
+        triggerError(`Incorrect PIN. ${MAX_ATTEMPTS - next} attempt${MAX_ATTEMPTS - next !== 1 ? "s" : ""} left.`);
       }
       return;
     }
@@ -177,9 +229,9 @@ export default function AuthScreen({ onUnlock }: Props) {
     e.preventDefault();
     setError("");
     const savedHash = loadSecurityAnswerHash();
-    if (!savedHash) { setError("No security question set."); return; }
+    if (!savedHash) { triggerError("No security question set."); return; }
     if (hashPin(recoverAnswer.trim().toLowerCase()) !== savedHash) {
-      setError("Incorrect answer. Please try again.");
+      triggerError("Incorrect answer. Please try again.");
       setRecoverAnswer("");
       return;
     }
@@ -190,7 +242,7 @@ export default function AuthScreen({ onUnlock }: Props) {
   function handleRecoverNewPin(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (newPin.length < 4) { setError("PIN must be at least 4 digits."); return; }
+    if (newPin.length < 4) { triggerError("PIN must be at least 4 digits."); return; }
     setStep("recover-confirm");
     setConfirmNewPin("");
   }
@@ -199,7 +251,7 @@ export default function AuthScreen({ onUnlock }: Props) {
     e.preventDefault();
     setError("");
     if (confirmNewPin !== newPin) {
-      setError("PINs do not match. Try again.");
+      triggerError("PINs do not match. Try again.");
       setNewPin(""); setConfirmNewPin(""); setStep("recover-pin");
       return;
     }
@@ -221,7 +273,7 @@ export default function AuthScreen({ onUnlock }: Props) {
       }
       onUnlock(recovered);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Biometric login failed.");
+      triggerError(err instanceof Error ? err.message : "Biometric authentication failed.");
     } finally {
       setBioLoading(false);
     }
@@ -230,177 +282,618 @@ export default function AuthScreen({ onUnlock }: Props) {
   const hasSQ = hasSecurityQuestion();
   const savedQIdx = loadSecurityQuestion() ?? 0;
 
+  // Active PIN value based on step
+  const activePinValue = 
+    step === "pin-enter" ? pin :
+    step === "pin-confirm" ? confirmPin :
+    step === "recover-pin" ? newPin :
+    step === "recover-confirm" ? confirmNewPin :
+    pin;
+
+  const isPinStep = 
+    step === "unlock" || 
+    step === "pin-enter" || 
+    step === "pin-confirm" || 
+    step === "recover-pin" || 
+    step === "recover-confirm";
+
+  // Visual PIN Dots Component
+  const renderPinDots = () => {
+    const minSlots = 4;
+    const totalSlots = Math.max(minSlots, Math.min(8, activePinValue.length));
+    return (
+      <div 
+        className={`auth-pin-pips-wrap ${isShaking ? "shake" : ""}`}
+        onClick={() => pinRef.current?.focus()}
+        title="Tap to focus keyboard"
+      >
+        <div className="auth-pin-pips-container">
+          {Array.from({ length: totalSlots }).map((_, i) => {
+            const isFilled = i < activePinValue.length;
+            return (
+              <div 
+                key={i} 
+                className={`auth-pin-pip ${isFilled ? "filled" : ""}`}
+              >
+                {isFilled && <span className="auth-pip-pulse" />}
+              </div>
+            );
+          })}
+        </div>
+        {activePinValue.length > 0 && (
+          <button
+            type="button"
+            className="auth-pin-peek-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowPlainPin(!showPlainPin);
+            }}
+            title={showPlainPin ? "Hide PIN" : "Show PIN"}
+          >
+            {showPlainPin ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
+        )}
+      </div>
+    );
+  };
+
   // ── RENDER ────────────────────────────────────────────────────
   return (
-    <div className="auth-screen">
-      <div className="auth-card">
-        <div className="auth-logo" style={{ background: "transparent", display: "flex", justifyContent: "center" }}>
-          <img src="/icon-512.png" alt="FinAura" style={{ width: "80px", height: "80px", borderRadius: "20px" }} />
+    <div className="auth-screen-luxury">
+      {/* Dynamic Ambient Radiant Mesh Background */}
+      <div className="auth-ambient-glow" />
+      <div className="auth-ambient-glow-secondary" />
+
+      <div className="auth-luxury-card">
+        {/* Brand Vault Emblem */}
+        <div className="auth-brand-badge-wrap">
+          <div className="auth-brand-halo">
+            <img src="/icon-512.png" alt="FinAura" className="auth-brand-logo-img" />
+          </div>
         </div>
-        <h1 className="auth-title">FinAura</h1>
+
+        <div className="auth-header-text">
+          <h1 className="auth-brand-name">FinAura</h1>
+          <div className="auth-security-pill">
+            <Shield size={12} className="auth-security-icon" />
+            <span>PERSONAL VAULT</span>
+          </div>
+        </div>
+
+        {/* ── EXISTING USER: Unlock ── */}
+        {step === "unlock" && (
+          <div className="auth-step-container">
+            <h2 className="auth-step-title">Welcome Back</h2>
+            <p className="auth-step-sub">Enter your Master PIN to unlock your vault</p>
+
+            {/* Visual Indicator Dots */}
+            {renderPinDots()}
+
+            {/* Form for physical keyboard & screen readers */}
+            <form className="auth-form-hidden" onSubmit={handleUnlockSubmit}>
+              <input
+                ref={pinRef}
+                type={showPlainPin ? "text" : "password"}
+                inputMode="numeric"
+                maxLength={12}
+                autoComplete="off"
+                data-lpignore="true"
+                data-1p-ignore
+                className="auth-hidden-input"
+                placeholder="Enter PIN"
+                autoFocus
+                value={pin}
+                onChange={(e) => {
+                  setPin(e.target.value);
+                  setError("");
+                }}
+              />
+            </form>
+
+            {error && (
+              <div className="auth-luxury-error">
+                <AlertTriangle size={15} />
+                <span>{error}</span>
+              </div>
+            )}
+
+            {/* Quick Touch Keypad for Mobile / Seamless Entry */}
+            <div className="auth-keypad">
+              <div className="auth-keypad-row">
+                {["1", "2", "3"].map((d) => (
+                  <button key={d} type="button" className="auth-keypad-btn" onClick={() => handleDigitPress(d)}>{d}</button>
+                ))}
+              </div>
+              <div className="auth-keypad-row">
+                {["4", "5", "6"].map((d) => (
+                  <button key={d} type="button" className="auth-keypad-btn" onClick={() => handleDigitPress(d)}>{d}</button>
+                ))}
+              </div>
+              <div className="auth-keypad-row">
+                {["7", "8", "9"].map((d) => (
+                  <button key={d} type="button" className="auth-keypad-btn" onClick={() => handleDigitPress(d)}>{d}</button>
+                ))}
+              </div>
+              <div className="auth-keypad-row">
+                {bioReady ? (
+                  <button 
+                    type="button" 
+                    className="auth-keypad-btn bio-key-btn" 
+                    onClick={handleBiometric} 
+                    disabled={bioLoading}
+                    title="Unlock with Biometric"
+                  >
+                    <Fingerprint size={24} color="#10B981" />
+                  </button>
+                ) : (
+                  <div className="auth-keypad-placeholder" />
+                )}
+                <button type="button" className="auth-keypad-btn" onClick={() => handleDigitPress("0")}>0</button>
+                <button 
+                  type="button" 
+                  className="auth-keypad-btn del-key-btn" 
+                  onClick={handleDeletePress} 
+                  title="Delete"
+                >
+                  <Delete size={20} />
+                </button>
+              </div>
+            </div>
+
+            {/* Unlock Action Button */}
+            <button 
+              type="button" 
+              className="auth-luxury-primary-btn"
+              onClick={() => handleUnlockSubmit()}
+              disabled={pin.length < 4}
+            >
+              <span>Unlock Vault</span>
+              <ArrowRight size={18} />
+            </button>
+
+            {/* Biometric Banner Option */}
+            {bioReady && (
+              <button 
+                type="button" 
+                className="auth-bio-quick-btn" 
+                onClick={handleBiometric} 
+                disabled={bioLoading}
+              >
+                <Fingerprint size={18} />
+                <span>{bioLoading ? "Verifying Identity…" : "Sign in with Biometric"}</span>
+              </button>
+            )}
+
+            {/* Recovery Option */}
+            {failedAttempts >= MAX_ATTEMPTS && hasSQ && (
+              <button
+                type="button"
+                className="auth-recover-link"
+                onClick={() => { clearFields(); setStep("recover-check"); }}
+              >
+                <Key size={14} />
+                <span>Forgot PIN? Recover with Security Question</span>
+              </button>
+            )}
+          </div>
+        )}
 
         {/* ── NEW USER: Enter PIN ── */}
         {step === "pin-enter" && (
-          <>
-            <p className="auth-subtitle">Create your Master PIN to secure your data</p>
-            <form className="auth-form" onSubmit={handleNewUserSubmit}>
-              <input ref={pinRef} type="text" inputMode="numeric" maxLength={20}
-                autoComplete="off" data-lpignore="true" data-1p-ignore
-                className="pin-input" placeholder="Enter PIN" autoFocus
-                style={{ WebkitTextSecurity: 'disc' } as any}
-                value={pin} onChange={(e) => { setPin(e.target.value); setError(""); }} />
-              {error && <p className="auth-error">{error}</p>}
-              <button type="submit" className="btn-primary auth-btn">Next</button>
+          <div className="auth-step-container">
+            <h2 className="auth-step-title">Create Master PIN</h2>
+            <p className="auth-step-sub">Set a secure PIN to encrypt your personal vault</p>
+
+            {renderPinDots()}
+
+            <form className="auth-form-hidden" onSubmit={handleNewUserSubmit}>
+              <input
+                ref={pinRef}
+                type={showPlainPin ? "text" : "password"}
+                inputMode="numeric"
+                maxLength={12}
+                autoComplete="off"
+                data-lpignore="true"
+                data-1p-ignore
+                className="auth-hidden-input"
+                placeholder="Enter PIN"
+                autoFocus
+                value={pin}
+                onChange={(e) => {
+                  setPin(e.target.value);
+                  setError("");
+                }}
+              />
             </form>
-            <p className="auth-warning"><AlertTriangle size={20} /> Your PIN encrypts all data. If lost, data cannot be recovered without your security answer.</p>
-          </>
+
+            {error && (
+              <div className="auth-luxury-error">
+                <AlertTriangle size={15} />
+                <span>{error}</span>
+              </div>
+            )}
+
+            {/* Keypad */}
+            <div className="auth-keypad">
+              <div className="auth-keypad-row">
+                {["1", "2", "3"].map((d) => (
+                  <button key={d} type="button" className="auth-keypad-btn" onClick={() => handleDigitPress(d)}>{d}</button>
+                ))}
+              </div>
+              <div className="auth-keypad-row">
+                {["4", "5", "6"].map((d) => (
+                  <button key={d} type="button" className="auth-keypad-btn" onClick={() => handleDigitPress(d)}>{d}</button>
+                ))}
+              </div>
+              <div className="auth-keypad-row">
+                {["7", "8", "9"].map((d) => (
+                  <button key={d} type="button" className="auth-keypad-btn" onClick={() => handleDigitPress(d)}>{d}</button>
+                ))}
+              </div>
+              <div className="auth-keypad-row">
+                <div className="auth-keypad-placeholder" />
+                <button type="button" className="auth-keypad-btn" onClick={() => handleDigitPress("0")}>0</button>
+                <button type="button" className="auth-keypad-btn del-key-btn" onClick={handleDeletePress}>
+                  <Delete size={20} />
+                </button>
+              </div>
+            </div>
+
+            <button 
+              type="button" 
+              className="auth-luxury-primary-btn"
+              onClick={handleNewUserSubmit}
+              disabled={pin.length < 4}
+            >
+              <span>Next: Confirm PIN</span>
+              <ArrowRight size={18} />
+            </button>
+
+            <p className="auth-luxury-footnote">
+              <ShieldCheck size={14} color="#10B981" />
+              <span>Your PIN encrypts your financial data directly on this device.</span>
+            </p>
+          </div>
         )}
 
         {/* ── NEW USER: Confirm PIN ── */}
         {step === "pin-confirm" && (
-          <>
-            <p className="auth-subtitle">Confirm your Master PIN</p>
-            <form className="auth-form" onSubmit={handleNewUserSubmit}>
-              <input ref={pinRef} type="text" inputMode="numeric" maxLength={20}
-                autoComplete="off" data-lpignore="true" data-1p-ignore
-                className="pin-input" placeholder="Confirm PIN" autoFocus
-                style={{ WebkitTextSecurity: 'disc' } as any}
-                value={confirmPin} onChange={(e) => { setConfirmPin(e.target.value); setError(""); }} />
-              {error && <p className="auth-error">{error}</p>}
-              <button type="submit" className="btn-primary auth-btn">Confirm PIN</button>
-              <button type="button" className="btn-secondary" onClick={() => { setStep("pin-enter"); clearFields(); }}>Back</button>
+          <div className="auth-step-container">
+            <h2 className="auth-step-title">Confirm Master PIN</h2>
+            <p className="auth-step-sub">Re-enter your PIN to verify</p>
+
+            {renderPinDots()}
+
+            <form className="auth-form-hidden" onSubmit={handleNewUserSubmit}>
+              <input
+                ref={pinRef}
+                type={showPlainPin ? "text" : "password"}
+                inputMode="numeric"
+                maxLength={12}
+                autoComplete="off"
+                data-lpignore="true"
+                data-1p-ignore
+                className="auth-hidden-input"
+                placeholder="Confirm PIN"
+                autoFocus
+                value={confirmPin}
+                onChange={(e) => {
+                  setConfirmPin(e.target.value);
+                  setError("");
+                }}
+              />
             </form>
-          </>
+
+            {error && (
+              <div className="auth-luxury-error">
+                <AlertTriangle size={15} />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <div className="auth-keypad">
+              <div className="auth-keypad-row">
+                {["1", "2", "3"].map((d) => (
+                  <button key={d} type="button" className="auth-keypad-btn" onClick={() => handleDigitPress(d)}>{d}</button>
+                ))}
+              </div>
+              <div className="auth-keypad-row">
+                {["4", "5", "6"].map((d) => (
+                  <button key={d} type="button" className="auth-keypad-btn" onClick={() => handleDigitPress(d)}>{d}</button>
+                ))}
+              </div>
+              <div className="auth-keypad-row">
+                {["7", "8", "9"].map((d) => (
+                  <button key={d} type="button" className="auth-keypad-btn" onClick={() => handleDigitPress(d)}>{d}</button>
+                ))}
+              </div>
+              <div className="auth-keypad-row">
+                <div className="auth-keypad-placeholder" />
+                <button type="button" className="auth-keypad-btn" onClick={() => handleDigitPress("0")}>0</button>
+                <button type="button" className="auth-keypad-btn del-key-btn" onClick={handleDeletePress}>
+                  <Delete size={20} />
+                </button>
+              </div>
+            </div>
+
+            <button 
+              type="button" 
+              className="auth-luxury-primary-btn"
+              onClick={handleNewUserSubmit}
+              disabled={confirmPin.length < 4}
+            >
+              <span>Confirm & Continue</span>
+              <ArrowRight size={18} />
+            </button>
+
+            <button 
+              type="button" 
+              className="auth-luxury-secondary-btn" 
+              onClick={() => { setStep("pin-enter"); clearFields(); }}
+            >
+              Change PIN
+            </button>
+          </div>
         )}
 
         {/* ── NEW USER: Security Question Setup ── */}
         {step === "security-setup" && (
-          <>
-            <p className="auth-subtitle">Set a security question for account recovery</p>
-            <form className="auth-form" onSubmit={handleNewUserSubmit}>
-              <div className="sq-list">
+          <div className="auth-step-container">
+            <h2 className="auth-step-title">Security Recovery</h2>
+            <p className="auth-step-sub">Select a recovery question to restore access if you forget your PIN</p>
+
+            <form onSubmit={handleNewUserSubmit} className="auth-setup-form">
+              <div className="auth-sq-grid">
                 {SECURITY_QUESTIONS.map((q, i) => (
                   <button
                     key={i}
                     type="button"
-                    className={`sq-option${secQIdx === i ? " active" : ""}`}
+                    className={`auth-sq-card ${secQIdx === i ? "active" : ""}`}
                     onClick={() => setSecQIdx(i)}
                   >
-                    {q}
+                    <span className="auth-sq-radio-dot" />
+                    <span>{q}</span>
                   </button>
                 ))}
               </div>
-              <input
-                ref={pinRef}
-                type="text"
-                className="pin-input"
-                placeholder="Your answer"
-                autoFocus
-                value={secAnswer}
-                onChange={(e) => { setSecAnswer(e.target.value); setError(""); }}
-              />
-              {error && <p className="auth-error">{error}</p>}
-              <p className="auth-sq-hint">Answer is case-insensitive and saved securely.</p>
-              <button type="submit" className="btn-primary auth-btn">Finish Setup</button>
-            </form>
-          </>
-        )}
 
-        {/* ── EXISTING USER: Unlock ── */}
-        {step === "unlock" && (
-          <>
-            <p className="auth-subtitle">Enter your Master PIN to continue</p>
-            <form className="auth-form" onSubmit={handleUnlockSubmit}>
-              <input ref={pinRef} type="text" inputMode="numeric" maxLength={20}
-                autoComplete="off" data-lpignore="true" data-1p-ignore
-                className="pin-input" placeholder="Enter PIN" autoFocus
-                style={{ WebkitTextSecurity: 'disc' } as any}
-                value={pin} onChange={(e) => { setPin(e.target.value); setError(""); }} />
-              {error && <p className="auth-error">{error}</p>}
-              <button type="submit" className="btn-primary auth-btn">Unlock</button>
+              <div className="auth-answer-input-wrap">
+                <input
+                  ref={pinRef}
+                  type="text"
+                  className="auth-answer-input"
+                  placeholder="Enter your security answer…"
+                  autoFocus
+                  value={secAnswer}
+                  onChange={(e) => { setSecAnswer(e.target.value); setError(""); }}
+                />
+              </div>
 
-              {failedAttempts >= MAX_ATTEMPTS && hasSQ && (
-                <button
-                  type="button"
-                  className="btn-recover"
-                  onClick={() => { clearFields(); setStep("recover-check"); }}
-                >
-                  <><Key size={16} /> Recover your password</>
-                </button>
+              {error && (
+                <div className="auth-luxury-error">
+                  <AlertTriangle size={15} />
+                  <span>{error}</span>
+                </div>
               )}
-            </form>
 
-            {bioReady && (
-              <>
-                <div className="auth-divider"><span>or</span></div>
-                <button type="button" className="btn-bio" onClick={handleBiometric} disabled={bioLoading}>
-                  {bioLoading ? "Authenticating…" : <><Lock size={20} /> Sign in with Biometric</>}
-                </button>
-              </>
-            )}
-            <p className="auth-warning"><AlertTriangle size={20} /> Your PIN encrypts all data.</p>
-          </>
+              <p className="auth-sq-hint">
+                <Sparkles size={13} color="#F59E0B" />
+                <span>Answers are case-insensitive and hashed securely on your device.</span>
+              </p>
+
+              <button type="submit" className="auth-luxury-primary-btn">
+                <span>Complete Vault Setup</span>
+                <ArrowRight size={18} />
+              </button>
+            </form>
+          </div>
         )}
 
         {/* ── RECOVERY: Check Security Answer ── */}
         {step === "recover-check" && (
-          <>
-            <p className="auth-subtitle">Answer your security question to reset your PIN</p>
-            <form className="auth-form" onSubmit={handleRecoverCheck}>
-              <div className="sq-display">{SECURITY_QUESTIONS[savedQIdx]}</div>
-              <input ref={pinRef} type="text" className="pin-input"
-                placeholder="Your answer" autoFocus
-                value={recoverAnswer} onChange={(e) => { setRecoverAnswer(e.target.value); setError(""); }} />
-              {error && <p className="auth-error">{error}</p>}
-              <button type="submit" className="btn-primary auth-btn">Verify Answer</button>
-              <button type="button" className="btn-secondary" onClick={() => { clearFields(); setFailedAttempts(0); setStep("unlock"); }}>Back to Login</button>
+          <div className="auth-step-container">
+            <h2 className="auth-step-title">Account Recovery</h2>
+            <p className="auth-step-sub">Answer your security question to reset your Master PIN</p>
+
+            <form onSubmit={handleRecoverCheck} className="auth-setup-form">
+              <div className="auth-sq-active-display">
+                <Key size={18} color="#F59E0B" />
+                <span>{SECURITY_QUESTIONS[savedQIdx]}</span>
+              </div>
+
+              <div className="auth-answer-input-wrap">
+                <input
+                  ref={pinRef}
+                  type="text"
+                  className="auth-answer-input"
+                  placeholder="Enter your answer…"
+                  autoFocus
+                  value={recoverAnswer}
+                  onChange={(e) => { setRecoverAnswer(e.target.value); setError(""); }}
+                />
+              </div>
+
+              {error && (
+                <div className="auth-luxury-error">
+                  <AlertTriangle size={15} />
+                  <span>{error}</span>
+                </div>
+              )}
+
+              <button type="submit" className="auth-luxury-primary-btn">
+                <span>Verify Answer</span>
+                <ArrowRight size={18} />
+              </button>
+
+              <button
+                type="button"
+                className="auth-luxury-secondary-btn"
+                onClick={() => { clearFields(); setFailedAttempts(0); setStep("unlock"); }}
+              >
+                Back to Login
+              </button>
             </form>
-          </>
+          </div>
         )}
 
         {/* ── RECOVERY: Enter New PIN ── */}
         {step === "recover-pin" && (
-          <>
-            <p className="auth-subtitle">Create a new Master PIN</p>
-            <form className="auth-form" onSubmit={handleRecoverNewPin}>
-              <input ref={pinRef} type="text" inputMode="numeric" maxLength={20}
-                autoComplete="off" data-lpignore="true" data-1p-ignore
-                className="pin-input" placeholder="Enter New PIN" autoFocus
-                style={{ WebkitTextSecurity: 'disc' } as any}
-                value={newPin} onChange={(e) => { setNewPin(e.target.value); setError(""); }} />
-              {error && <p className="auth-error">{error}</p>}
-              <button type="submit" className="btn-primary auth-btn">Next</button>
+          <div className="auth-step-container">
+            <h2 className="auth-step-title">Reset Master PIN</h2>
+            <p className="auth-step-sub">Enter a new Master PIN for your vault</p>
+
+            {renderPinDots()}
+
+            <form className="auth-form-hidden" onSubmit={handleRecoverNewPin}>
+              <input
+                ref={pinRef}
+                type={showPlainPin ? "text" : "password"}
+                inputMode="numeric"
+                maxLength={12}
+                autoComplete="off"
+                data-lpignore="true"
+                data-1p-ignore
+                className="auth-hidden-input"
+                placeholder="Enter New PIN"
+                autoFocus
+                value={newPin}
+                onChange={(e) => { setNewPin(e.target.value); setError(""); }}
+              />
             </form>
-          </>
+
+            {error && (
+              <div className="auth-luxury-error">
+                <AlertTriangle size={15} />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <div className="auth-keypad">
+              <div className="auth-keypad-row">
+                {["1", "2", "3"].map((d) => (
+                  <button key={d} type="button" className="auth-keypad-btn" onClick={() => handleDigitPress(d)}>{d}</button>
+                ))}
+              </div>
+              <div className="auth-keypad-row">
+                {["4", "5", "6"].map((d) => (
+                  <button key={d} type="button" className="auth-keypad-btn" onClick={() => handleDigitPress(d)}>{d}</button>
+                ))}
+              </div>
+              <div className="auth-keypad-row">
+                {["7", "8", "9"].map((d) => (
+                  <button key={d} type="button" className="auth-keypad-btn" onClick={() => handleDigitPress(d)}>{d}</button>
+                ))}
+              </div>
+              <div className="auth-keypad-row">
+                <div className="auth-keypad-placeholder" />
+                <button type="button" className="auth-keypad-btn" onClick={() => handleDigitPress("0")}>0</button>
+                <button type="button" className="auth-keypad-btn del-key-btn" onClick={handleDeletePress}>
+                  <Delete size={20} />
+                </button>
+              </div>
+            </div>
+
+            <button 
+              type="button" 
+              className="auth-luxury-primary-btn"
+              onClick={handleRecoverNewPin}
+              disabled={newPin.length < 4}
+            >
+              <span>Next: Confirm New PIN</span>
+              <ArrowRight size={18} />
+            </button>
+          </div>
         )}
 
         {/* ── RECOVERY: Confirm New PIN ── */}
         {step === "recover-confirm" && (
-          <>
-            <p className="auth-subtitle">Confirm your new Master PIN</p>
-            <form className="auth-form" onSubmit={handleRecoverConfirm}>
-              <input ref={pinRef} type="text" inputMode="numeric" maxLength={20}
-                autoComplete="off" data-lpignore="true" data-1p-ignore
-                className="pin-input" placeholder="Confirm New PIN" autoFocus
-                style={{ WebkitTextSecurity: 'disc' } as any}
-                value={confirmNewPin} onChange={(e) => { setConfirmNewPin(e.target.value); setError(""); }} />
-              {error && <p className="auth-error">{error}</p>}
-              <button type="submit" className="btn-primary auth-btn">Save New PIN</button>
+          <div className="auth-step-container">
+            <h2 className="auth-step-title">Confirm New PIN</h2>
+            <p className="auth-step-sub">Re-enter your new PIN to complete reset</p>
+
+            {renderPinDots()}
+
+            <form className="auth-form-hidden" onSubmit={handleRecoverConfirm}>
+              <input
+                ref={pinRef}
+                type={showPlainPin ? "text" : "password"}
+                inputMode="numeric"
+                maxLength={12}
+                autoComplete="off"
+                data-lpignore="true"
+                data-1p-ignore
+                className="auth-hidden-input"
+                placeholder="Confirm New PIN"
+                autoFocus
+                value={confirmNewPin}
+                onChange={(e) => { setConfirmNewPin(e.target.value); setError(""); }}
+              />
             </form>
-          </>
+
+            {error && (
+              <div className="auth-luxury-error">
+                <AlertTriangle size={15} />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <div className="auth-keypad">
+              <div className="auth-keypad-row">
+                {["1", "2", "3"].map((d) => (
+                  <button key={d} type="button" className="auth-keypad-btn" onClick={() => handleDigitPress(d)}>{d}</button>
+                ))}
+              </div>
+              <div className="auth-keypad-row">
+                {["4", "5", "6"].map((d) => (
+                  <button key={d} type="button" className="auth-keypad-btn" onClick={() => handleDigitPress(d)}>{d}</button>
+                ))}
+              </div>
+              <div className="auth-keypad-row">
+                {["7", "8", "9"].map((d) => (
+                  <button key={d} type="button" className="auth-keypad-btn" onClick={() => handleDigitPress(d)}>{d}</button>
+                ))}
+              </div>
+              <div className="auth-keypad-row">
+                <div className="auth-keypad-placeholder" />
+                <button type="button" className="auth-keypad-btn" onClick={() => handleDigitPress("0")}>0</button>
+                <button type="button" className="auth-keypad-btn del-key-btn" onClick={handleDeletePress}>
+                  <Delete size={20} />
+                </button>
+              </div>
+            </div>
+
+            <button 
+              type="button" 
+              className="auth-luxury-primary-btn"
+              onClick={handleRecoverConfirm}
+              disabled={confirmNewPin.length < 4}
+            >
+              <span>Save & Unlock Vault</span>
+              <ArrowRight size={18} />
+            </button>
+          </div>
         )}
+
+        {/* Luxury Trust Badge Footer */}
+        <div className="auth-trust-badge">
+          <ShieldCheck size={14} className="auth-trust-icon" />
+          <span>256-Bit Client Encrypted • Zero Server Knowledge</span>
+        </div>
       </div>
 
+      {/* PWA Floating Install Banner */}
       {showInstallPopup && (
-        <div className="install-popup-overlay">
-          <div className="install-popup-icon"><Smartphone size={40} /></div>
-          <div className="install-popup-content">
-            <h3>Install FinAura</h3>
-            <p>Get the app for a secure, fullscreen native experience!</p>
+        <div className="auth-luxury-install-banner">
+          <div className="auth-install-icon-box">
+            <Smartphone size={22} color="#F59E0B" />
           </div>
-          <div className="install-popup-actions">
-            <button className="btn-install" onClick={handleInstall}>Install</button>
-            <button className="btn-later" onClick={() => setShowInstallPopup(false)}>Later</button>
+          <div className="auth-install-content">
+            <h4>Install FinAura App</h4>
+            <p>Native fullscreen experience with biometric support</p>
+          </div>
+          <div className="auth-install-actions">
+            <button className="auth-install-btn-ok" onClick={handleInstall}>Install</button>
+            <button className="auth-install-btn-dismiss" onClick={() => setShowInstallPopup(false)}>Later</button>
           </div>
         </div>
       )}

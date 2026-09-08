@@ -6,13 +6,15 @@ import {
 } from "lucide-react";
 import { FinanceItem, PaymentIntent } from "../types";
 import { loadItems, savePaymentIntents, loadPaymentIntents, loadCurrency } from "../lib/storage";
-import { getCurrency, formatAmount, Currency } from "../lib/currency";
+import { getCurrency, formatAmount, formatCompactAmount, getCompactDenominationHint, Currency } from "../lib/currency";
 
 export interface PaymentAppOption {
   name: string;
   icon: string;
   url: string;
   fallbackText: string;
+  androidPackage?: string;
+  iosScheme?: string;
 }
 
 export const PAYMENT_APPS: PaymentAppOption[] = [
@@ -20,50 +22,74 @@ export const PAYMENT_APPS: PaymentAppOption[] = [
     name: "Google Pay", 
     icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyVO9LUWF81Ov6LZR50eDNu5rNFCpkn0LwYQ&s", 
     url: "https://pay.google.com",
-    fallbackText: "GPay"
+    fallbackText: "GPay",
+    androidPackage: "com.google.android.apps.nbu.paisa.user",
+    iosScheme: "gpay://"
   },
   { 
     name: "PhonePe", 
     icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTo4x8kSTmPUq4PFzl4HNT0gObFuEhivHOFYg&s", 
     url: "https://www.phonepe.com",
-    fallbackText: "Pe"
+    fallbackText: "Pe",
+    androidPackage: "com.phonepe.app",
+    iosScheme: "phonepe://"
   },
   { 
     name: "Paytm", 
     icon: "https://images.icon-icons.com/730/PNG/512/paytm_icon-icons.com_62778.png", 
     url: "https://paytm.com",
-    fallbackText: "Paytm"
+    fallbackText: "Paytm",
+    androidPackage: "net.one97.paytm",
+    iosScheme: "paytmmp://"
   },
   { 
     name: "CRED", 
     icon: "https://www.pngall.com/wp-content/uploads/16/Cred-Logo-PNG-Picture-thumb.png", 
     url: "https://cred.club",
-    fallbackText: "CRED"
+    fallbackText: "CRED",
+    androidPackage: "com.dreamplug.androidapp",
+    iosScheme: "cred://"
   },
   { 
     name: "Amazon Pay", 
     icon: "https://static.vecteezy.com/system/resources/thumbnails/073/494/118/small_2x/amazon-pay-logo-modern-circular-icon-with-transparent-background-free-png.png", 
     url: "https://www.amazon.com/pay",
-    fallbackText: "Amazon"
+    fallbackText: "Amazon",
+    androidPackage: "in.amazon.mShop.android.shopping",
+    iosScheme: "amazon://"
   },
   { 
     name: "Navi", 
-    icon: "https://play-lh.googleusercontent.com/odLHWIoUXt-09eYccaFf_zmF8yiLR3iPqRjzwUWc_xUAJrcHFao_23CcuqrOJBaSCZRU=s96-rw", 
+    icon: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Navi_Logo.png", 
     url: "https://navi.com",
-    fallbackText: "Navi"
+    fallbackText: "Navi",
+    androidPackage: "com.navi.navidotcom",
+    iosScheme: "navipay://"
   },
   { 
     name: "Mobikwik", 
     icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEt03XLHujIry51KoZxt0DLJDqQMz9k5IqUA&s", 
     url: "https://www.mobikwik.com",
-    fallbackText: "Mobi"
+    fallbackText: "Mobi",
+    androidPackage: "com.mobikwik_new",
+    iosScheme: "mobikwik://"
   },
   { 
     name: "FreeCharge", 
     icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWd7gE_EU9okxdsbO0WMiR2Xt3I2qbMlb7Ng&s", 
     url: "https://www.freecharge.in",
-    fallbackText: "FC"
+    fallbackText: "FC",
+    androidPackage: "com.freecharge.android",
+    iosScheme: "freecharge://"
   },
+  {
+    name: "Any UPI App",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/320px-UPI-Logo-vector.svg.png",
+    url: "https://www.npci.org.in/what-we-do/upi/product-overview",
+    fallbackText: "UPI",
+    androidPackage: "",
+    iosScheme: "upi://"
+  }
 ];
 
 const CATEGORY_TAGS = [
@@ -193,43 +219,79 @@ export default function PayAutoRecordModal({ onClose }: { onClose: () => void })
     const existingIntents = loadPaymentIntents();
     savePaymentIntents([...existingIntents, newIntent]);
 
-    // Build deep link from the app URL
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const formattedAmt = enteredAmt > 0 ? enteredAmt.toFixed(2) : "0.00";
+    const encodedNote = encodeURIComponent(description.trim() || "Payment");
+
+    // On desktop browsers: open the web URL in a new tab directly
+    if (!isMobile) {
+      window.open(app.url, "_blank", "noopener,noreferrer");
+      onClose();
+      return;
+    }
+
+    // Build targeted deep link or intent
     let deepLink = app.url;
-    if (app.url.includes("cred.club")) deepLink = "cred://";
-    else if (app.url.includes("pay.google.com")) deepLink = "tez://upi/";
-    else if (app.url.includes("phonepe.com")) deepLink = "phonepe://";
-    else if (app.url.includes("paytm.com")) deepLink = "paytmmp://";
-    else if (app.url.includes("amazon.com")) deepLink = "amazon://";
-    else if (app.url.includes("navi.com")) deepLink = "navi://";
-    else if (app.url.includes("mobikwik.com")) deepLink = "mobikwik://";
-    else if (app.url.includes("freecharge.in")) deepLink = "freecharge://";
+    if (isAndroid) {
+      if (app.androidPackage) {
+        // Modern Chrome Android Intent syntax targeted to specific UPI package
+        deepLink = `intent://upi/pay?am=${formattedAmt}&cu=INR&tn=${encodedNote}#Intent;scheme=upi;package=${app.androidPackage};end`;
+      } else {
+        // Generic native UPI chooser
+        deepLink = `upi://pay?am=${formattedAmt}&cu=INR&tn=${encodedNote}`;
+      }
+    } else if (isIOS) {
+      if (app.iosScheme) {
+        deepLink = `${app.iosScheme}upi/pay?am=${formattedAmt}&cu=INR&tn=${encodedNote}`;
+      } else {
+        deepLink = `upi://pay?am=${formattedAmt}&cu=INR&tn=${encodedNote}`;
+      }
+    }
 
-    // Attempt to launch the deep link
-    window.location.href = deepLink;
+    // Launch deep link via programmatic anchor click for reliable user-gesture propagation
+    let appSwitched = false;
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        appSwitched = true;
+      }
+    };
+    const onBlur = () => {
+      appSwitched = true;
+    };
 
-    const start = Date.now();
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("blur", onBlur);
+
+    const link = document.createElement("a");
+    link.href = deepLink;
+    link.rel = "noopener noreferrer";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
     setTimeout(() => {
-      // If the user is still on the page and not enough time passed,
-      // the app was NOT launched — it's not installed.
-      if (Date.now() - start < 2000 && !document.hidden) {
-        // Remove the pending intent since app launch failed
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("blur", onBlur);
+
+      // If user did not switch app and page is still visible, the app is not installed
+      if (!appSwitched && !document.hidden) {
         const updatedIntents = loadPaymentIntents().filter(
           (intent) => intent.id !== newIntent.id
         );
         savePaymentIntents(updatedIntents);
 
-        // Show the "App not found" error — do NOT redirect to web
-        setAppNotFoundMsg(`"${app.name}" app not found on your device. Please install it or try another app.`);
+        setAppNotFoundMsg(`"${app.name}" app was not found on your device. Please install it or choose another payment app.`);
 
-        // Auto-dismiss the error after 5 seconds
         setTimeout(() => {
           setAppNotFoundMsg("");
         }, 5000);
       } else {
-        // App was launched successfully, close the modal
+        // App launched successfully, dismiss the modal
         onClose();
       }
-    }, 1000);
+    }, 2500);
   };
 
   return (
@@ -290,6 +352,15 @@ export default function PayAutoRecordModal({ onClose }: { onClose: () => void })
                   autoFocus
                 />
               </div>
+
+              {/* Real-time Large Amount Denomination Pill */}
+              {enteredAmt >= 1000000 && (
+                <div className="pay-denomination-badge">
+                  <span className="pay-denomination-pill">
+                    {getCompactDenominationHint(enteredAmt, currency)}
+                  </span>
+                </div>
+              )}
 
               {/* Quick Amount Chips */}
               <div className="pay-chips-row">
@@ -559,8 +630,15 @@ export default function PayAutoRecordModal({ onClose }: { onClose: () => void })
                   Amount to Pay
                 </div>
                 <div className="pay-summary-amount">
-                  {formatAmount(enteredAmt, currency)}
+                  {enteredAmt >= 1000000 
+                    ? formatCompactAmount(enteredAmt, currency) 
+                    : formatAmount(enteredAmt, currency)}
                 </div>
+                {enteredAmt >= 1000000 && (
+                  <div style={{ fontSize: "0.72rem", color: "var(--text3)", marginTop: 2 }}>
+                    Exact: {formatAmount(enteredAmt, currency)}
+                  </div>
+                )}
               </div>
               <div className="pay-summary-details">
                 <div style={{ fontWeight: 600, color: "var(--text)" }}>
@@ -590,11 +668,14 @@ export default function PayAutoRecordModal({ onClose }: { onClose: () => void })
                       src={app.icon}
                       alt={app.name}
                       className="pay-app-logo-img"
+                      referrerPolicy="no-referrer"
                       onError={(e) => {
                         e.currentTarget.style.display = "none";
+                        const sibling = e.currentTarget.nextElementSibling as HTMLElement;
+                        if (sibling) sibling.style.display = "flex";
                       }}
                     />
-                    <span style={{ display: "none", fontSize: "0.75rem", fontWeight: 700, color: "var(--text)" }}>
+                    <span style={{ display: "none", width: "100%", height: "100%", alignItems: "center", justifyContent: "center", fontSize: "0.75rem", fontWeight: 700, color: "var(--text)", background: "var(--surface2)", borderRadius: "10px" }}>
                       {app.fallbackText}
                     </span>
                   </div>
