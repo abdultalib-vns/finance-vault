@@ -13,6 +13,7 @@ const SECURITY_Q_KEY    = "finance_security_q_idx";
 const SECURITY_A_KEY    = "finance_security_a_hash";
 const AI_OPTIONS_KEY    = "finance_ai_options";
 const PAYMENT_INTENT_KEY = "finance_payment_intents";
+const PAY_RECORD_ENABLED_KEY = "finance_pay_record_enabled";
 
 // ── Finance Items ────────────────────────────────────────────────
 export function saveItems(items: FinanceItem[]): void {
@@ -264,4 +265,19 @@ export function loadPaymentIntents(): PaymentIntent[] {
   } catch {
     return [];
   }
+}
+
+// ── Pay & Record Feature Toggle ─────────────────────────────────
+export function loadPayAndRecordEnabled(): boolean {
+  try {
+    const raw = localStorage.getItem(PAY_RECORD_ENABLED_KEY);
+    if (raw === null) return true; // enabled by default
+    return JSON.parse(raw) === true;
+  } catch {
+    return true;
+  }
+}
+
+export function savePayAndRecordEnabled(enabled: boolean): void {
+  localStorage.setItem(PAY_RECORD_ENABLED_KEY, JSON.stringify(enabled));
 }

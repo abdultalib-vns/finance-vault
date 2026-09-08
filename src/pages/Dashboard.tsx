@@ -2,7 +2,7 @@ import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignL
 import { useState, useEffect } from "react";
 import { FinanceItem } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
-import { saveItems, loadExpenses, saveExpenses, loadBankExpenses, saveBankExpenses, suppressDueReminder, isDueReminderSuppressed } from "../lib/storage";
+import { saveItems, loadExpenses, saveExpenses, loadBankExpenses, saveBankExpenses, suppressDueReminder, isDueReminderSuppressed, loadPayAndRecordEnabled } from "../lib/storage";
 import AddItemForm from "../components/AddItemForm";
 import ItemCard from "../components/ItemCard";
 import NotificationBell from "../components/NotificationBell";
@@ -104,6 +104,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
   const [allUpcomingDues, setAllUpcomingDues] = useState<any[]>([]);
   const [showPaymentApps, setShowPaymentApps] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const payRecordEnabled = loadPayAndRecordEnabled();
 
   useEffect(() => {
     const allExpenses = loadExpenses();
@@ -316,7 +317,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
         </div>
       )}
       
-      {showPaymentApps && <PayAutoRecordModal onClose={() => setShowPaymentApps(false)} />}
+      {payRecordEnabled && showPaymentApps && <PayAutoRecordModal onClose={() => setShowPaymentApps(false)} />}
 
       <header className="dashboard-header">
         <div className="header-top">
@@ -616,9 +617,11 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
         )}
       </div>
 
-      <button className="fab-btn pay-fab-btn" onClick={() => setShowPaymentApps(true)} aria-label="Pay Now" title="Pay Now">
-        <Coins size={24} />
-      </button>
+      {payRecordEnabled && (
+        <button className="fab-btn pay-fab-btn" onClick={() => setShowPaymentApps(true)} aria-label="Pay Now" title="Pay Now">
+          <Coins size={24} />
+        </button>
+      )}
       <button className="fab-btn" onClick={() => setShowAddForm(true)} aria-label="Add Entry" title="Add Entry">+</button>
       {showAddForm && (
         <div className="modal-overlay" onClick={() => setShowAddForm(false)}>

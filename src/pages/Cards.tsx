@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import { CreditCard, Gift, ArrowRight, CheckCircle, Calendar, ChevronLeft, ChevronRight, AlertTriangle, X, Coins, Receipt, Sparkles, Building2, TrendingUp, RefreshCw, ClipboardList, Gem, Star, EyeOff, Eye, Pin, Hourglass, CheckCircle2 } from "lucide-react";
 import { FinanceItem, CardExpense, ExpenseStatus, PaymentApp } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
-import { loadExpenses, saveExpenses, saveItems, saveCashbacks, loadCashbacks } from "../lib/storage";
+import { loadExpenses, saveExpenses, saveItems, saveCashbacks, loadCashbacks, loadPayAndRecordEnabled } from "../lib/storage";
 import CardDetail from "../components/CardDetail";
 import ExpenseForm from "../components/ExpenseForm";
 import AddItemForm from "../components/AddItemForm";
@@ -34,6 +34,7 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
   const [showAmounts, setShowAmounts] = useState(false);
   const [showPaymentApps, setShowPaymentApps] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
+  const payRecordEnabled = loadPayAndRecordEnabled();
 
   useEffect(() => {
     if (targetCardId) {
@@ -126,7 +127,7 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
           onDelete={handleDelete}
           onReload={onReload}
           showAmounts={showAmounts}
-          onPayClick={() => setShowPaymentApps(true)}
+          onPayClick={payRecordEnabled ? () => setShowPaymentApps(true) : undefined}
         />
       ) : subTab === "expenses" ? (
         <ExpensesView cards={cardItems} currency={currency} onSelectCard={setSelectedCard} onReload={onReload} showAmounts={showAmounts} />
@@ -150,7 +151,7 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
       )}
 
       {/* Payment Apps Popup */}
-      {showPaymentApps && (
+      {payRecordEnabled && showPaymentApps && (
         <PayAutoRecordModal onClose={() => setShowPaymentApps(false)} />
       )}
 
@@ -167,7 +168,7 @@ function BalanceView({ items, currency, onSelect, masterKey, onAddCard, onEdit, 
   items: FinanceItem[]; currency: Currency; onSelect: (i: FinanceItem) => void;
   masterKey: string; onAddCard: (item: FinanceItem) => void;
   onEdit: (item: FinanceItem) => void; onDelete: (id: string) => void;
-  onReload?: () => void; showAmounts: boolean; onPayClick: () => void;
+  onReload?: () => void; showAmounts: boolean; onPayClick?: () => void;
 }) {
   const [showAddForm, setShowAddForm] = useState(false);
   const cards = items.filter((i) => i.type === "card");
@@ -204,9 +205,11 @@ function BalanceView({ items, currency, onSelect, masterKey, onAddCard, onEdit, 
       )}
 
       <PullToRefresh onRefresh={onReload ?? (() => {})} className="content">
-      <button className="fab-btn pay-fab-btn" onClick={onPayClick} aria-label="Pay Now" title="Pay Now">
-        <Coins size={24} />
-      </button>
+      {onPayClick && (
+        <button className="fab-btn pay-fab-btn" onClick={onPayClick} aria-label="Pay Now" title="Pay Now">
+          <Coins size={24} />
+        </button>
+      )}
       <button className="fab-btn" onClick={() => setShowAddForm(true)} aria-label="Add Card / Pay Later" title="Add Card / Pay Later">+</button>
 
         {showAddForm && (

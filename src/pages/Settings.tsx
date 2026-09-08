@@ -1,7 +1,7 @@
-import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff, User, Camera, Edit2, Save, Grid3x3, Code, Database, Cpu, RotateCcw, Bug, Terminal, Layers, Zap, QrCode, ScanLine, ShieldCheck, HelpCircle, BookOpen } from "lucide-react";
+import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff, User, Camera, Edit2, Save, Grid3x3, Code, Database, Cpu, RotateCcw, Bug, Terminal, Layers, Zap, QrCode, ScanLine, ShieldCheck, HelpCircle, BookOpen, Coins } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { hashPin } from "../lib/crypto";
-import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses, saveAIOptions, loadAIOptions, getVeloAIUsageCount, loadUserProfile, saveUserProfile, saveExpenses, saveCashbacks, saveBankExpenses, saveBills } from "../lib/storage";
+import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses, saveAIOptions, loadAIOptions, getVeloAIUsageCount, loadUserProfile, saveUserProfile, saveExpenses, saveCashbacks, saveBankExpenses, saveBills, loadPayAndRecordEnabled, savePayAndRecordEnabled } from "../lib/storage";
 import { encryptData, decryptData } from "../lib/crypto";
 import { FinanceItem, Currency, AIOptions, UserProfile } from "../types";
 import { OPENROUTER_MODELS, GROQ_MODELS } from "../lib/ai";
@@ -95,6 +95,9 @@ export default function Settings({
   // Quick Sync
   const [syncMode, setSyncMode] = useState<"generate" | "scan" | null>(null);
   const [showSyncInfo, setShowSyncInfo] = useState(false);
+
+  // Pay & Record toggle
+  const [payRecordEnabled, setPayRecordEnabled] = useState(() => loadPayAndRecordEnabled());
 
   useEffect(() => {
     isBiometricSupported().then(setBioSupported);
@@ -598,6 +601,49 @@ export default function Settings({
               <div className="theme-toggle">
                 <button type="button" className={`theme-btn ${theme === "light" ? "active" : ""}`} onClick={() => onThemeChange("light")}><Sun size={16} /> Light</button>
                 <button type="button" className={`theme-btn ${theme === "dark" ? "active" : ""}`} onClick={() => onThemeChange("dark")}><Moon size={16} /> Dark</button>
+              </div>
+            </div>
+
+            <div className="settings-section">
+              <h3 className="settings-section-title"><Coins size={20} /> Pay & Auto-Record</h3>
+              <p className="settings-hint">Enable or disable the Pay & Auto-Record feature. When enabled, a Pay button appears on Dashboard and Cards for quick UPI payments with automatic transaction recording.</p>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12, padding: "12px 16px", background: "var(--surface2)", borderRadius: "12px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <Coins size={18} color={payRecordEnabled ? "var(--primary)" : "var(--text3)"} />
+                  <span style={{ fontSize: "0.9rem", fontWeight: 500, color: "var(--text)" }}>{payRecordEnabled ? "Enabled" : "Disabled"}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = !payRecordEnabled;
+                    setPayRecordEnabled(next);
+                    savePayAndRecordEnabled(next);
+                  }}
+                  style={{
+                    position: "relative",
+                    width: 48,
+                    height: 26,
+                    borderRadius: 13,
+                    border: "none",
+                    cursor: "pointer",
+                    background: payRecordEnabled ? "var(--primary)" : "var(--surface3, #555)",
+                    transition: "background 0.25s ease",
+                    padding: 0,
+                  }}
+                  aria-label="Toggle Pay & Record"
+                >
+                  <span style={{
+                    position: "absolute",
+                    top: 3,
+                    left: payRecordEnabled ? 24 : 3,
+                    width: 20,
+                    height: 20,
+                    borderRadius: "50%",
+                    background: "#fff",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
+                    transition: "left 0.25s ease",
+                  }} />
+                </button>
               </div>
             </div>
 
