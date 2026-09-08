@@ -52,6 +52,16 @@ export interface PaymentApp {
   url: string;
 }
 
+export interface PaymentIntent {
+  id: string;
+  amount: number;
+  description: string;
+  sourceAccountId: string;
+  sourceType: "bank" | "card" | "fd" | "rd" | "mf" | "paylater" | "other";
+  status: "pending" | "completed" | "cancelled";
+  createdAt: number;
+}
+
 export interface CreditCardOffer {
   name: string;
   bank: string;

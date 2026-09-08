@@ -23,6 +23,7 @@ import { getCurrency } from "./lib/currency";
 import { FinanceItem, NavTab, Currency } from "./types";
 import MobileLandscapeBlocker from "./components/MobileLandscapeBlocker";
 import HelpGuideModal from "./components/HelpGuideModal";
+import PaymentVerificationModal from "./components/PaymentVerificationModal";
 import { startSession, endSession, trackTabVisit, applyAdminTheme, loadAdminTheme, loadAdminConfigFromServer, seedDefaultCardTemplates, loadGlobalConfig } from "./admin/adminStorage";
 import { GlobalAppConfig } from "./admin/adminTypes";
 
@@ -80,9 +81,33 @@ function MainApp() {
   const [targetCardId, setTargetCardId] = useState<string | null>(null);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [showHelpGuide, setShowHelpGuide] = useState(false);
+  const [pendingIntent, setPendingIntent] = useState<import("./types").PaymentIntent | null>(null);
   const aiOpts = loadAIOptions();
 
   const handleSplashDone = useCallback(() => setShowSplash(false), []);
+
+  const checkPendingIntents = useCallback(() => {
+    const intents = import("./lib/storage").then(s => {
+      const allIntents = s.loadPaymentIntents();
+      const pending = allIntents.find(i => i.status === "pending");
+      if (pending) {
+        setPendingIntent(pending);
+      } else {
+        setPendingIntent(null);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    checkPendingIntents();
+    const handleVisibility = () => {
+      if (!document.hidden) {
+        checkPendingIntents();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, [checkPendingIntents]);
 
   // Re-apply admin theme overrides every time MainApp mounts (e.g. after returning from admin)
   useEffect(() => {
@@ -301,6 +326,15 @@ function MainApp() {
         )}
         {showHelpGuide && (
           <HelpGuideModal onClose={() => setShowHelpGuide(false)} />
+        )}
+        {pendingIntent && (
+          <PaymentVerificationModal 
+            intent={pendingIntent} 
+            onClose={() => {
+              setPendingIntent(null);
+              setItems(loadItems()); // Refresh balances
+            }} 
+          />
         )}
       </div>
     </div>

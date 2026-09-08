@@ -6,7 +6,7 @@ import { saveItems, loadExpenses, saveExpenses, loadBankExpenses, saveBankExpens
 import AddItemForm from "../components/AddItemForm";
 import ItemCard from "../components/ItemCard";
 import NotificationBell from "../components/NotificationBell";
-import PaymentAppsModal from "../components/PaymentAppsModal";
+import PayAutoRecordModal from "../components/PayAutoRecordModal";
 
 interface Props {
   masterKey: string;
@@ -316,7 +316,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
         </div>
       )}
       
-      {showPaymentApps && <PaymentAppsModal onClose={() => setShowPaymentApps(false)} />}
+      {showPaymentApps && <PayAutoRecordModal onClose={() => setShowPaymentApps(false)} />}
 
       <header className="dashboard-header">
         <div className="header-top">
@@ -616,8 +616,10 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
         )}
       </div>
 
+      <button className="fab-btn pay-fab-btn" onClick={() => setShowPaymentApps(true)} aria-label="Pay Now" title="Pay Now">
+        <Coins size={24} />
+      </button>
       <button className="fab-btn" onClick={() => setShowAddForm(true)} aria-label="Add Entry" title="Add Entry">+</button>
-
       {showAddForm && (
         <div className="modal-overlay" onClick={() => setShowAddForm(false)}>
           <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>

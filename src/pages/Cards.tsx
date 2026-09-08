@@ -8,7 +8,7 @@ import ExpenseForm from "../components/ExpenseForm";
 import AddItemForm from "../components/AddItemForm";
 import SwipeableRow from "../components/SwipeableRow";
 import PullToRefresh from "../components/PullToRefresh";
-import PaymentAppsModal from "../components/PaymentAppsModal";
+import PayAutoRecordModal from "../components/PayAutoRecordModal";
 import { loadCardTemplates, loadAdminConfigFromServer } from "../admin/adminStorage";
 import { CardTemplate } from "../admin/adminTypes";
 
@@ -126,6 +126,7 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
           onDelete={handleDelete}
           onReload={onReload}
           showAmounts={showAmounts}
+          onPayClick={() => setShowPaymentApps(true)}
         />
       ) : subTab === "expenses" ? (
         <ExpensesView cards={cardItems} currency={currency} onSelectCard={setSelectedCard} onReload={onReload} showAmounts={showAmounts} />
@@ -150,7 +151,7 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
 
       {/* Payment Apps Popup */}
       {showPaymentApps && (
-        <PaymentAppsModal onClose={() => setShowPaymentApps(false)} />
+        <PayAutoRecordModal onClose={() => setShowPaymentApps(false)} />
       )}
 
       {showCalendar && (
@@ -162,11 +163,11 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
 
 
 
-function BalanceView({ items, currency, onSelect, masterKey, onAddCard, onEdit, onDelete, onReload, showAmounts }: {
+function BalanceView({ items, currency, onSelect, masterKey, onAddCard, onEdit, onDelete, onReload, showAmounts, onPayClick }: {
   items: FinanceItem[]; currency: Currency; onSelect: (i: FinanceItem) => void;
   masterKey: string; onAddCard: (item: FinanceItem) => void;
   onEdit: (item: FinanceItem) => void; onDelete: (id: string) => void;
-  onReload?: () => void; showAmounts: boolean;
+  onReload?: () => void; showAmounts: boolean; onPayClick: () => void;
 }) {
   const [showAddForm, setShowAddForm] = useState(false);
   const cards = items.filter((i) => i.type === "card");
@@ -203,7 +204,10 @@ function BalanceView({ items, currency, onSelect, masterKey, onAddCard, onEdit, 
       )}
 
       <PullToRefresh onRefresh={onReload ?? (() => {})} className="content">
-        <button className="fab-btn" onClick={() => setShowAddForm(true)} aria-label="Add Card / Pay Later" title="Add Card / Pay Later">+</button>
+      <button className="fab-btn pay-fab-btn" onClick={onPayClick} aria-label="Pay Now" title="Pay Now">
+        <Coins size={24} />
+      </button>
+      <button className="fab-btn" onClick={() => setShowAddForm(true)} aria-label="Add Card / Pay Later" title="Add Card / Pay Later">+</button>
 
         {showAddForm && (
           <div className="modal-overlay" onClick={() => setShowAddForm(false)}>

@@ -1,4 +1,4 @@
-import { FinanceItem, CardExpense, CardBill, CashbackEntry, RDInstallment, BankExpense, AIOptions, UserProfile } from "../types";
+import { FinanceItem, CardExpense, CardBill, CashbackEntry, RDInstallment, BankExpense, AIOptions, UserProfile, PaymentIntent } from "../types";
 const ITEMS_KEY         = "finance_items";
 const PIN_HASH_KEY      = "finance_pin_hash";
 const CURRENCY_KEY      = "finance_currency";
@@ -12,6 +12,7 @@ const THEME_KEY         = "finance_theme";
 const SECURITY_Q_KEY    = "finance_security_q_idx";
 const SECURITY_A_KEY    = "finance_security_a_hash";
 const AI_OPTIONS_KEY    = "finance_ai_options";
+const PAYMENT_INTENT_KEY = "finance_payment_intents";
 
 // ── Finance Items ────────────────────────────────────────────────
 export function saveItems(items: FinanceItem[]): void {
@@ -136,7 +137,7 @@ export function clearAll(): void {
   [ITEMS_KEY, PIN_HASH_KEY, CURRENCY_KEY, EXPENSES_KEY, BILLS_KEY,
    CASHBACKS_KEY, RD_INSTALL_KEY, BANK_EXPENSES_KEY,
    "finance_bio_cred_id", "finance_bio_enc_pin", "finance_bio_prf_salt",
-   IDLE_TIMEOUT_KEY, THEME_KEY, SECURITY_Q_KEY, SECURITY_A_KEY]
+   IDLE_TIMEOUT_KEY, THEME_KEY, SECURITY_Q_KEY, SECURITY_A_KEY, PAYMENT_INTENT_KEY]
     .forEach((k) => localStorage.removeItem(k));
 }
 
@@ -248,4 +249,19 @@ export function loadUserProfile(): UserProfile | null {
 
 export function saveUserProfile(profile: UserProfile): void {
   localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(profile));
+}
+
+// ── Payment Intents ─────────────────────────────────────────────
+export function savePaymentIntents(intents: PaymentIntent[]): void {
+  localStorage.setItem(PAYMENT_INTENT_KEY, JSON.stringify(intents));
+}
+
+export function loadPaymentIntents(): PaymentIntent[] {
+  try {
+    const raw = localStorage.getItem(PAYMENT_INTENT_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
 }
