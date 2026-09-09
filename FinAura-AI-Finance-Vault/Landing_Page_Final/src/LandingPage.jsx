@@ -523,7 +523,7 @@ export default function LandingPage() {
             <p className="text-lg text-[#5C5F66] leading-relaxed">No bank logins. No cloud accounts. Just create a PIN and start adding your accounts.</p>
           </div>
 
-          <div className="flex flex-col md:flex-row justify-between items-start relative gap-12 md:gap-8">
+          <div className="flex flex-col md:flex-row justify-between items-center md:items-start relative gap-12 md:gap-8">
             {/* Connecting line */}
             <div className="hidden md:block absolute top-10 left-[12%] right-[12%] h-[2px] bg-gradient-to-r from-[#3B5BDB] via-[#40C057] to-[#FFD43B]" />
 
@@ -533,16 +533,17 @@ export default function LandingPage() {
               { num: '03', title: 'Add Your Accounts', desc: 'Add banks, cards, FDs, RDs, mutual funds, or pay later accounts. Enter balances and details.', icon: <Wallet className="w-6 h-6" /> },
               { num: '04', title: 'Track & Manage', desc: 'Log expenses, track cashback, generate bills, and view your net worth via interactive charts.', icon: <BarChart3 className="w-6 h-6" /> }
             ].map((s, i) => (
-              <div key={i} className="relative z-10 flex flex-col items-center text-center flex-1">
+              <div key={i} className="relative z-10 flex flex-col items-center text-center flex-1 w-full md:w-auto">
                 <div className="w-20 h-20 bg-white border-4 border-[#3B5BDB] text-[#3B5BDB] rounded-full flex items-center justify-center mb-6 shadow-lg">
                   {s.icon}
                 </div>
                 <div className="text-xs font-bold text-[#3B5BDB] uppercase tracking-widest mb-2">Step {s.num}</div>
                 <h3 className="text-lg font-bold text-[#1B2559] mb-2">{s.title}</h3>
-                <p className="text-sm text-[#5C5F66] max-w-[220px]">{s.desc}</p>
+                <p className="text-sm text-[#5C5F66] max-w-[220px] mx-auto">{s.desc}</p>
               </div>
             ))}
           </div>
+
         </div>
       </section>
 
