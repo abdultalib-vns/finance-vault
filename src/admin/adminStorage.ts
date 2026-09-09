@@ -336,6 +336,9 @@ const DEFAULT_THEME: AdminThemeSettings = {
   accentColor: "#2563eb",
   accentColorDark: "#3b82f6",
   accentColorLight: "#dbeafe",
+  fontFamily: "Inter, sans-serif",
+  borderRadius: "12px",
+  glassmorphism: true,
 };
 
 export function saveAdminTheme(settings: AdminThemeSettings): void {
@@ -357,6 +360,22 @@ export function applyAdminTheme(settings: AdminThemeSettings): void {
   root.style.setProperty("--primary", settings.accentColor);
   root.style.setProperty("--primary-dark", settings.accentColorDark);
   root.style.setProperty("--primary-light", settings.accentColorLight);
+  
+  if (settings.fontFamily) {
+    root.style.setProperty("--font-family", settings.fontFamily);
+    document.body.style.fontFamily = settings.fontFamily;
+  }
+  
+  if (settings.borderRadius) {
+    root.style.setProperty("--radius", settings.borderRadius);
+    root.style.setProperty("--radius-sm", `calc(${settings.borderRadius} * 0.75)`);
+  }
+
+  if (settings.glassmorphism !== undefined) {
+    root.style.setProperty("--glass-blur", settings.glassmorphism ? "12px" : "0px");
+    root.style.setProperty("--glass-bg-opacity", settings.glassmorphism ? "0.8" : "1");
+  }
+
   // Also apply directly to admin shell (if open) so scoped dark mode doesn't override
   const adminShell = document.querySelector(".admin-shell") as HTMLElement | null;
   if (adminShell) {

@@ -71,6 +71,9 @@ export interface AdminThemeSettings {
   accentColor: string;
   accentColorDark: string;
   accentColorLight: string;
+  fontFamily?: string;
+  borderRadius?: string;
+  glassmorphism?: boolean;
 }
 
-export type AdminTab = "config" | "currencies" | "cards" | "analytics" | "theme" | "ads" | "feedbacks" | "security";
+export type AdminTab = "config" | "currencies" | "cards" | "analytics" | "theme" | "ads" | "feedbacks" | "security" | "system";

@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import { SessionRecord, AnalyticsEvent } from "../adminTypes";
+import { 
+  BarChart3, Calendar, Clock, Zap, Users, 
+  TrendingUp, Activity, Layers 
+} from "lucide-react";
 
 function formatDuration(start: number, end?: number): string {
   const ms = (end ?? Date.now()) - start;
@@ -42,7 +46,7 @@ export default function AnalyticsSection() {
     };
 
     fetchGlobalAnalytics();
-    const id = setInterval(fetchGlobalAnalytics, 10000); // 10s refresh for admin panel
+    const id = setInterval(fetchGlobalAnalytics, 10000);
     return () => {
       mounted = false;
       clearInterval(id);
@@ -57,7 +61,6 @@ export default function AnalyticsSection() {
   }));
 
   const maxDaySessions = Math.max(...sessionsByDay.map((d) => d.count), 1);
-
   const totalSessions = sessions.length;
   const todaySessions = sessions.filter((s) => s.date === last7Days[6]).length;
 
@@ -92,44 +95,59 @@ export default function AnalyticsSection() {
     <div className="admin-section">
       <div className="admin-section-header">
         <div>
-          <h2 className="admin-section-title">User Analytics</h2>
+          <h2 className="admin-section-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <BarChart3 size={22} className="admin-title-icon" />
+            <span>User Analytics</span>
+          </h2>
           <p className="admin-section-desc">
-            Session tracking, tab usage, and feature events. Refreshes every 5 seconds.
+            Session tracking, tab usage, and feature telemetry. Refreshes every 10 seconds.
           </p>
         </div>
         <div className="admin-realtime-badge">
           <span className={`admin-pulse ${activeUsers > 0 ? "active" : ""}`} />
-          <span>{activeUsers > 0 ? `${activeUsers} user online` : "No active users"}</span>
+          <Users size={14} style={{ marginRight: 4 }} />
+          <span>{activeUsers > 0 ? `${activeUsers} online` : "0 active users"}</span>
         </div>
       </div>
 
-      {/* Stats Row */}
+      {/* Stats KPI Cards */}
       <div className="admin-stats-grid">
         <div className="admin-stat-card">
-          <span className="admin-stat-icon">📊</span>
+          <div className="admin-stat-icon-wrapper" style={{ background: "rgba(59, 130, 246, 0.1)", color: "#3b82f6" }}>
+            <BarChart3 size={20} />
+          </div>
           <div>
             <div className="admin-stat-value">{totalSessions}</div>
             <div className="admin-stat-label">Total Sessions</div>
           </div>
         </div>
+
         <div className="admin-stat-card">
-          <span className="admin-stat-icon">📅</span>
+          <div className="admin-stat-icon-wrapper" style={{ background: "rgba(16, 185, 129, 0.1)", color: "#10b981" }}>
+            <Calendar size={20} />
+          </div>
           <div>
             <div className="admin-stat-value">{todaySessions}</div>
             <div className="admin-stat-label">Today's Sessions</div>
           </div>
         </div>
+
         <div className="admin-stat-card">
-          <span className="admin-stat-icon">⏱️</span>
+          <div className="admin-stat-icon-wrapper" style={{ background: "rgba(99, 102, 241, 0.1)", color: "#6366f1" }}>
+            <Clock size={20} />
+          </div>
           <div>
             <div className="admin-stat-value">
               {avgDuration > 0 ? formatDuration(0, avgDuration) : "—"}
             </div>
-            <div className="admin-stat-label">Avg. Session Duration</div>
+            <div className="admin-stat-label">Avg. Duration</div>
           </div>
         </div>
+
         <div className="admin-stat-card">
-          <span className="admin-stat-icon">⚡</span>
+          <div className="admin-stat-icon-wrapper" style={{ background: "rgba(245, 158, 11, 0.1)", color: "#f59e0b" }}>
+            <Zap size={20} />
+          </div>
           <div>
             <div className="admin-stat-value">{events.length}</div>
             <div className="admin-stat-label">Total Events</div>
@@ -139,7 +157,10 @@ export default function AnalyticsSection() {
 
       {/* Sessions chart - last 7 days */}
       <div className="admin-analytics-card">
-        <h3 className="admin-analytics-subtitle">Sessions — Last 7 Days</h3>
+        <h3 className="admin-analytics-subtitle" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Activity size={18} color="var(--primary)" />
+          <span>Sessions — Last 7 Days</span>
+        </h3>
         <div className="admin-bar-chart">
           {sessionsByDay.map((d) => (
             <div key={d.date} className="admin-bar-col">
@@ -159,7 +180,10 @@ export default function AnalyticsSection() {
       {/* Tab usage */}
       {tabEntries.length > 0 && (
         <div className="admin-analytics-card">
-          <h3 className="admin-analytics-subtitle">Tab Usage</h3>
+          <h3 className="admin-analytics-subtitle" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Layers size={18} color="var(--primary)" />
+            <span>Tab Usage Breakdown</span>
+          </h3>
           <div className="admin-hbar-list">
             {tabEntries.map(([tab, count]) => (
               <div key={tab} className="admin-hbar-row">
@@ -180,7 +204,10 @@ export default function AnalyticsSection() {
       {/* Event breakdown */}
       {eventEntries.length > 0 && (
         <div className="admin-analytics-card">
-          <h3 className="admin-analytics-subtitle">Feature Events</h3>
+          <h3 className="admin-analytics-subtitle" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Zap size={18} color="#f59e0b" />
+            <span>Feature Events</span>
+          </h3>
           <div className="admin-event-grid">
             {eventEntries.map(([type, count]) => (
               <div key={type} className="admin-event-chip">
@@ -195,7 +222,10 @@ export default function AnalyticsSection() {
       {/* Recent sessions */}
       {recentSessions.length > 0 && (
         <div className="admin-analytics-card">
-          <h3 className="admin-analytics-subtitle">Recent Sessions</h3>
+          <h3 className="admin-analytics-subtitle" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Clock size={18} color="var(--primary)" />
+            <span>Recent Sessions</span>
+          </h3>
           <div className="admin-table-wrap">
             <table className="admin-table">
               <thead>
@@ -227,8 +257,10 @@ export default function AnalyticsSection() {
 
       {totalSessions === 0 && (
         <div className="admin-empty">
-          <span className="admin-empty-icon">📈</span>
-          <p>No analytics data yet. Data is collected when users interact with the app.</p>
+          <div style={{ color: "var(--text3)", marginBottom: 12 }}>
+            <TrendingUp size={44} />
+          </div>
+          <p>No analytics data recorded yet. Data will populate as users navigate the app.</p>
         </div>
       )}
     </div>

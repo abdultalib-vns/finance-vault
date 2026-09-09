@@ -41,23 +41,25 @@ applyAdminTheme(loadAdminTheme());
 seedDefaultCardTemplates();
 
 export default function App() {
-  const [isAdmin, setIsAdmin] = useState(() => window.location.hash === "#/admin" && import.meta.env.VITE_ENABLE_ADMIN === "true");
+  const adminEnabled = import.meta.env.VITE_ENABLE_ADMIN !== "false";
+  const [isAdmin, setIsAdmin] = useState(() => window.location.hash === "#/admin" && adminEnabled);
 
   // React to hash changes so navigating #/admin ↔ main app works live
   useEffect(() => {
     const handler = () => {
-      if (import.meta.env.VITE_ENABLE_ADMIN === "true") {
+      if (adminEnabled) {
         setIsAdmin(window.location.hash === "#/admin");
       }
     };
     window.addEventListener("hashchange", handler);
     return () => window.removeEventListener("hashchange", handler);
-  }, []);
+  }, [adminEnabled]);
 
   return (
     <>
       <MobileLandscapeBlocker />
-      {isAdmin && import.meta.env.VITE_ENABLE_ADMIN === "true" ? (
+      <AlertContainer />
+      {isAdmin && adminEnabled ? (
         <AdminApp />
       ) : (
         <MainApp key={isAdmin ? "admin" : "main"} />
@@ -410,7 +412,6 @@ function MainApp() {
           </button>
         )}
 
-        <AlertContainer />
         {showAIAssistant && (
           <AIAssistant 
             aiOpts={aiOpts}
