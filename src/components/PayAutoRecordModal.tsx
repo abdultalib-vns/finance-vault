@@ -83,6 +83,46 @@ export const PAYMENT_APPS: PaymentAppOption[] = [
     iosScheme: "freecharge://"
   },
   {
+    name: "BHIM UPI",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/BHIM_app_logo.svg/200px-BHIM_app_logo.svg.png",
+    url: "https://www.bhimupi.org.in/",
+    fallbackText: "BHIM",
+    androidPackage: "in.org.npci.upiapp",
+    iosScheme: "bhim://"
+  },
+  {
+    name: "WhatsApp",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/200px-WhatsApp.svg.png",
+    url: "https://www.whatsapp.com/",
+    fallbackText: "WA",
+    androidPackage: "com.whatsapp",
+    iosScheme: "whatsapp://"
+  },
+  {
+    name: "Slice",
+    icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEsV-4n6wQo7Q1Z7O2Y_WqL6rG_Mowu3a4iA&s",
+    url: "https://www.sliceit.com/",
+    fallbackText: "Slice",
+    androidPackage: "indwin.c3.shareapp",
+    iosScheme: "slice://"
+  },
+  {
+    name: "FamPay",
+    icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqY6U_xX5yY4PzP-Zp23z2yT89_G-01_1-0w&s",
+    url: "https://fampay.in/",
+    fallbackText: "FamPay",
+    androidPackage: "com.fampay.in",
+    iosScheme: "fampay://"
+  },
+  {
+    name: "Groww",
+    icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhX_V_64Z_Pj-lO8V5O68wQoZ-nO7GZ_jH0g&s",
+    url: "https://groww.in/",
+    fallbackText: "Groww",
+    androidPackage: "com.nextbillion.groww",
+    iosScheme: "groww://"
+  },
+  {
     name: "Any UPI App",
     icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/320px-UPI-Logo-vector.svg.png",
     url: "https://www.npci.org.in/what-we-do/upi/product-overview",
