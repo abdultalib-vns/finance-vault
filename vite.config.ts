@@ -5,6 +5,8 @@ import { fileURLToPath } from "url";
 import path from "path";
 import { VitePWA } from "vite-plugin-pwa";
 
+import pkg from "./package.json";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const port = Number(process.env.PORT) || 3000;
@@ -13,6 +15,7 @@ const basePath = process.env.BASE_PATH || "/";
 export default defineConfig({
   base: basePath,
   define: {
+    'import.meta.env.VITE_APP_VERSION': JSON.stringify(pkg.version),
     'import.meta.env.VITE_BUILD_VERSION': JSON.stringify(`Build ${new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')} UTC`),
   },
   plugins: [

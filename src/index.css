@@ -5304,90 +5304,100 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #080C14;
+  background: #F8FAFC;
   overflow: hidden;
   transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.dark-mode .splash-screen {
+  background: #080C14;
+}
+
+/* Background Image */
+.splash-bg-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .splash-enter { opacity: 1; }
 .splash-hold { opacity: 1; transform: scale(1); }
 .splash-exit { opacity: 0; transform: scale(1.05) translateY(-20px); filter: blur(10px); }
 
-/* Premium Ambient Glows */
-.splash-premium-glow-1 {
-  position: absolute;
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, rgba(99, 102, 241, 0.05) 50%, transparent 70%);
-  filter: blur(50px);
-  animation: splashPulse1 4s infinite alternate ease-in-out;
-  pointer-events: none;
-}
-
-.splash-premium-glow-2 {
-  position: absolute;
-  bottom: 5%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 350px;
-  height: 350px;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, rgba(245, 158, 11, 0.03) 50%, transparent 70%);
-  filter: blur(60px);
-  animation: splashPulse2 5s infinite alternate ease-in-out;
-  pointer-events: none;
-}
-
-@keyframes splashPulse1 {
-  0% { transform: translateX(-60%) scale(1); opacity: 0.8; }
-  100% { transform: translateX(-40%) scale(1.2); opacity: 1; }
-}
-
-@keyframes splashPulse2 {
-  0% { transform: translateX(-40%) scale(1.1); opacity: 0.7; }
-  100% { transform: translateX(-60%) scale(0.9); opacity: 1; }
-}
-
-/* Floating Glassmorphic Container */
+/* Central Glassmorphic Card */
 .splash-premium-card {
   position: relative;
   z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px;
+  padding: 40px 44px;
   border-radius: 32px;
-  background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
   transform: translateY(20px);
   opacity: 0;
   animation: splashCardEnter 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.dark-mode .splash-premium-card {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 @keyframes splashCardEnter {
   to { transform: translateY(0); opacity: 1; }
 }
 
+/* Version Badge - top left */
+.splash-version-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #64748B;
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  padding: 4px 10px;
+}
+
+.dark-mode .splash-version-badge {
+  color: #94A3B8;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
 /* App Icon Halo */
 .splash-icon-wrapper {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
+
 .splash-icon-halo {
   width: 96px;
   height: 96px;
   border-radius: 28px;
   padding: 3px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(37, 99, 235, 0.3), rgba(16, 185, 129, 0.3));
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 24px rgba(37, 99, 235, 0.25);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), var(--primary, #3b82f6), rgba(16, 185, 129, 0.4));
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15), 0 0 24px rgba(37, 99, 235, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
   animation: splashIconFloat 4s ease-in-out infinite;
+}
+
+.dark-mode .splash-icon-halo {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 24px rgba(37, 99, 235, 0.25);
 }
 
 .splash-icon {
@@ -5399,7 +5409,7 @@ html, body {
 
 @keyframes splashIconFloat {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 32px rgba(37, 99, 235, 0.3); }
+  50% { transform: translateY(-8px); }
 }
 
 /* Premium Typography */
@@ -5408,72 +5418,124 @@ html, body {
   font-weight: 800;
   letter-spacing: -0.03em;
   margin: 0 0 8px;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-}
-.splash-title-fin { color: #FFFFFF; }
-.splash-title-aura {
-  background: linear-gradient(135deg, #60a5fa, #a78bfa, #818cf8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
+.splash-title-fin {
+  color: #1E293B;
+}
+
+.dark-mode .splash-title-fin {
+  color: #FFFFFF;
+}
+
+/* "Aura" adapts to admin accent color via --primary */
+.splash-title-aura {
+  color: var(--primary, #3b82f6);
+}
+
+/* Tagline - single line, no break */
 .splash-tagline {
-  font-size: 1rem;
-  color: #94A3B8;
+  font-size: 0.95rem;
+  color: #64748B;
   font-weight: 500;
   letter-spacing: 0.02em;
-  margin: 0 0 36px;
+  margin: 0 0 32px;
+  white-space: nowrap;
 }
 
-/* Elegant Loader */
+.dark-mode .splash-tagline {
+  color: #94A3B8;
+}
+
+/* Professional Progress Bar Loader */
 .splash-premium-loader {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 14px;
+  width: 100%;
+}
+
+.splash-progress-track {
+  width: 200px;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.08);
   border-radius: 99px;
-  color: #F8FAFC;
+  overflow: hidden;
 }
-.splash-spinner {
-  animation: spin 1s linear infinite;
-  color: #818cf8;
+
+.dark-mode .splash-progress-track {
+  background: rgba(255, 255, 255, 0.08);
 }
+
+/* Progress bar adapts to admin accent color via --primary */
+.splash-progress-bar {
+  height: 100%;
+  width: 40%;
+  background: var(--primary, #3b82f6);
+  border-radius: 99px;
+  animation: splashProgressSlide 1.5s ease-in-out infinite;
+}
+
+@keyframes splashProgressSlide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(500%); }
+}
+
 .splash-loader-text {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 500;
-  opacity: 0.9;
+  color: #64748B;
   letter-spacing: 0.02em;
+}
+
+.dark-mode .splash-loader-text {
+  color: #94A3B8;
 }
 
 /* Premium Footer */
 .splash-premium-footer {
   position: absolute;
-  bottom: 32px;
+  bottom: 28px;
   left: 0;
   width: 100%;
-  text-align: center;
-  font-size: 0.8rem;
-  color: #64748B;
-  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  z-index: 10;
   opacity: 0;
   animation: splashFadeIn 1s ease 0.5s forwards;
 }
-.splash-company a {
-  color: #3b82f6;
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.2s ease;
+
+.splash-premium-footer p {
+  font-size: 0.8rem;
+  color: #64748B;
+  margin: 0;
+  line-height: 1.4;
 }
-.splash-company a:hover { color: #60a5fa; }
-.splash-version {
-  margin-top: 8px;
-  font-size: 0.7rem;
-  opacity: 0.5;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+
+.dark-mode .splash-premium-footer p {
+  color: #94A3B8;
+}
+
+.splash-velolaunch-link {
+  color: var(--primary, #3b82f6);
+  text-decoration: none;
+  font-weight: 700;
+  transition: opacity 0.2s ease;
+}
+
+.splash-velolaunch-link:hover {
+  opacity: 0.8;
+}
+
+/* Safety Badges */
+.splash-safety-badges {
+  max-width: 320px;
+  width: 90%;
+  height: auto;
+  object-fit: contain;
 }
 
 @keyframes splashFadeIn {
