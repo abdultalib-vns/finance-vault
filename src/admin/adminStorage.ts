@@ -360,6 +360,10 @@ export function applyAdminTheme(settings: AdminThemeSettings): void {
   root.style.setProperty("--primary", settings.accentColor);
   root.style.setProperty("--primary-dark", settings.accentColorDark);
   root.style.setProperty("--primary-light", settings.accentColorLight);
+
+  // Update dashboard header gradient to match the chosen accent color
+  root.style.setProperty("--header-gradient-start", settings.accentColorDark);
+  root.style.setProperty("--header-gradient-end", settings.accentColor);
   
   if (settings.fontFamily) {
     root.style.setProperty("--font-family", settings.fontFamily);
@@ -384,6 +388,7 @@ export function applyAdminTheme(settings: AdminThemeSettings): void {
     adminShell.style.setProperty("--primary-light", settings.accentColorLight);
   }
 }
+
 
 export function clearAdminData(): void {
   localStorage.removeItem(ADMIN_CARDS_KEY);

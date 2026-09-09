@@ -34,6 +34,9 @@
   --radius: 12px;
   --radius-sm: 8px;
   --bottom-nav-h: 68px;
+  /* Dashboard header gradient — overridden by Admin Theme Engine */
+  --header-gradient-start: #1e3a8a;
+  --header-gradient-end: #2563eb;
 }
 
 :root.dark-mode {
@@ -1188,7 +1191,7 @@ html, body {
 }
 
 .dashboard-header {
-  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  background: linear-gradient(135deg, var(--header-gradient-start) 0%, var(--header-gradient-end) 100%);
   padding: 20px 20px 28px;
   color: #fff;
 }
