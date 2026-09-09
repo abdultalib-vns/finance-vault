@@ -307,32 +307,47 @@ export default function AuthScreen({ onUnlock }: Props) {
         onClick={() => pinRef.current?.focus()}
         title="Tap to focus keyboard"
       >
+        {/* Left balance spacer so dots remain centered */}
+        <div className="auth-pin-spacer" />
+
         <div className="auth-pin-pips-container">
           {Array.from({ length: totalSlots }).map((_, i) => {
             const isFilled = i < activePinValue.length;
             return (
               <div 
                 key={i} 
-                className={`auth-pin-pip ${isFilled ? "filled" : ""}`}
+                className={`auth-pin-pip ${isFilled ? "filled" : ""} ${showPlainPin && isFilled ? "show-text" : ""}`}
               >
-                {isFilled && <span className="auth-pip-pulse" />}
+                {isFilled && (
+                  showPlainPin ? (
+                    <span className="auth-pip-digit">{activePinValue[i]}</span>
+                  ) : (
+                    <span className="auth-pip-pulse" />
+                  )
+                )}
               </div>
             );
           })}
         </div>
-        {activePinValue.length > 0 && (
-          <button
-            type="button"
-            className="auth-pin-peek-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowPlainPin(!showPlainPin);
-            }}
-            title={showPlainPin ? "Hide PIN" : "Show PIN"}
-          >
-            {showPlainPin ? <EyeOff size={16} /> : <Eye size={16} />}
-          </button>
-        )}
+
+        {/* Right dedicated action slot */}
+        <div className="auth-pin-action-slot">
+          {activePinValue.length > 0 ? (
+            <button
+              type="button"
+              className="auth-pin-peek-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowPlainPin(!showPlainPin);
+              }}
+              title={showPlainPin ? "Hide PIN" : "Show PIN"}
+            >
+              {showPlainPin ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          ) : (
+            <div className="auth-pin-spacer" />
+          )}
+        </div>
       </div>
     );
   };

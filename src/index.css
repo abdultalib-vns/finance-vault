@@ -289,9 +289,10 @@ html, body {
 .auth-pin-pips-wrap {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 12px 20px;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 320px;
+  padding: 8px 12px;
   border-radius: 20px;
   background: rgba(0, 0, 0, 0.25);
   border: 1px solid rgba(255, 255, 255, 0.07);
@@ -300,6 +301,7 @@ html, body {
   transition: all 0.2s ease;
   position: relative;
   min-height: 52px;
+  box-sizing: border-box;
 }
 
 .auth-pin-pips-wrap:hover {
@@ -307,10 +309,22 @@ html, body {
   background: rgba(0, 0, 0, 0.35);
 }
 
+.auth-pin-spacer,
+.auth-pin-action-slot {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .auth-pin-pips-container {
   display: flex;
   align-items: center;
-  gap: 14px;
+  justify-content: center;
+  gap: 12px;
+  flex: 1;
 }
 
 .auth-pin-pip {
@@ -321,13 +335,32 @@ html, body {
   background: transparent;
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .auth-pin-pip.filled {
   background: linear-gradient(135deg, #10B981 0%, #059669 100%);
   border-color: #34D399;
-  transform: scale(1.18);
+  transform: scale(1.15);
   box-shadow: 0 0 12px rgba(16, 185, 129, 0.55);
+}
+
+.auth-pin-pip.show-text {
+  width: 24px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(16, 185, 129, 0.15);
+  border-color: #10B981;
+}
+
+.auth-pip-digit {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1;
+  user-select: none;
 }
 
 .auth-pip-pulse {
@@ -342,21 +375,25 @@ html, body {
 }
 
 .auth-pin-peek-btn {
-  position: absolute;
-  right: 12px;
-  background: none;
-  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   color: #94A3B8;
   cursor: pointer;
-  padding: 4px;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.15s;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
 }
 
 .auth-pin-peek-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
   color: #F8FAFC;
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 /* Hidden native input for keyboard capture */
