@@ -19,6 +19,17 @@ interface Message {
   loading?: boolean;
 }
 
+function formatAiMessage(rawText: string): string {
+  if (!rawText) return "";
+  const escaped = rawText
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  const withBold = escaped.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+  const withBullets = withBold.replace(/^[\*\-]\s+/gm, "• ");
+  return withBullets.replace(/\n/g, "<br/>");
+}
+
 export default function AIAssistant({ aiOpts, contextData, onClose, onDataChanged }: Props) {
   const [messages, setMessages] = useState<Message[]>(() => {
     const saved = sessionStorage.getItem("finaura_ai_chat");
@@ -36,12 +47,28 @@ export default function AIAssistant({ aiOpts, contextData, onClose, onDataChange
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const chatHistoryRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     sessionStorage.setItem("finaura_ai_chat", JSON.stringify(messages));
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatHistoryRef.current) {
+      chatHistoryRef.current.scrollTo({
+        top: chatHistoryRef.current.scrollHeight,
+        behavior: "smooth"
+      });
+      chatHistoryRef.current.scrollLeft = 0;
+    } else {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+    }
   }, [messages]);
+
+  useEffect(() => {
+    if (chatHistoryRef.current) {
+      chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
+      chatHistoryRef.current.scrollLeft = 0;
+    }
+  }, []);
 
   async function handleSend(e?: React.FormEvent) {
     if (e) e.preventDefault();
@@ -158,7 +185,15 @@ export default function AIAssistant({ aiOpts, contextData, onClose, onDataChange
           </div>
         </div>
         
-        <div className="ai-chat-history">
+        <div 
+          className="ai-chat-history" 
+          ref={chatHistoryRef}
+          onScroll={(e) => {
+            if (e.currentTarget.scrollLeft !== 0) {
+              e.currentTarget.scrollLeft = 0;
+            }
+          }}
+        >
           {messages.map(m => (
             <div key={m.id} className={`ai-msg-row ${m.role}`}>
               <div className="ai-msg-avatar">
@@ -168,7 +203,7 @@ export default function AIAssistant({ aiOpts, contextData, onClose, onDataChange
                 {m.loading ? (
                   <span className="ai-typing"><RefreshCw size={14} className="spin" /> Thinking...</span>
                 ) : (
-                  <div dangerouslySetInnerHTML={{ __html: m.text.replace(/\n/g, "<br/>") }} />
+                  <div dangerouslySetInnerHTML={{ __html: formatAiMessage(m.text) }} />
                 )}
               </div>
             </div>

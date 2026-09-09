@@ -308,8 +308,21 @@ export default function AuthScreen({ onUnlock }: Props) {
         throw new Error("Saved PIN no longer matches. Please use your PIN once to re-enable biometric.");
       }
       onUnlock(recovered);
-    } catch (err) {
-      triggerError(err instanceof Error ? err.message : "Biometric authentication failed.");
+    } catch (err: any) {
+      const msg = err instanceof Error ? err.message : String(err || "");
+      if (
+        err?.name === "NotAllowedError" ||
+        err?.name === "AbortError" ||
+        msg.includes("not allowed") ||
+        msg.includes("timed out") ||
+        msg.includes("webauthn") ||
+        msg.includes("cancelled") ||
+        msg.includes("canceled")
+      ) {
+        triggerError("Biometric authentication was cancelled. Please enter your Master PIN or try again.");
+      } else {
+        triggerError(msg || "Biometric authentication failed. Please enter your Master PIN.");
+      }
     } finally {
       setBioLoading(false);
     }

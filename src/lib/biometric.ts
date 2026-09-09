@@ -84,6 +84,54 @@ interface PrfExtensionResults {
   prf?: { results?: { first?: ArrayBuffer } };
 }
 
+// ── Normalize WebAuthn error messages for user-friendly UI ────────
+function normalizeWebAuthnError(err: unknown, fallback: string): Error {
+  if (err && typeof err === "object") {
+    const errorObj = err as { name?: string; message?: string };
+    const name = errorObj.name || "";
+    const msg = (errorObj.message || "").toLowerCase();
+
+    // User cancelled, dismissed, tapped outside, or timed out
+    if (
+      name === "NotAllowedError" ||
+      name === "AbortError" ||
+      msg.includes("not allowed") ||
+      msg.includes("timed out") ||
+      msg.includes("webauthn") ||
+      msg.includes("canceled") ||
+      msg.includes("cancelled")
+    ) {
+      return new Error("Biometric authentication was cancelled. Please enter your PIN or try again.");
+    }
+
+    if (name === "TimeoutError") {
+      return new Error("Biometric authentication timed out. Please try again or enter your PIN.");
+    }
+
+    if (name === "InvalidStateError") {
+      return new Error("Biometric credential was not recognized on this device.");
+    }
+
+    if (name === "NotSupportedError") {
+      return new Error("Biometric authentication is not supported on this device.");
+    }
+
+    if (name === "SecurityError") {
+      return new Error("Biometric verification failed security check. Please use your PIN.");
+    }
+  }
+
+  if (err instanceof Error) {
+    const msg = err.message.toLowerCase();
+    if (msg.includes("webauthn") || msg.includes("not allowed") || msg.includes("timed out") || msg.includes("canceled") || msg.includes("cancelled")) {
+      return new Error("Biometric authentication was cancelled. Please enter your PIN or try again.");
+    }
+    return err;
+  }
+
+  return new Error(fallback);
+}
+
 // ── Enroll ────────────────────────────────────────────────────────
 export async function enrollBiometric(pin: string): Promise<void> {
   if (!(await isBiometricSupported())) {
@@ -94,25 +142,30 @@ export async function enrollBiometric(pin: string): Promise<void> {
   const prfSalt     = crypto.getRandomValues(new Uint8Array(32));
   const userIdBytes = new TextEncoder().encode(USER_HANDLE);
 
-  const cred = await navigator.credentials.create({
-    publicKey: {
-      rp:   { name: RP_NAME },
-      user: { id: userIdBytes, name: "user", displayName: "FinAura User" },
-      challenge,
-      pubKeyCredParams: [
-        { alg: -7,   type: "public-key" },  // ES256
-        { alg: -257, type: "public-key" },  // RS256
-      ],
-      authenticatorSelection: {
-        authenticatorAttachment: "platform",
-        userVerification: "required",
-        residentKey: "preferred",
+  let cred: PublicKeyCredential | null = null;
+  try {
+    cred = await navigator.credentials.create({
+      publicKey: {
+        rp:   { name: RP_NAME },
+        user: { id: userIdBytes, name: "user", displayName: "FinAura User" },
+        challenge,
+        pubKeyCredParams: [
+          { alg: -7,   type: "public-key" },  // ES256
+          { alg: -257, type: "public-key" },  // RS256
+        ],
+        authenticatorSelection: {
+          authenticatorAttachment: "platform",
+          userVerification: "required",
+          residentKey: "preferred",
+        },
+        timeout: 60000,
+        attestation: "none",
+        extensions: { prf: { eval: { first: prfSalt } } } as AuthenticationExtensionsClientInputs,
       },
-      timeout: 60000,
-      attestation: "none",
-      extensions: { prf: { eval: { first: prfSalt } } } as AuthenticationExtensionsClientInputs,
-    },
-  }) as PublicKeyCredential | null;
+    }) as PublicKeyCredential | null;
+  } catch (err) {
+    throw normalizeWebAuthnError(err, "Biometric registration was cancelled.");
+  }
 
   if (!cred) throw new Error("Biometric setup was cancelled.");
 
@@ -149,17 +202,22 @@ export async function loginWithBiometric(): Promise<string> {
     ? { prf: { eval: { first: new Uint8Array(b64uToBuf(prfSaltB64)) } } } as AuthenticationExtensionsClientInputs
     : {};
 
-  const assertion = await navigator.credentials.get({
-    publicKey: {
-      challenge,
-      allowCredentials: [{ id: credId, type: "public-key" }],
-      userVerification: "required",
-      timeout: 60000,
-      extensions,
-    },
-  }) as PublicKeyCredential | null;
+  let assertion: PublicKeyCredential | null = null;
+  try {
+    assertion = await navigator.credentials.get({
+      publicKey: {
+        challenge,
+        allowCredentials: [{ id: credId, type: "public-key" }],
+        userVerification: "required",
+        timeout: 60000,
+        extensions,
+      },
+    }) as PublicKeyCredential | null;
+  } catch (err) {
+    throw normalizeWebAuthnError(err, "Biometric authentication failed. Please enter your PIN.");
+  }
 
-  if (!assertion) throw new Error("Biometric authentication was cancelled.");
+  if (!assertion) throw new Error("Biometric authentication was cancelled. Please enter your PIN or try again.");
 
   if (encPin.startsWith("prf:")) {
     const ext = assertion.getClientExtensionResults() as PrfExtensionResults;
