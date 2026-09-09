@@ -137,6 +137,7 @@ export default function FeedbacksSection() {
                   <th>Title</th>
                   <th>Date</th>
                   <th>Status</th>
+                  <th style={{ width: 80, textAlign: "center" }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -164,6 +165,27 @@ export default function FeedbacksSection() {
                         )}
                       </span>
                     </td>
+                    <td style={{ textAlign: "center" }} onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        title="Delete feedback"
+                        onClick={() => handleDelete(fb.id)}
+                        style={{
+                          background: "rgba(239,68,68,0.1)",
+                          border: "1px solid rgba(239,68,68,0.2)",
+                          color: "#ef4444",
+                          borderRadius: 8,
+                          padding: "5px 8px",
+                          cursor: "pointer",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          transition: "all 0.15s"
+                        }}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -174,7 +196,7 @@ export default function FeedbacksSection() {
 
       {/* Detail Modal */}
       {selected && (
-        <div className="admin-drawer-backdrop" onClick={() => setSelected(null)}>
+        <div className="admin-modal-backdrop" onClick={() => setSelected(null)}>
           <div className="admin-card" style={{ maxWidth: 520, width: "90%", margin: "auto", position: "relative", zIndex: 1100 }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, borderBottom: "1px solid var(--border)", paddingBottom: 14 }}>
               <h3 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 700, color: "var(--text)" }}>{selected.title}</h3>
