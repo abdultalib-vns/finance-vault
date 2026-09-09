@@ -1,4 +1,5 @@
 import { Construction, Sparkles } from "lucide-react";
+import LandingPage, { isLandingSeen } from "./components/LandingPage";
 import { useEffect, useRef, useState, useCallback } from "react";
 import AuthScreen from "./pages/AuthScreen";
 import Dashboard from "./pages/Dashboard";
@@ -84,6 +85,8 @@ function MainApp() {
   const [idleMinutes, setIdleMinutes] = useState<number>(() => loadIdleTimeout());
   const [theme, setThemeState] = useState<"light" | "dark">(() => loadTheme());
   const [wasNewUser] = useState(() => !loadPinHash());
+  // Show landing page to brand-new users who haven't seen it yet
+  const [showLanding, setShowLanding] = useState(() => !loadPinHash() && !isLandingSeen());
 
   const idleTimerRef = useRef<number | null>(null);
   const [globalConfig, setGlobalConfig] = useState<GlobalAppConfig>(() => loadGlobalConfig());
@@ -311,6 +314,10 @@ function MainApp() {
         </div>
       </div>
     );
+  }
+
+  if (showLanding) {
+    return <LandingPage onGetStarted={() => setShowLanding(false)} />;
   }
 
   if (!masterKey) {
