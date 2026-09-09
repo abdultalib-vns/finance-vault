@@ -64,8 +64,44 @@ export default function AuthScreen({ onUnlock }: Props) {
   const pinRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    pinRef.current?.focus();
+    // Only focus virtual keyboard for text recovery/security question steps
+    if (step === "security-setup" || step === "recover-check") {
+      pinRef.current?.focus();
+    }
   }, [step]);
+
+  // Support physical hardware keyboard on desktop without triggering mobile virtual numpad
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // If user is currently typing in an actual text field, let native handling take care of it
+      const activeEl = document.activeElement;
+      if (activeEl && activeEl instanceof HTMLInputElement && activeEl.getAttribute("inputmode") !== "none" && activeEl.type !== "hidden") {
+        return;
+      }
+
+      if (/^[0-9]$/.test(e.key)) {
+        e.preventDefault();
+        handleDigitPress(e.key);
+      } else if (e.key === "Backspace") {
+        e.preventDefault();
+        handleDeletePress();
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (step === "unlock") {
+          handleUnlockSubmit();
+        } else if (step === "pin-enter" || step === "pin-confirm") {
+          handleNewUserSubmit(e as any);
+        } else if (step === "recover-pin") {
+          handleRecoverNewPin(e as any);
+        } else if (step === "recover-confirm") {
+          handleRecoverConfirm(e as any);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [step, pin, confirmPin, newPin, confirmNewPin]);
 
   useEffect(() => {
     let cancelled = false;
@@ -304,8 +340,6 @@ export default function AuthScreen({ onUnlock }: Props) {
     return (
       <div 
         className={`auth-pin-pips-wrap ${isShaking ? "shake" : ""}`}
-        onClick={() => pinRef.current?.focus()}
-        title="Tap to focus keyboard"
       >
         {/* Left balance spacer so dots remain centered */}
         <div className="auth-pin-spacer" />
@@ -398,19 +432,19 @@ export default function AuthScreen({ onUnlock }: Props) {
             {/* Visual Indicator Dots */}
             {renderPinDots()}
 
-            {/* Form for physical keyboard & screen readers */}
+            {/* Hidden field for accessibility & screen readers (inputMode=none prevents mobile OS keypad) */}
             <form className="auth-form-hidden" onSubmit={handleUnlockSubmit}>
               <input
                 ref={pinRef}
                 type={showPlainPin ? "text" : "password"}
-                inputMode="numeric"
+                inputMode="none"
+                tabIndex={-1}
                 maxLength={12}
                 autoComplete="off"
                 data-lpignore="true"
                 data-1p-ignore
                 className="auth-hidden-input"
                 placeholder="Enter PIN"
-                autoFocus
                 value={pin}
                 onChange={(e) => {
                   setPin(e.target.value);
@@ -519,14 +553,14 @@ export default function AuthScreen({ onUnlock }: Props) {
               <input
                 ref={pinRef}
                 type={showPlainPin ? "text" : "password"}
-                inputMode="numeric"
+                inputMode="none"
+                tabIndex={-1}
                 maxLength={12}
                 autoComplete="off"
                 data-lpignore="true"
                 data-1p-ignore
                 className="auth-hidden-input"
                 placeholder="Enter PIN"
-                autoFocus
                 value={pin}
                 onChange={(e) => {
                   setPin(e.target.value);
@@ -597,14 +631,14 @@ export default function AuthScreen({ onUnlock }: Props) {
               <input
                 ref={pinRef}
                 type={showPlainPin ? "text" : "password"}
-                inputMode="numeric"
+                inputMode="none"
+                tabIndex={-1}
                 maxLength={12}
                 autoComplete="off"
                 data-lpignore="true"
                 data-1p-ignore
                 className="auth-hidden-input"
                 placeholder="Confirm PIN"
-                autoFocus
                 value={confirmPin}
                 onChange={(e) => {
                   setConfirmPin(e.target.value);
@@ -777,14 +811,14 @@ export default function AuthScreen({ onUnlock }: Props) {
               <input
                 ref={pinRef}
                 type={showPlainPin ? "text" : "password"}
-                inputMode="numeric"
+                inputMode="none"
+                tabIndex={-1}
                 maxLength={12}
                 autoComplete="off"
                 data-lpignore="true"
                 data-1p-ignore
                 className="auth-hidden-input"
                 placeholder="Enter New PIN"
-                autoFocus
                 value={newPin}
                 onChange={(e) => { setNewPin(e.target.value); setError(""); }}
               />
@@ -846,14 +880,14 @@ export default function AuthScreen({ onUnlock }: Props) {
               <input
                 ref={pinRef}
                 type={showPlainPin ? "text" : "password"}
-                inputMode="numeric"
+                inputMode="none"
+                tabIndex={-1}
                 maxLength={12}
                 autoComplete="off"
                 data-lpignore="true"
                 data-1p-ignore
                 className="auth-hidden-input"
                 placeholder="Confirm New PIN"
-                autoFocus
                 value={confirmNewPin}
                 onChange={(e) => { setConfirmNewPin(e.target.value); setError(""); }}
               />

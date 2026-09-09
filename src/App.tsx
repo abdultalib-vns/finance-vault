@@ -24,10 +24,11 @@ import { FinanceItem, NavTab, Currency } from "./types";
 import MobileLandscapeBlocker from "./components/MobileLandscapeBlocker";
 import HelpGuideModal from "./components/HelpGuideModal";
 import PaymentVerificationModal from "./components/PaymentVerificationModal";
+import DailyBackupPromptModal from "./components/DailyBackupPromptModal";
 import { startSession, endSession, trackTabVisit, applyAdminTheme, loadAdminTheme, loadAdminConfigFromServer, seedDefaultCardTemplates, loadGlobalConfig } from "./admin/adminStorage";
 import { GlobalAppConfig } from "./admin/adminTypes";
 
-import { loadBackupReminderConfig, loadBackupReminderKey, checkAndTriggerReminder, BACKUP_CHANNEL_NAME } from "./lib/backupReminder";
+import { loadBackupReminderConfig, loadBackupReminderKey, checkAndTriggerReminder, shouldShowDailyBackupPrompt, BACKUP_CHANNEL_NAME } from "./lib/backupReminder";
 import { exportVaultDirect } from "./lib/importExport";
 
 const storedTheme = loadTheme();
@@ -90,6 +91,7 @@ function MainApp() {
   const [targetCardId, setTargetCardId] = useState<string | null>(null);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [showHelpGuide, setShowHelpGuide] = useState(false);
+  const [showDailyBackupPrompt, setShowDailyBackupPrompt] = useState(false);
   const [pendingIntent, setPendingIntent] = useState<import("./types").PaymentIntent | null>(null);
   const aiOpts = loadAIOptions();
 
@@ -159,6 +161,9 @@ function MainApp() {
     // Show welcome setup for first-time users
     if (wasNewUser && !isOnboardingDone()) {
       setShowWelcome(true);
+    } else if (shouldShowDailyBackupPrompt()) {
+      // First open of the day: show daily backup bottom sheet if enabled
+      setShowDailyBackupPrompt(true);
     }
   }
 
@@ -416,6 +421,12 @@ function MainApp() {
         )}
         {showHelpGuide && (
           <HelpGuideModal onClose={() => setShowHelpGuide(false)} />
+        )}
+        {showDailyBackupPrompt && (
+          <DailyBackupPromptModal 
+            onClose={() => setShowDailyBackupPrompt(false)} 
+            onBackupSuccess={() => setItems(loadItems())}
+          />
         )}
         {pendingIntent && (
           <PaymentVerificationModal 

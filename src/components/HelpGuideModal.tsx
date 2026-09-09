@@ -9,9 +9,7 @@ import {
   RefreshCw, 
   Gift, 
   Lock, 
-  Smartphone, 
   CreditCard, 
-  Building2, 
   Search, 
   ChevronDown, 
   ChevronUp, 
@@ -20,11 +18,9 @@ import {
   Zap, 
   X, 
   Info, 
-  ArrowRight,
   Database,
-  QrCode,
-  Shield,
-  FileCheck
+  ArrowUpRight,
+  LifeBuoy
 } from "lucide-react";
 
 interface Props {
@@ -54,11 +50,12 @@ interface FAQItem {
 export default function HelpGuideModal({ onClose }: Props) {
   const [activeCategory, setActiveCategory] = useState<GuideCategory>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [openGuideId, setOpenGuideId] = useState<string | null>("quick-start");
   const [openFAQIndex, setOpenFAQIndex] = useState<number | null>(null);
 
   const categories = [
     { id: "all", label: "All Topics", icon: BookOpen },
-    { id: "getting-started", label: "Getting Started", icon: Zap },
+    { id: "getting-started", label: "Basics", icon: Zap },
     { id: "security", label: "Security & PIN", icon: ShieldCheck },
     { id: "ai", label: "AI Assistant", icon: Bot },
     { id: "sync", label: "QuickSync", icon: RefreshCw },
@@ -75,14 +72,14 @@ export default function HelpGuideModal({ onClose }: Props) {
       icon: Zap,
       summary: "FinAura is a 100% zero-knowledge, offline-first personal finance tracker. All your financial accounts, card numbers, and balances remain encrypted exclusively on your local device.",
       steps: [
-        "1. Create your secure 4-6 digit Vault PIN upon first launch.",
-        "2. Add your Bank Accounts, Credit Cards, FDs, RDs, or Mutual Funds with the '+' action button.",
-        "3. Track your overall Net Worth, monthly dues, and closing bank balance in the live Dashboard.",
-        "4. Log expenses, record cashback rewards, and set bill due date alerts."
+        "Create your secure 4-6 digit Vault PIN upon first launch.",
+        "Add your Bank Accounts, Credit Cards, FDs, RDs, or Mutual Funds using the '+' button.",
+        "Track your overall Net Worth, monthly dues, and closing bank balance in the live Dashboard.",
+        "Log expenses, record cashback rewards, and set bill due date alerts."
       ],
       tips: [
         "Your Master Key is derived from your PIN using PBKDF2 with 100,000 hashing rounds.",
-        "No account creation or cloud login is ever required."
+        "No account creation, phone number, or cloud login is ever required."
       ]
     },
     {
@@ -96,10 +93,10 @@ export default function HelpGuideModal({ onClose }: Props) {
         "Go to the Cards tab to manage credit cards, credit limits, statements, and payment due dates.",
         "Go to the Investments tab to record Bank Savings, Fixed Deposits, Recurring Deposits, and Mutual Funds.",
         "Tap on any item to view detailed analytics, interest rates, maturity calculations, or log new transactions.",
-        "Swipe left on any account to quickly edit details or remove it from your vault."
+        "Swipe left or tap an account to quickly edit details or update balances."
       ],
       tips: [
-        "Card numbers and sensitive credentials can be hidden with the one-tap privacy toggle.",
+        "Card numbers and sensitive credentials can be masked with the one-tap privacy toggle.",
         "Calculations for FD & RD maturity interest are updated in real-time."
       ]
     },
@@ -111,7 +108,7 @@ export default function HelpGuideModal({ onClose }: Props) {
       icon: ShieldCheck,
       summary: "How FinAura secures your financial information with military-grade client-side encryption.",
       steps: [
-        "All data is encrypted with AES (Advanced Encryption Standard) via CryptoJS before touching local storage.",
+        "All data is encrypted with AES via CryptoJS before touching local storage.",
         "Your PIN acts as the encryption key. Even if your device backup is inspected, raw secrets cannot be decrypted without your PIN.",
         "Auto-Lock timer automatically locks your vault when inactive (configurable from 1 to 30 minutes in Settings).",
         "Enable Biometrics (WebAuthn / Face ID / Fingerprint) in Settings for fast, frictionless unlocking."
@@ -127,7 +124,7 @@ export default function HelpGuideModal({ onClose }: Props) {
       summary: "Safely export your entire financial history into an encrypted portable backup file.",
       steps: [
         "Open Settings > Backup & Restore.",
-        "Tap 'Export Encrypted Backup' to download your JSON backup file.",
+        "Tap 'Export Encrypted Backup' to download your JSON backup file (.fvbackup).",
         "To restore on another phone, laptop, or browser, tap 'Import Backup File' and enter the PIN used when creating the backup.",
         "Your data is seamlessly restored with all accounts, histories, cashbacks, and settings intact."
       ]
@@ -143,11 +140,11 @@ export default function HelpGuideModal({ onClose }: Props) {
         "Open Settings > AI Assistant Settings and select your preferred provider (VeloAI, Google Gemini, OpenRouter, or Groq).",
         "Tap the floating AI Lotus button on your screen to open the Vault AI Assistant.",
         "Use Natural Language: type 'I paid $85 for dinner on Amex Gold' to automatically parse and log expenses.",
-        "Use Smart Receipt Scan: upload a photo of a restaurant or shopping receipt to automatically extract merchant, date, amount, and items."
+        "Use Smart Receipt Scan: upload a photo of a receipt to automatically extract merchant, date, amount, and items."
       ],
       tips: [
         "VeloAI includes free daily AI queries without requiring your own API key.",
-        "Your API keys are stored encrypted locally in your browser."
+        "Your custom API keys are stored encrypted locally on your device."
       ]
     },
     {
@@ -175,7 +172,7 @@ export default function HelpGuideModal({ onClose }: Props) {
         "Go to the Cashback tab to see total earnings, active month yields, and best-performing cards.",
         "When logging an expense, enter the cashback amount earned (e.g. 5% on Amazon / 2% on Dining).",
         "FinAura tracks upcoming due dates and triggers the Notification Bell alert when a bill is due.",
-        "Tap 'Pay Now' on any notification to directly open your preferred payment apps (GPay, PhonePe, Paytm, CRED, etc.)."
+        "Tap 'Pay Now' on any notification to directly open your preferred payment apps."
       ]
     }
   ];
@@ -237,50 +234,65 @@ export default function HelpGuideModal({ onClose }: Props) {
   }, [activeCategory, searchQuery]);
 
   return (
-    <div className="modal-overlay help-modal-overlay" onClick={onClose}>
-      <div className="modal-sheet help-modal-sheet" onClick={(e) => e.stopPropagation()}>
-        {/* Modal Header */}
-        <div className="help-modal-header">
-          <div className="help-header-left">
-            <div className="help-icon-badge">
-              <BookOpen size={22} className="help-badge-icon" />
+    <div className="help-sheet-overlay" onClick={onClose}>
+      <div className="help-sheet-container" onClick={(e) => e.stopPropagation()}>
+        {/* Mobile Drag Handle */}
+        <div className="help-sheet-drag-area">
+          <div className="help-sheet-drag-bar" />
+        </div>
+
+        {/* Top Header */}
+        <div className="help-sheet-header">
+          <div className="help-sheet-brand">
+            <div className="help-sheet-icon-halo">
+              <BookOpen size={20} />
             </div>
             <div>
-              <h2 className="help-modal-title">Help &amp; User Guide</h2>
-              <p className="help-modal-subtitle">Documentation, Tutorials &amp; FAQs for FinAura Vault</p>
+              <h2 className="help-sheet-title">Help &amp; User Guide</h2>
+              <p className="help-sheet-subtitle">Everything you need to master your vault</p>
             </div>
           </div>
-          <button className="help-close-btn" onClick={onClose} aria-label="Close Help">
-            <X size={20} />
+          <button 
+            type="button" 
+            className="help-sheet-close-btn" 
+            onClick={onClose} 
+            aria-label="Close guide"
+          >
+            <X size={18} />
           </button>
         </div>
 
-        {/* Live Search Bar */}
-        <div className="help-search-bar-wrap">
-          <Search size={18} className="help-search-icon" />
-          <input 
+        {/* Search Bar */}
+        <div className="help-sheet-search-wrap">
+          <Search size={16} className="help-sheet-search-icon" />
+          <input
             type="text"
-            className="help-search-input"
-            placeholder="Search guides, PIN, backup, AI scanning, syncing..."
+            className="help-sheet-search-input"
+            placeholder="Search guides, PIN, backup, AI, security..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           {searchQuery && (
-            <button className="help-search-clear" onClick={() => setSearchQuery("")}>
-              <X size={16} />
+            <button
+              type="button"
+              className="help-sheet-search-clear"
+              onClick={() => setSearchQuery("")}
+            >
+              <X size={14} />
             </button>
           )}
         </div>
 
-        {/* Category Filter Chips */}
-        <div className="help-category-chips">
+        {/* Category Pills Bar */}
+        <div className="help-sheet-categories">
           {categories.map((cat) => {
             const Icon = cat.icon;
+            const isActive = activeCategory === cat.id;
             return (
               <button
                 key={cat.id}
                 type="button"
-                className={`help-category-chip ${activeCategory === cat.id ? "active" : ""}`}
+                className={`help-sheet-category-chip ${isActive ? "active" : ""}`}
                 onClick={() => setActiveCategory(cat.id)}
               >
                 <Icon size={14} />
@@ -290,60 +302,93 @@ export default function HelpGuideModal({ onClose }: Props) {
           })}
         </div>
 
-        {/* Content Body */}
-        <div className="help-modal-body">
+        {/* Scrollable Body Content */}
+        <div className="help-sheet-scrollable">
           {/* Guides Section */}
           {filteredGuides.length > 0 && (
-            <div className="help-section-group">
-              <h3 className="help-group-title">
-                <FileCheck size={18} /> Guides &amp; Walkthroughs ({filteredGuides.length})
-              </h3>
-              <div className="help-guides-grid">
+            <div className="help-sheet-section">
+              <div className="help-sheet-section-header">
+                <span className="help-sheet-section-tag">GUIDES &amp; TUTORIALS</span>
+                <span className="help-sheet-section-count">{filteredGuides.length} articles</span>
+              </div>
+
+              <div className="help-sheet-cards-list">
                 {filteredGuides.map((guide) => {
-                  const GuideIcon = guide.icon;
+                  const Icon = guide.icon;
+                  const isOpen = openGuideId === guide.id;
+
                   return (
-                    <div key={guide.id} className="help-guide-card">
-                      <div className="help-guide-header">
-                        <div className="help-guide-icon-wrap">
-                          <GuideIcon size={20} />
-                        </div>
-                        <div className="help-guide-meta">
-                          <h4 className="help-guide-title">{guide.title}</h4>
-                          {guide.badge && <span className="help-guide-badge">{guide.badge}</span>}
-                        </div>
-                      </div>
-
-                      <p className="help-guide-summary">{guide.summary}</p>
-
-                      {guide.steps && (
-                        <div className="help-guide-steps">
-                          <h5 className="help-steps-heading">Step-by-Step Instructions:</h5>
-                          <ul className="help-steps-list">
-                            {guide.steps.map((step, idx) => (
-                              <li key={idx} className="help-step-item">
-                                <CheckCircle2 size={14} className="help-step-check" />
-                                <span>{step}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {guide.tips && (
-                        <div className="help-guide-tips">
-                          {guide.tips.map((tip, idx) => (
-                            <div key={idx} className="help-tip-row">
-                              <Zap size={14} className="help-tip-icon" />
-                              <span>{tip}</span>
+                    <div 
+                      key={guide.id} 
+                      className={`help-guide-card-modern ${isOpen ? "expanded" : ""}`}
+                    >
+                      <button
+                        type="button"
+                        className="help-guide-card-header-btn"
+                        onClick={() => setOpenGuideId(isOpen ? null : guide.id)}
+                      >
+                        <div className="help-guide-card-left">
+                          <div className="help-guide-card-icon">
+                            <Icon size={18} />
+                          </div>
+                          <div className="help-guide-card-titles">
+                            <div className="help-guide-badge-row">
+                              {guide.badge && (
+                                <span className="help-guide-card-badge">{guide.badge}</span>
+                              )}
                             </div>
-                          ))}
+                            <h3 className="help-guide-card-title">{guide.title}</h3>
+                          </div>
                         </div>
-                      )}
+                        <div className="help-guide-chevron-box">
+                          {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                        </div>
+                      </button>
 
-                      {guide.callout && (
-                        <div className="help-guide-callout">
-                          <Shield size={14} />
-                          <span>{guide.callout}</span>
+                      <p className="help-guide-card-summary">{guide.summary}</p>
+
+                      {isOpen && (
+                        <div className="help-guide-expanded-drawer">
+                          {guide.steps && guide.steps.length > 0 && (
+                            <div className="help-guide-box">
+                              <h4 className="help-guide-box-title">
+                                <Zap size={14} color="#10B981" />
+                                <span>Key Steps &amp; Instructions</span>
+                              </h4>
+                              <div className="help-guide-step-items">
+                                {guide.steps.map((step, sIdx) => (
+                                  <div key={sIdx} className="help-guide-step-row">
+                                    <span className="help-step-num-bubble">{sIdx + 1}</span>
+                                    <span className="help-step-text">{step}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {guide.tips && guide.tips.length > 0 && (
+                            <div className="help-guide-box tips-box">
+                              <h4 className="help-guide-box-title">
+                                <Sparkles size={14} color="#F59E0B" />
+                                <span>Pro Tips</span>
+                              </h4>
+                              <div className="help-guide-tips-list">
+                                {guide.tips.map((tip, tIdx) => (
+                                  <div key={tIdx} className="help-guide-tip-row">
+                                    <CheckCircle2 size={14} className="help-tip-check" />
+                                    <span>{tip}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {guide.callout && (
+                            <div className="help-guide-box callout-box">
+                              <ShieldCheck size={16} className="help-callout-icon" />
+                              <span>{guide.callout}</span>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
@@ -355,25 +400,32 @@ export default function HelpGuideModal({ onClose }: Props) {
 
           {/* FAQs Section */}
           {filteredFAQs.length > 0 && (
-            <div className="help-section-group" style={{ marginTop: 24 }}>
-              <h3 className="help-group-title">
-                <HelpCircle size={18} /> Frequently Asked Questions ({filteredFAQs.length})
-              </h3>
-              <div className="help-faqs-accordion">
+            <div className="help-sheet-section" style={{ marginTop: 24 }}>
+              <div className="help-sheet-section-header">
+                <span className="help-sheet-section-tag">FREQUENTLY ASKED QUESTIONS</span>
+                <span className="help-sheet-section-count">{filteredFAQs.length} questions</span>
+              </div>
+
+              <div className="help-faq-accordion-modern">
                 {filteredFAQs.map((faq, idx) => {
                   const isOpen = openFAQIndex === idx;
                   return (
-                    <div key={idx} className={`help-faq-item ${isOpen ? "open" : ""}`}>
-                      <button 
-                        type="button" 
-                        className="help-faq-question-btn"
+                    <div 
+                      key={idx} 
+                      className={`help-faq-item-modern ${isOpen ? "open" : ""}`}
+                    >
+                      <button
+                        type="button"
+                        className="help-faq-item-header"
                         onClick={() => setOpenFAQIndex(isOpen ? null : idx)}
                       >
                         <span className="help-faq-q-text">{faq.question}</span>
-                        {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                        <div className="help-faq-chevron">
+                          {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                        </div>
                       </button>
                       {isOpen && (
-                        <div className="help-faq-answer">
+                        <div className="help-faq-item-body">
                           <p>{faq.answer}</p>
                         </div>
                       )}
@@ -386,49 +438,70 @@ export default function HelpGuideModal({ onClose }: Props) {
 
           {/* If No Results */}
           {filteredGuides.length === 0 && filteredFAQs.length === 0 && (
-            <div className="help-empty-results">
-              <Info size={40} className="help-empty-icon" />
-              <h4>No matches found for "{searchQuery}"</h4>
-              <p>Try searching for a different keyword like "PIN", "Backup", "AI", or select another category.</p>
-              <button 
-                className="btn-secondary" 
-                style={{ marginTop: 12 }} 
+            <div className="help-empty-modern">
+              <div className="help-empty-icon-bubble">
+                <Info size={28} />
+              </div>
+              <h4 className="help-empty-title">No matches found for "{searchQuery}"</h4>
+              <p className="help-empty-desc">Try searching for keywords like "PIN", "Backup", "AI", or select another category above.</p>
+              <button
+                type="button"
+                className="help-empty-reset-btn"
                 onClick={() => { setSearchQuery(""); setActiveCategory("all"); }}
               >
-                Reset Search
+                Reset Search Filters
               </button>
             </div>
           )}
 
-          {/* Developer & Support Contact Footer */}
-          <div className="help-support-card">
-            <div className="help-support-info">
-              <ShieldCheck size={24} className="help-support-icon" />
-              <div>
-                <h4 className="help-support-title">Need Additional Support?</h4>
-                <p className="help-support-desc">
-                  Developed by Velo Launch · Smart Vista IT Solutions. Built for privacy, zero telemetry, and maximum local security.
-                </p>
-              </div>
+          {/* Luxury Support & Engineering Footer */}
+          <div className="help-sheet-footer-card">
+            <div className="help-footer-icon-wrap">
+              <LifeBuoy size={24} />
             </div>
-            <div className="help-support-links">
-              <a 
-                href="https://smartvistaitsolutions.in" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="help-support-btn"
+            <div className="help-footer-content">
+              <h4 className="help-footer-title">Engineered by VeloLaunch</h4>
+              <p className="help-footer-subtitle">
+                A Company by{" "}
+                <a 
+                  href="https://www.smartvistaitsolutions.in" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="help-footer-link"
+                >
+                  Smart Vista IT Solutions
+                </a>
+                . Zero-knowledge local encryption &amp; private personal fintech.
+              </p>
+            </div>
+
+            <div className="help-footer-links-grid">
+              <a
+                href="https://velolaunch-aistudio.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="help-footer-action-pill"
+              >
+                <span>VeloLaunch Studio</span>
+                <ArrowUpRight size={14} />
+              </a>
+              <a
+                href="https://www.smartvistaitsolutions.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="help-footer-action-pill"
               >
                 <span>Smart Vista IT Solutions</span>
-                <ExternalLink size={14} />
+                <ArrowUpRight size={14} />
               </a>
-              <a 
-                href="https://finaura-landingpage.vercel.app" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="help-support-btn"
+              <a
+                href="https://finaura-landingpage.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="help-footer-action-pill"
               >
                 <span>Landing Page &amp; Docs</span>
-                <ExternalLink size={14} />
+                <ArrowUpRight size={14} />
               </a>
             </div>
           </div>

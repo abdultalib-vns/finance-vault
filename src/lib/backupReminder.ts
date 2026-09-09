@@ -2,13 +2,13 @@ import CryptoJS from "crypto-js";
 
 export interface BackupReminderConfig {
   enabled: boolean;
-  time: string; // "HH:mm", e.g. "21:00"
-  lastNotifiedDate?: string; // "YYYY-MM-DD"
+  time?: string; // Optional legacy "HH:mm"
+  lastPromptDate?: string; // "YYYY-MM-DD" for daily first-open sheet
+  lastNotifiedDate?: string; // "YYYY-MM-DD" for notifications
 }
 
 const DEFAULT_CONFIG: BackupReminderConfig = {
   enabled: false,
-  time: "21:00",
 };
 
 const CONFIG_KEY = "finance_backup_reminder_config";
@@ -35,7 +35,8 @@ export function loadBackupReminderConfig(): BackupReminderConfig {
     const parsed = JSON.parse(raw);
     return {
       enabled: Boolean(parsed.enabled),
-      time: parsed.time || "21:00",
+      time: parsed.time,
+      lastPromptDate: parsed.lastPromptDate || parsed.lastNotifiedDate,
       lastNotifiedDate: parsed.lastNotifiedDate,
     };
   } catch {
@@ -72,6 +73,42 @@ export function clearBackupReminderKey(): void {
 
 export function isBackupReminderEnabled(): boolean {
   return loadBackupReminderConfig().enabled;
+}
+
+export function setBackupReminderEnabled(enabled: boolean): void {
+  const config = loadBackupReminderConfig();
+  config.enabled = enabled;
+  saveBackupReminderConfig(config);
+}
+
+/**
+ * Check if the user should see the "Create a backup now" bottom sheet today.
+ * Triggers once per calendar day when the backup reminder toggle is enabled.
+ */
+export function shouldShowDailyBackupPrompt(): boolean {
+  const config = loadBackupReminderConfig();
+  if (!config.enabled) return false;
+
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const todayStr = `${year}-${month}-${day}`;
+
+  return config.lastPromptDate !== todayStr;
+}
+
+/**
+ * Mark that the daily backup prompt was presented to the user today.
+ */
+export function markDailyBackupPromptShown(): void {
+  const config = loadBackupReminderConfig();
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  config.lastPromptDate = `${year}-${month}-${day}`;
+  saveBackupReminderConfig(config);
 }
 
 export function getNotificationPermissionStatus(): NotificationPermission {
@@ -159,7 +196,7 @@ export async function sendBackupNotification(isTest: boolean = false): Promise<b
 
 export async function checkAndTriggerReminder(): Promise<boolean> {
   const config = loadBackupReminderConfig();
-  if (!config.enabled || !config.time) return false;
+  if (!config.enabled) return false;
 
   const now = new Date();
   const year = now.getFullYear();
@@ -172,16 +209,17 @@ export async function checkAndTriggerReminder(): Promise<boolean> {
     return false;
   }
 
-  const [targetH, targetM] = config.time.split(":").map(Number);
-  if (isNaN(targetH) || isNaN(targetM)) return false;
-
-  const currentH = now.getHours();
-  const currentM = now.getMinutes();
-
-  // Trigger if current time is at or past scheduled time
-  const isTimeOrPast = currentH > targetH || (currentH === targetH && currentM >= targetM);
-  if (!isTimeOrPast) {
-    return false;
+  // If a time was specified, check time; otherwise trigger
+  if (config.time) {
+    const [targetH, targetM] = config.time.split(":").map(Number);
+    if (!isNaN(targetH) && !isNaN(targetM)) {
+      const currentH = now.getHours();
+      const currentM = now.getMinutes();
+      const isTimeOrPast = currentH > targetH || (currentH === targetH && currentM >= targetM);
+      if (!isTimeOrPast) {
+        return false;
+      }
+    }
   }
 
   // Mark as notified today so it won't fire repeatedly

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { loadTheme } from "../lib/storage";
 
 interface Props {
   onFinish: () => void;
@@ -6,14 +7,25 @@ interface Props {
 
 export default function SplashScreen({ onFinish }: Props) {
   const [phase, setPhase] = useState<"enter" | "hold" | "exit">("enter");
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    try {
+      const savedTheme = loadTheme();
+      if (savedTheme) return savedTheme === "dark";
+    } catch {}
+    if (typeof window !== "undefined") {
+      const htmlEl = document.documentElement;
+      if (htmlEl.classList.contains("dark-mode")) return true;
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    return false;
+  });
 
   useEffect(() => {
-    // Detect theme: check if dark-mode class is on <html>, or fallback to system preference
     const htmlEl = document.documentElement;
     const hasDarkClass = htmlEl.classList.contains("dark-mode");
+    const savedTheme = loadTheme();
     const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setIsDark(hasDarkClass || (!hasDarkClass && systemDark));
+    setIsDark(hasDarkClass || savedTheme === "dark" || (!hasDarkClass && !savedTheme && systemDark));
   }, []);
 
   useEffect(() => {
@@ -35,7 +47,7 @@ export default function SplashScreen({ onFinish }: Props) {
   const version = (import.meta.env.VITE_APP_VERSION as string) || "1.0.0";
 
   return (
-    <div className={`splash-screen splash-${phase}`}>
+    <div className={`splash-screen splash-${phase} ${isDark ? "dark-mode splash-dark" : "splash-light"}`}>
       {/* Theme-aware background image */}
       <img
         src={bgImage}

@@ -984,7 +984,7 @@ export default function Settings({
             </div>
 
             <p className="settings-hint" style={{ marginTop: 6, marginBottom: reminderConfig.enabled ? 12 : 0 }}>
-              Set a daily timer to show a notification in your device panel. Tapping the notification launches FinAura and automatically starts backing up your vault without asking for PIN or Biometric again.
+              Remind to back up your vault once a day. Whenever you open FinAura for the first time in a day, an instant "Create a backup now" prompt appears so you can immediately secure and export your data without entering your PIN or Biometrics.
             </p>
 
             {reminderConfig.enabled && (
@@ -993,29 +993,13 @@ export default function Settings({
                   <div className="notif-permission-box" style={{ background: "rgba(234, 179, 8, 0.12)", border: "1px solid rgba(234, 179, 8, 0.3)", borderRadius: 10, padding: "10px 14px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
                     <div style={{ fontSize: "0.82rem", color: "var(--text)" }}>
                       <AlertTriangle size={15} style={{ display: "inline", verticalAlign: "middle", marginRight: 6, color: "#eab308" }} />
-                      Notification permission is required for reminders to appear in your notification panel.
+                      Enable notification permission to also receive alerts in your device notification panel.
                     </div>
                     <button type="button" className="btn-primary" style={{ padding: "5px 12px", fontSize: "0.78rem", whiteSpace: "nowrap" }} onClick={handleRequestPermission}>
                       Allow
                     </button>
                   </div>
                 )}
-
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="settings-label" style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <Clock size={15} /> Reminder Time
-                  </label>
-                  <input
-                    type="time"
-                    className="settings-input"
-                    value={reminderConfig.time}
-                    onChange={(e) => handleReminderTimeChange(e.target.value)}
-                    style={{ maxWidth: 220, fontSize: "1rem", letterSpacing: 1 }}
-                  />
-                  <p className="settings-hint" style={{ marginTop: 4 }}>
-                    FinAura will notify you daily at {formatTime12Hour(reminderConfig.time)}.
-                  </p>
-                </div>
 
                 <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", paddingTop: 4 }}>
                   <button
@@ -1035,7 +1019,7 @@ export default function Settings({
                 </div>
 
                 <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 10, padding: "10px 12px", fontSize: "0.78rem", color: "var(--text3)", lineHeight: 1.5 }}>
-                  🔒 <strong>One-Tap Backup:</strong> Interacting with the notification panel confirms you have authenticated on your device, so FinAura starts backing up automatically without prompting for PIN or Biometric. Normal manual Export and Import above continue to work as usual.
+                  🛡️ <strong>One-Tap Daily Backup:</strong> When you open the app each day, FinAura presents a "Create a backup now" bottom sheet. Tapping "Yes" instantly exports an encrypted backup file to your device without requiring PIN or Biometric re-authentication.
                 </div>
               </div>
             )}
