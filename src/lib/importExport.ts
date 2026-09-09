@@ -82,6 +82,38 @@ export async function exportVault(pin: string): Promise<void> {
   URL.revokeObjectURL(url);
 }
 
+/**
+ * Direct export for automated daily backup reminders.
+ * Generates and downloads the encrypted vault backup without prompting for PIN.
+ */
+export async function exportVaultDirect(): Promise<string> {
+  const backup: VaultBackup = {
+    version: 1,
+    exportedAt: Date.now(),
+    items: loadItems(),
+    expenses: loadExpenses(),
+    bills: loadBills(),
+    cashbacks: loadCashbacks(),
+    rdInstallments: loadRDInstallments(),
+    bankExpenses: loadBankExpenses(),
+    veloAIUsage: loadVeloAIUsage(),
+  };
+  const json = JSON.stringify(backup, null, 2);
+  const date = new Date().toISOString().slice(0, 10);
+  const fileName = `FinAura-backup-${date}.fvbackup`;
+
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  return fileName;
+}
+
 export async function importVault(file: File, pin: string): Promise<VaultBackup> {
   if (!verifyPin(pin)) throw new Error("Incorrect PIN.");
   const text = await file.text();

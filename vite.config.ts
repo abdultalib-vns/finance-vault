@@ -59,6 +59,7 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         navigateFallback: null,
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
+        importScripts: [basePath + "custom-sw.js"],
       },
       devOptions: {
         enabled: false,

@@ -152,6 +152,153 @@ html, body {
   font-family: inherit;
 }
 
+/* Background Image */
+.auth-bg-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Light mode styles for Auth Screen */
+.auth-screen-luxury.auth-light-mode {
+  background: #F1F5F9;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-ambient-glow {
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, rgba(99, 102, 241, 0.05) 50%, transparent 70%);
+}
+
+.auth-screen-luxury.auth-light-mode .auth-ambient-glow-secondary {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, rgba(245, 158, 11, 0.04) 50%, transparent 70%);
+}
+
+.auth-screen-luxury.auth-light-mode .auth-luxury-card {
+  background: rgba(255, 255, 255, 0.76);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    0 20px 50px -10px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  color: #0F172A;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-brand-name {
+  background: linear-gradient(180deg, #0F172A 0%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-security-pill {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #475569;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-step-title {
+  color: #0F172A;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-step-sub {
+  color: #64748B;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-pin-pips-wrap {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.auth-screen-luxury.auth-light-mode .auth-pin-pips-wrap:hover {
+  background: rgba(0, 0, 0, 0.07);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.auth-screen-luxury.auth-light-mode .auth-pin-pip {
+  border-color: rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.auth-screen-luxury.auth-light-mode .auth-pin-pip.filled {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  border-color: #10B981;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+.auth-screen-luxury.auth-light-mode .auth-pip-digit {
+  color: #FFFFFF;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-pin-peek-btn {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #64748B;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-pin-peek-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #0F172A;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-keypad-btn {
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #0F172A;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.auth-screen-luxury.auth-light-mode .auth-keypad-btn:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.auth-screen-luxury.auth-light-mode .auth-keypad-btn:active {
+  background: rgba(241, 245, 249, 0.95);
+}
+
+.auth-screen-luxury.auth-light-mode .auth-keypad-btn.action-btn,
+.auth-screen-luxury.auth-light-mode .auth-keypad-action {
+  color: #64748B;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-keypad-btn.action-btn:hover,
+.auth-screen-luxury.auth-light-mode .auth-keypad-action:hover {
+  color: #0F172A;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-forgot-btn,
+.auth-screen-luxury.auth-light-mode .auth-back-btn {
+  color: #64748B;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-forgot-btn:hover,
+.auth-screen-luxury.auth-light-mode .auth-back-btn:hover {
+  color: #0F172A;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-input-luxury {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: #0F172A;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-input-luxury:focus {
+  border-color: var(--primary, #2563eb);
+  background: #ffffff;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-select-luxury {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: #0F172A;
+}
+
 .auth-ambient-glow {
   position: absolute;
   top: 15%;
@@ -5502,32 +5649,43 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   z-index: 10;
   opacity: 0;
   animation: splashFadeIn 1s ease 0.5s forwards;
 }
 
-.splash-premium-footer p {
-  font-size: 0.8rem;
+.splash-attribution-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  text-align: center;
+}
+
+.splash-footer-line {
+  font-size: 0.76rem;
   color: #64748B;
   margin: 0;
   line-height: 1.4;
 }
 
-.dark-mode .splash-premium-footer p {
+.dark-mode .splash-footer-line {
   color: #94A3B8;
 }
 
-.splash-velolaunch-link {
+.splash-velolaunch-link,
+.splash-smartvista-link {
   color: var(--primary, #3b82f6);
   text-decoration: none;
   font-weight: 700;
   transition: opacity 0.2s ease;
 }
 
-.splash-velolaunch-link:hover {
+.splash-velolaunch-link:hover,
+.splash-smartvista-link:hover {
   opacity: 0.8;
+  text-decoration: underline;
 }
 
 /* Safety Badges */
@@ -9714,7 +9872,57 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   color: var(--text) !important;
 }
 
+/* -----------------------------------------------------------------------
+   DAILY BACKUP REMINDER & TOGGLE SWITCH
+   ----------------------------------------------------------------------- */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
 
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
 
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: var(--border);
+  transition: all 0.25s ease;
+  border-radius: 24px;
+}
 
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #ffffff;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
 
+.toggle-switch input:checked + .toggle-slider {
+  background-color: var(--primary);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(20px);
+}
+
+.backup-reminder-card {
+  transition: all 0.2s ease;
+}
+
+.backup-reminder-body {
+  animation: fadeIn 0.2s ease-out;
+}

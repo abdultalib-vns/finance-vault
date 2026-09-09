@@ -9,7 +9,7 @@ import {
   loadPinHash, savePinHash,
   loadSecurityQuestion, saveSecurityQuestion,
   loadSecurityAnswerHash, saveSecurityAnswerHash,
-  hasSecurityQuestion,
+  hasSecurityQuestion, loadTheme,
 } from "../lib/storage";
 import {
   isBiometricSupported,
@@ -353,8 +353,22 @@ export default function AuthScreen({ onUnlock }: Props) {
   };
 
   // ── RENDER ────────────────────────────────────────────────────
+  const userTheme = loadTheme();
+  const isDark = userTheme === "dark";
+  const bgImage = isDark
+    ? "/Background_Image_(DarkMode).png"
+    : "/Background_Image_(LightMode).png";
+
   return (
-    <div className="auth-screen-luxury">
+    <div className={`auth-screen-luxury ${isDark ? "auth-dark-mode" : "auth-light-mode"}`}>
+      {/* Theme-aware background image */}
+      <img
+        src={bgImage}
+        alt=""
+        className="auth-bg-image"
+        aria-hidden="true"
+      />
+
       {/* Dynamic Ambient Radiant Mesh Background */}
       <div className="auth-ambient-glow" />
       <div className="auth-ambient-glow-secondary" />

@@ -1,4 +1,4 @@
-import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff, User, Camera, Edit2, Save, Grid3x3, Code, Database, Cpu, RotateCcw, Bug, Terminal, Layers, Zap, QrCode, ScanLine, ShieldCheck, HelpCircle, BookOpen, Coins } from "lucide-react";
+import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff, User, Camera, Edit2, Save, Grid3x3, Code, Database, Cpu, RotateCcw, Bug, Terminal, Layers, Zap, QrCode, ScanLine, ShieldCheck, HelpCircle, BookOpen, Coins, Bell, Clock } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { hashPin } from "../lib/crypto";
 import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses, saveAIOptions, loadAIOptions, getVeloAIUsageCount, loadUserProfile, saveUserProfile, saveExpenses, saveCashbacks, saveBankExpenses, saveBills, loadPayAndRecordEnabled, savePayAndRecordEnabled } from "../lib/storage";
@@ -17,6 +17,17 @@ import {
   loginWithBiometric,
 } from "../lib/biometric";
 import { exportVault, importVault } from "../lib/importExport";
+import {
+  loadBackupReminderConfig,
+  saveBackupReminderConfig,
+  saveBackupReminderKey,
+  clearBackupReminderKey,
+  isBackupReminderEnabled,
+  getNotificationPermissionStatus,
+  requestNotificationPermission,
+  sendBackupNotification,
+  BackupReminderConfig,
+} from "../lib/backupReminder";
 import veloLaunchLogo from "../VeloLaunch.png";
 
 const APP_VERSION = "2.0.0";
@@ -99,6 +110,79 @@ export default function Settings({
   // Pay & Record toggle
   const [payRecordEnabled, setPayRecordEnabled] = useState(() => loadPayAndRecordEnabled());
 
+  // Daily Backup Reminder State
+  const [reminderConfig, setReminderConfig] = useState<BackupReminderConfig>(() => loadBackupReminderConfig());
+  const [notifPermission, setNotifPermission] = useState<NotificationPermission>(() => getNotificationPermissionStatus());
+  const [testNotifLoading, setTestNotifLoading] = useState(false);
+  const [testNotifMsg, setTestNotifMsg] = useState("");
+
+  async function handleToggleReminder(enabled: boolean) {
+    if (enabled) {
+      if (masterKey) {
+        saveBackupReminderKey(masterKey);
+      }
+      let perm = notifPermission;
+      if (perm !== "granted") {
+        perm = await requestNotificationPermission();
+        setNotifPermission(perm);
+      }
+      const updated = { ...reminderConfig, enabled: true };
+      setReminderConfig(updated);
+      saveBackupReminderConfig(updated);
+    } else {
+      clearBackupReminderKey();
+      const updated = { ...reminderConfig, enabled: false };
+      setReminderConfig(updated);
+      saveBackupReminderConfig(updated);
+    }
+  }
+
+  function handleReminderTimeChange(newTime: string) {
+    const updated = { ...reminderConfig, time: newTime, lastNotifiedDate: undefined };
+    setReminderConfig(updated);
+    saveBackupReminderConfig(updated);
+  }
+
+  async function handleRequestPermission() {
+    const perm = await requestNotificationPermission();
+    setNotifPermission(perm);
+    if (perm === "granted") {
+      setTestNotifMsg("Permission granted!");
+      setTimeout(() => setTestNotifMsg(""), 3000);
+    }
+  }
+
+  async function handleSendTestNotification() {
+    setTestNotifLoading(true);
+    setTestNotifMsg("");
+    try {
+      if (masterKey) {
+        saveBackupReminderKey(masterKey);
+      }
+      const success = await sendBackupNotification(true);
+      if (success) {
+        setTestNotifMsg("Test sent! Check notification panel.");
+      } else {
+        setTestNotifMsg("Error: Allow notification permission first.");
+      }
+    } catch (e: any) {
+      setTestNotifMsg(`Error: ${e.message || "Failed to send notification"}`);
+    } finally {
+      setTestNotifLoading(false);
+    }
+  }
+
+  function formatTime12Hour(time24: string): string {
+    if (!time24) return "9:00 PM";
+    const [hStr, mStr] = time24.split(":");
+    let h = parseInt(hStr, 10);
+    const m = mStr || "00";
+    if (isNaN(h)) return time24;
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    return `${h}:${m} ${ampm}`;
+  }
+
   useEffect(() => {
     isBiometricSupported().then(setBioSupported);
   }, []);
@@ -125,6 +209,9 @@ export default function Settings({
     saveItems(reEncrypted);
     onItemsChange(reEncrypted);
     onMasterKeyChange(newPin);
+    if (isBackupReminderEnabled()) {
+      saveBackupReminderKey(newPin);
+    }
     setNewPin("");
     setConfirmPin("");
     setPinMsg("Success: PIN changed! All data re-encrypted.");
@@ -199,6 +286,8 @@ export default function Settings({
 
   function handleClearAll() {
     clearAll();
+    clearBackupReminderKey();
+    saveBackupReminderConfig({ enabled: false, time: "21:00" });
     onItemsChange([]);
     onLock();
   }
@@ -876,6 +965,81 @@ export default function Settings({
               )}
             </>
           )}
+
+          {/* ── Daily Backup Reminder ── */}
+          <div className="backup-reminder-card" style={{ marginTop: 20, paddingTop: 16, borderTop: "1px solid var(--border)" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <Bell size={18} style={{ color: "var(--primary)" }} />
+                <h4 style={{ margin: 0, fontSize: "1rem", fontWeight: 600, color: "var(--text)" }}>Daily Backup Reminder</h4>
+              </div>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={reminderConfig.enabled}
+                  onChange={(e) => handleToggleReminder(e.target.checked)}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
+
+            <p className="settings-hint" style={{ marginTop: 6, marginBottom: reminderConfig.enabled ? 12 : 0 }}>
+              Set a daily timer to show a notification in your device panel. Tapping the notification launches FinAura and automatically starts backing up your vault without asking for PIN or Biometric again.
+            </p>
+
+            {reminderConfig.enabled && (
+              <div className="backup-reminder-body" style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 14 }}>
+                {notifPermission !== "granted" && (
+                  <div className="notif-permission-box" style={{ background: "rgba(234, 179, 8, 0.12)", border: "1px solid rgba(234, 179, 8, 0.3)", borderRadius: 10, padding: "10px 14px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+                    <div style={{ fontSize: "0.82rem", color: "var(--text)" }}>
+                      <AlertTriangle size={15} style={{ display: "inline", verticalAlign: "middle", marginRight: 6, color: "#eab308" }} />
+                      Notification permission is required for reminders to appear in your notification panel.
+                    </div>
+                    <button type="button" className="btn-primary" style={{ padding: "5px 12px", fontSize: "0.78rem", whiteSpace: "nowrap" }} onClick={handleRequestPermission}>
+                      Allow
+                    </button>
+                  </div>
+                )}
+
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="settings-label" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <Clock size={15} /> Reminder Time
+                  </label>
+                  <input
+                    type="time"
+                    className="settings-input"
+                    value={reminderConfig.time}
+                    onChange={(e) => handleReminderTimeChange(e.target.value)}
+                    style={{ maxWidth: 220, fontSize: "1rem", letterSpacing: 1 }}
+                  />
+                  <p className="settings-hint" style={{ marginTop: 4 }}>
+                    FinAura will notify you daily at {formatTime12Hour(reminderConfig.time)}.
+                  </p>
+                </div>
+
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", paddingTop: 4 }}>
+                  <button
+                    type="button"
+                    className="btn-outline"
+                    style={{ fontSize: "0.82rem", padding: "7px 14px", display: "inline-flex", alignItems: "center", gap: 6 }}
+                    onClick={handleSendTestNotification}
+                    disabled={testNotifLoading}
+                  >
+                    <Bell size={14} /> {testNotifLoading ? "Sending..." : "Send Test Notification"}
+                  </button>
+                  {testNotifMsg && (
+                    <span style={{ fontSize: "0.8rem", color: testNotifMsg.startsWith("Error") ? "var(--danger, #ef4444)" : "var(--primary, #3b82f6)" }}>
+                      {testNotifMsg}
+                    </span>
+                  )}
+                </div>
+
+                <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 10, padding: "10px 12px", fontSize: "0.78rem", color: "var(--text3)", lineHeight: 1.5 }}>
+                  🔒 <strong>One-Tap Backup:</strong> Interacting with the notification panel confirms you have authenticated on your device, so FinAura starts backing up automatically without prompting for PIN or Biometric. Normal manual Export and Import above continue to work as usual.
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* ── Velo's Quick Sync ────────────────────── */}

@@ -27,6 +27,9 @@ import PaymentVerificationModal from "./components/PaymentVerificationModal";
 import { startSession, endSession, trackTabVisit, applyAdminTheme, loadAdminTheme, loadAdminConfigFromServer, seedDefaultCardTemplates, loadGlobalConfig } from "./admin/adminStorage";
 import { GlobalAppConfig } from "./admin/adminTypes";
 
+import { loadBackupReminderConfig, loadBackupReminderKey, checkAndTriggerReminder, BACKUP_CHANNEL_NAME } from "./lib/backupReminder";
+import { exportVaultDirect } from "./lib/importExport";
+
 const storedTheme = loadTheme();
 if (storedTheme === "dark") document.documentElement.classList.add("dark-mode");
 
@@ -63,7 +66,13 @@ export default function App() {
 }
 
 function MainApp() {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("action") === "daily_backup") return false;
+    }
+    return true;
+  });
   const [masterKey, setMasterKey] = useState<string | null>(null);
   const [showWelcome, setShowWelcome] = useState(false);
   const [items, setItems] = useState<FinanceItem[]>([]);
@@ -167,6 +176,87 @@ function MainApp() {
     setItems(loadItems());
     setCurrency(getCurrency(loadCurrency()));
   }
+
+  const triggerDailyBackup = useCallback(async () => {
+    const reminderKey = loadBackupReminderKey();
+    if (reminderKey) {
+      handleUnlock(reminderKey);
+      setShowSplash(false);
+    }
+    try {
+      const fileName = await exportVaultDirect();
+      customAlert(`Your daily encrypted backup (${fileName}) has been downloaded successfully.`, "Daily Backup Completed", "success");
+    } catch (err) {
+      console.error("Auto backup failed:", err);
+    }
+  }, [wasNewUser]);
+
+  // Handle notification interaction (URL action=daily_backup, SW postMessage, BroadcastChannel)
+  useEffect(() => {
+    const checkUrlTrigger = () => {
+      try {
+        const url = new URL(window.location.href);
+        if (url.searchParams.get("action") === "daily_backup") {
+          url.searchParams.delete("action");
+          url.searchParams.delete("t");
+          window.history.replaceState({}, document.title, url.pathname + (url.hash || ""));
+          triggerDailyBackup();
+        }
+      } catch (e) {}
+    };
+
+    checkUrlTrigger();
+
+    // Service Worker message listener
+    const handleSwMsg = (e: MessageEvent) => {
+      if (e.data?.action === "trigger_daily_backup") {
+        triggerDailyBackup();
+      }
+    };
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.addEventListener("message", handleSwMsg);
+    }
+
+    // BroadcastChannel listener
+    let channel: BroadcastChannel | null = null;
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        channel = new BroadcastChannel(BACKUP_CHANNEL_NAME);
+        channel.onmessage = (e) => {
+          if (e.data?.action === "trigger_daily_backup") {
+            triggerDailyBackup();
+          }
+        };
+      } catch (e) {}
+    }
+
+    return () => {
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.removeEventListener("message", handleSwMsg);
+      }
+      if (channel) {
+        channel.close();
+      }
+    };
+  }, [triggerDailyBackup]);
+
+  // Daily reminder scheduler check
+  useEffect(() => {
+    checkAndTriggerReminder();
+    const interval = setInterval(() => {
+      checkAndTriggerReminder();
+    }, 30000); // Check every 30 seconds
+    const handleVis = () => {
+      if (!document.hidden) {
+        checkAndTriggerReminder();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVis);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVis);
+    };
+  }, []);
 
   useEffect(() => {
     if (!masterKey) return;

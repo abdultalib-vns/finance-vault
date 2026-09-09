@@ -76,24 +76,37 @@ export default function SplashScreen({ onFinish }: Props) {
 
       {/* Footer */}
       <div className="splash-premium-footer">
-        <p>
-          Engineered by{" "}
-          <a
-            href="https://velolaunch-aistudio.vercel.app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="splash-velolaunch-link"
-          >
-            VeloLaunch
-          </a>
-        </p>
-
         {/* Safety Badges */}
         <img
           src="/SafetyBadges.png"
           alt="Safe and Secured • 100% Local • 100% Offline"
           className="splash-safety-badges"
         />
+
+        <div className="splash-attribution-block">
+          <p className="splash-footer-line">
+            Engineered by{" "}
+            <a
+              href="https://velolaunch-aistudio.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="splash-velolaunch-link"
+            >
+              VeloLaunch
+            </a>
+          </p>
+          <p className="splash-footer-line">
+            A Company by{" "}
+            <a
+              href="https://www.smartvistaitsolutions.in"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="splash-smartvista-link"
+            >
+              Smart Vista IT Solutions
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
