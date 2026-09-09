@@ -11966,3 +11966,82 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
 .lp-dark .lp-footer-credit { color: #64748b; }
 .lp-footer-credit a { color: #6366f1; text-decoration: none; font-weight: 600; }
 .lp-dark .lp-footer-credit a { color: #a5b4fc; }
+
+/* ── GET STARTED IN MINUTES — Steps ── */
+.lp-steps {
+  padding: 0 20px 44px;
+}
+
+.lp-steps-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* center each card horizontally */
+  gap: 14px;
+  width: 100%;
+}
+
+.lp-step-card {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;    /* stack number on top of text */
+  align-items: center;       /* center everything horizontally */
+  text-align: center;        /* center all text */
+  gap: 12px;
+  background: rgba(255,255,255,0.82);
+  border: 1px solid rgba(255,255,255,0.7);
+  border-top: 3px solid var(--step-color, #6366f1);
+  border-radius: 18px;
+  padding: 22px 20px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.lp-step-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+}
+.lp-dark .lp-step-card {
+  background: rgba(20,20,36,0.75);
+  border-color: rgba(255,255,255,0.06);
+  border-top-color: var(--step-color, #6366f1);
+}
+
+.lp-step-num {
+  width: 52px; height: 52px;
+  border-radius: 16px;
+  background: var(--step-bg, rgba(99,102,241,0.12));
+  color: var(--step-color, #6366f1);
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lp-step-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.lp-step-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+.lp-dark .lp-step-title { color: #e2e8f0; }
+
+.lp-step-desc {
+  font-size: 0.82rem;
+  color: #6b7280;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 280px;
+}
+.lp-dark .lp-step-desc { color: #64748b; }
+

@@ -254,6 +254,60 @@ export default function LandingPage({ onGetStarted }: Props) {
           </div>
         </section>
 
+        {/* ══ GET STARTED IN MINUTES ══ */}
+        <section className="lp-steps">
+          <div className="lp-section-header">
+            <span className="lp-section-pill"><Sparkles size={13} /> Quick setup</span>
+            <h2 className="lp-section-title">Get Started in Minutes</h2>
+            <p className="lp-section-sub">From zero to fully secured in 4 easy steps.</p>
+          </div>
+
+          <div className="lp-steps-list">
+            {[
+              {
+                num: "01",
+                color: "#6366f1",
+                bg: "rgba(99,102,241,0.12)",
+                title: "Create Your PIN",
+                desc: "Set a secure 4–6 digit PIN to encrypt your vault. Your data never leaves your device.",
+              },
+              {
+                num: "02",
+                color: "#f59e0b",
+                bg: "rgba(245,158,11,0.12)",
+                title: "Add Cards & Banks",
+                desc: "Add your credit cards and bank accounts in seconds — all stored locally.",
+              },
+              {
+                num: "03",
+                color: "#10b981",
+                bg: "rgba(16,185,129,0.12)",
+                title: "Track & Analyse",
+                desc: "Log expenses, monitor due dates, and view beautiful analytics on your spending.",
+              },
+              {
+                num: "04",
+                color: "#8b5cf6",
+                bg: "rgba(139,92,246,0.12)",
+                title: "Ask Your AI",
+                desc: "Connect an AI provider and ask FinAura anything about your finances instantly.",
+              },
+            ].map((step) => (
+              <div
+                key={step.num}
+                className="lp-step-card"
+                style={{ "--step-color": step.color, "--step-bg": step.bg } as React.CSSProperties}
+              >
+                <div className="lp-step-num">{step.num}</div>
+                <div className="lp-step-body">
+                  <h4 className="lp-step-title">{step.title}</h4>
+                  <p className="lp-step-desc">{step.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* ══ FINAL CTA ══ */}
         <section className="lp-final-cta">
           <div className="lp-final-card">
@@ -270,6 +324,7 @@ export default function LandingPage({ onGetStarted }: Props) {
             </button>
           </div>
         </section>
+
 
         {/* ══ FOOTER ══ */}
         <footer className="lp-footer">
