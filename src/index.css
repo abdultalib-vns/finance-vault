@@ -100,6 +100,111 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* ══════════════════════════════════════════════
+   CUSTOM SCROLLBARS — Main App
+   Thumb follows --accent (theme color)
+   ══════════════════════════════════════════════ */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+
+/* Webkit (Chrome, Edge, Safari) — global */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 999px;
+  opacity: 0.7;
+  transition: background 0.2s;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+  filter: brightness(1.2);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Dark mode — slightly more visible track */
+:root.dark-mode ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+:root.dark-mode * {
+  scrollbar-color: var(--accent) rgba(255, 255, 255, 0.04);
+}
+
+/* ══════════════════════════════════════════════
+   CUSTOM SCROLLBARS — Admin Panel
+   Uses the admin primary/accent color
+   ══════════════════════════════════════════════ */
+
+/* Admin light mode */
+.admin-luxury-shell * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) transparent;
+}
+.admin-luxury-shell ::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.admin-luxury-shell ::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 999px;
+}
+.admin-luxury-shell ::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 999px;
+  opacity: 0.6;
+  transition: background 0.2s, filter 0.2s;
+}
+.admin-luxury-shell ::-webkit-scrollbar-thumb:hover {
+  filter: brightness(1.25);
+}
+
+/* Admin dark mode — accent glow effect */
+.admin-luxury-shell.admin-dark-mode *,
+.admin-dark-mode .admin-luxury-shell * {
+  scrollbar-color: #6366f1 rgba(255, 255, 255, 0.05);
+}
+.admin-luxury-shell.admin-dark-mode ::-webkit-scrollbar-track,
+.admin-dark-mode .admin-luxury-shell ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+.admin-luxury-shell.admin-dark-mode ::-webkit-scrollbar-thumb,
+.admin-dark-mode .admin-luxury-shell ::-webkit-scrollbar-thumb {
+  background: #6366f1;
+  box-shadow: 0 0 6px rgba(99, 102, 241, 0.5);
+}
+.admin-luxury-shell.admin-dark-mode ::-webkit-scrollbar-thumb:hover,
+.admin-dark-mode .admin-luxury-shell ::-webkit-scrollbar-thumb:hover {
+  background: #818cf8;
+  box-shadow: 0 0 8px rgba(129, 140, 248, 0.6);
+}
+
+/* Admin light mode override */
+.admin-luxury-shell.admin-light-mode *,
+.admin-light-mode .admin-luxury-shell * {
+  scrollbar-color: #6366f1 rgba(0, 0, 0, 0.04);
+}
+.admin-luxury-shell.admin-light-mode ::-webkit-scrollbar-thumb,
+.admin-light-mode .admin-luxury-shell ::-webkit-scrollbar-thumb {
+  background: #6366f1;
+}
+.admin-luxury-shell.admin-light-mode ::-webkit-scrollbar-thumb:hover,
+.admin-light-mode .admin-luxury-shell ::-webkit-scrollbar-thumb:hover {
+  background: #4f46e5;
+}
+
+
 button {
   cursor: pointer;
   border: none;
