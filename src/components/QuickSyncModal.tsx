@@ -311,8 +311,9 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
                 className="settings-input"
                 placeholder="Sender's PIN"
                 value={pin}
-                onChange={e => { setPin(e.target.value); setError(""); }}
+                onChange={e => { setPin(e.target.value.replace(/\D/g, "").slice(0, 6)); setError(""); }}
                 inputMode="numeric"
+                maxLength={6}
                 autoFocus
                 autoComplete="off"
                 data-lpignore="true"
@@ -414,8 +415,9 @@ export default function QuickSyncModal({ mode, onClose, onSyncComplete }: Props)
                 className="settings-input"
                 placeholder="Enter your PIN"
                 value={pin}
-                onChange={e => { setPin(e.target.value); setError(""); }}
+                onChange={e => { setPin(e.target.value.replace(/\D/g, "").slice(0, 6)); setError(""); }}
                 inputMode="numeric"
+                maxLength={6}
                 autoFocus
                 autoComplete="off"
                 data-lpignore="true"

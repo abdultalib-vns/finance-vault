@@ -244,10 +244,10 @@ export default function BillPaymentSheet({
                 type="text"
                 inputMode="numeric"
                 className="bps-pin-input"
-                placeholder="••••"
+                placeholder="••••••"
                 value={pin}
-                onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-                maxLength={8}
+                onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                maxLength={6}
                 autoComplete="off"
                 data-lpignore="true"
                 data-1p-ignore

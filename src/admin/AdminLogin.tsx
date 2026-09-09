@@ -72,11 +72,11 @@ export default function AdminLogin({ onLogin }: Props) {
   function handleDigitPress(digit: string) {
     setError("");
     if (mode === "login") {
-      if (pin.length < 12) setPin(prev => prev + digit);
+      if (pin.length < 6) setPin(prev => prev + digit);
     } else if (mode === "setup") {
-      if (pin.length < 12) setPin(prev => prev + digit);
+      if (pin.length < 6) setPin(prev => prev + digit);
     } else if (mode === "reset") {
-      if (newPin.length < 12) setNewPin(prev => prev + digit);
+      if (newPin.length < 6) setNewPin(prev => prev + digit);
     }
   }
 
@@ -424,8 +424,8 @@ export default function AdminLogin({ onLogin }: Props) {
                   style={{ width: "100%", padding: "12px 14px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--surface2)", color: "var(--text)" }}
                   placeholder="Create Admin PIN"
                   value={pin}
-                  onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-                  maxLength={12}
+                  onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  maxLength={6}
                 />
               </div>
 
@@ -440,8 +440,8 @@ export default function AdminLogin({ onLogin }: Props) {
                   style={{ width: "100%", padding: "12px 14px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--surface2)", color: "var(--text)" }}
                   placeholder="Re-enter Admin PIN"
                   value={confirm}
-                  onChange={(e) => setConfirm(e.target.value.replace(/\D/g, ""))}
-                  maxLength={12}
+                  onChange={(e) => setConfirm(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  maxLength={6}
                 />
               </div>
             </div>
@@ -556,8 +556,8 @@ export default function AdminLogin({ onLogin }: Props) {
                   style={{ width: "100%", padding: "12px 14px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--surface2)", color: "var(--text)" }}
                   placeholder="Min 4 digits"
                   value={newPin}
-                  onChange={(e) => setNewPin(e.target.value.replace(/\D/g, ""))}
-                  maxLength={12}
+                  onChange={(e) => setNewPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  maxLength={6}
                 />
               </div>
 
@@ -572,8 +572,8 @@ export default function AdminLogin({ onLogin }: Props) {
                   style={{ width: "100%", padding: "12px 14px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--surface2)", color: "var(--text)" }}
                   placeholder="Confirm PIN"
                   value={newPinConfirm}
-                  onChange={(e) => setNewPinConfirm(e.target.value.replace(/\D/g, ""))}
-                  maxLength={12}
+                  onChange={(e) => setNewPinConfirm(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  maxLength={6}
                 />
               </div>
             </div>

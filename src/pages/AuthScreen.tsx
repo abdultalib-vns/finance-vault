@@ -170,13 +170,13 @@ export default function AuthScreen({ onUnlock }: Props) {
   function handleDigitPress(digit: string) {
     setError("");
     if (step === "pin-enter" || step === "unlock") {
-      if (pin.length < 12) setPin((prev) => prev + digit);
+      if (pin.length < 6) setPin((prev) => prev + digit);
     } else if (step === "pin-confirm") {
-      if (confirmPin.length < 12) setConfirmPin((prev) => prev + digit);
+      if (confirmPin.length < 6) setConfirmPin((prev) => prev + digit);
     } else if (step === "recover-pin") {
-      if (newPin.length < 12) setNewPin((prev) => prev + digit);
+      if (newPin.length < 6) setNewPin((prev) => prev + digit);
     } else if (step === "recover-confirm") {
-      if (confirmNewPin.length < 12) setConfirmNewPin((prev) => prev + digit);
+      if (confirmNewPin.length < 6) setConfirmNewPin((prev) => prev + digit);
     }
   }
 
@@ -452,7 +452,7 @@ export default function AuthScreen({ onUnlock }: Props) {
                 type={showPlainPin ? "text" : "password"}
                 inputMode="none"
                 tabIndex={-1}
-                maxLength={12}
+                maxLength={6}
                 autoComplete="off"
                 data-lpignore="true"
                 data-1p-ignore
@@ -460,7 +460,7 @@ export default function AuthScreen({ onUnlock }: Props) {
                 placeholder="Enter PIN"
                 value={pin}
                 onChange={(e) => {
-                  setPin(e.target.value);
+                  setPin(e.target.value.slice(0, 6));
                   setError("");
                 }}
               />
@@ -568,7 +568,7 @@ export default function AuthScreen({ onUnlock }: Props) {
                 type={showPlainPin ? "text" : "password"}
                 inputMode="none"
                 tabIndex={-1}
-                maxLength={12}
+                maxLength={6}
                 autoComplete="off"
                 data-lpignore="true"
                 data-1p-ignore
@@ -576,7 +576,7 @@ export default function AuthScreen({ onUnlock }: Props) {
                 placeholder="Enter PIN"
                 value={pin}
                 onChange={(e) => {
-                  setPin(e.target.value);
+                  setPin(e.target.value.slice(0, 6));
                   setError("");
                 }}
               />
@@ -646,7 +646,7 @@ export default function AuthScreen({ onUnlock }: Props) {
                 type={showPlainPin ? "text" : "password"}
                 inputMode="none"
                 tabIndex={-1}
-                maxLength={12}
+                maxLength={6}
                 autoComplete="off"
                 data-lpignore="true"
                 data-1p-ignore
@@ -654,7 +654,7 @@ export default function AuthScreen({ onUnlock }: Props) {
                 placeholder="Confirm PIN"
                 value={confirmPin}
                 onChange={(e) => {
-                  setConfirmPin(e.target.value);
+                  setConfirmPin(e.target.value.slice(0, 6));
                   setError("");
                 }}
               />
@@ -826,14 +826,14 @@ export default function AuthScreen({ onUnlock }: Props) {
                 type={showPlainPin ? "text" : "password"}
                 inputMode="none"
                 tabIndex={-1}
-                maxLength={12}
+                maxLength={6}
                 autoComplete="off"
                 data-lpignore="true"
                 data-1p-ignore
                 className="auth-hidden-input"
                 placeholder="Enter New PIN"
                 value={newPin}
-                onChange={(e) => { setNewPin(e.target.value); setError(""); }}
+                onChange={(e) => { setNewPin(e.target.value.slice(0, 6)); setError(""); }}
               />
             </form>
 
@@ -895,14 +895,14 @@ export default function AuthScreen({ onUnlock }: Props) {
                 type={showPlainPin ? "text" : "password"}
                 inputMode="none"
                 tabIndex={-1}
-                maxLength={12}
+                maxLength={6}
                 autoComplete="off"
                 data-lpignore="true"
                 data-1p-ignore
                 className="auth-hidden-input"
                 placeholder="Confirm New PIN"
                 value={confirmNewPin}
-                onChange={(e) => { setConfirmNewPin(e.target.value); setError(""); }}
+                onChange={(e) => { setConfirmNewPin(e.target.value.slice(0, 6)); setError(""); }}
               />
             </form>
 
