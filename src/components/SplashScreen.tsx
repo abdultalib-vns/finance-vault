@@ -56,10 +56,12 @@ export default function SplashScreen({ onFinish }: Props) {
         aria-hidden="true"
       />
 
+
+      {/* Version badge - top left of screen */}
+      <div className="splash-version-badge">Version {version}</div>
+
       {/* Central content card */}
       <div className="splash-premium-card">
-        {/* Version badge - top left */}
-        <div className="splash-version-badge">Version {version}</div>
 
         {/* App Icon */}
         <div className="splash-icon-wrapper">

@@ -25,7 +25,6 @@ import {
   isBackupReminderEnabled,
   getNotificationPermissionStatus,
   requestNotificationPermission,
-  sendBackupNotification,
   BackupReminderConfig,
 } from "../lib/backupReminder";
 import veloLaunchLogo from "../VeloLaunch.png";
@@ -113,8 +112,6 @@ export default function Settings({
   // Daily Backup Reminder State
   const [reminderConfig, setReminderConfig] = useState<BackupReminderConfig>(() => loadBackupReminderConfig());
   const [notifPermission, setNotifPermission] = useState<NotificationPermission>(() => getNotificationPermissionStatus());
-  const [testNotifLoading, setTestNotifLoading] = useState(false);
-  const [testNotifMsg, setTestNotifMsg] = useState("");
 
   async function handleToggleReminder(enabled: boolean) {
     if (enabled) {
@@ -146,31 +143,9 @@ export default function Settings({
   async function handleRequestPermission() {
     const perm = await requestNotificationPermission();
     setNotifPermission(perm);
-    if (perm === "granted") {
-      setTestNotifMsg("Permission granted!");
-      setTimeout(() => setTestNotifMsg(""), 3000);
-    }
+    // permission granted — no additional action needed
   }
 
-  async function handleSendTestNotification() {
-    setTestNotifLoading(true);
-    setTestNotifMsg("");
-    try {
-      if (masterKey) {
-        saveBackupReminderKey(masterKey);
-      }
-      const success = await sendBackupNotification(true);
-      if (success) {
-        setTestNotifMsg("Test sent! Check notification panel.");
-      } else {
-        setTestNotifMsg("Error: Allow notification permission first.");
-      }
-    } catch (e: any) {
-      setTestNotifMsg(`Error: ${e.message || "Failed to send notification"}`);
-    } finally {
-      setTestNotifLoading(false);
-    }
-  }
 
   function formatTime12Hour(time24: string): string {
     if (!time24) return "9:00 PM";
@@ -1001,22 +976,6 @@ export default function Settings({
                   </div>
                 )}
 
-                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", paddingTop: 4 }}>
-                  <button
-                    type="button"
-                    className="btn-outline"
-                    style={{ fontSize: "0.82rem", padding: "7px 14px", display: "inline-flex", alignItems: "center", gap: 6 }}
-                    onClick={handleSendTestNotification}
-                    disabled={testNotifLoading}
-                  >
-                    <Bell size={14} /> {testNotifLoading ? "Sending..." : "Send Test Notification"}
-                  </button>
-                  {testNotifMsg && (
-                    <span style={{ fontSize: "0.8rem", color: testNotifMsg.startsWith("Error") ? "var(--danger, #ef4444)" : "var(--primary, #3b82f6)" }}>
-                      {testNotifMsg}
-                    </span>
-                  )}
-                </div>
 
                 <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 10, padding: "10px 12px", fontSize: "0.78rem", color: "var(--text3)", lineHeight: 1.5 }}>
                   🛡️ <strong>One-Tap Daily Backup:</strong> When you open the app each day, FinAura presents a "Create a backup now" bottom sheet. Tapping "Yes" instantly exports an encrypted backup file to your device without requiring PIN or Biometric re-authentication.

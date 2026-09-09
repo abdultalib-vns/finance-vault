@@ -5509,9 +5509,10 @@ html, body {
 
 /* Version Badge - top left */
 .splash-version-badge {
-  position: absolute;
+  position: fixed;
   top: 16px;
   left: 16px;
+  z-index: 10001;
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.04em;
