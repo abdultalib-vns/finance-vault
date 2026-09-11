@@ -11663,10 +11663,11 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
 .loans-tab-bar {
   display: flex;
   background: var(--surface2);
-  border-radius: 12px;
-  padding: 4px;
-  margin: 0 16px 20px;
-  gap: 4px;
+  border-radius: 16px;
+  padding: 6px;
+  margin: 0 16px 24px;
+  gap: 8px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .loans-tab-btn {
@@ -11675,21 +11676,30 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 10px;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 12px;
   border: none;
   background: transparent;
   color: var(--text2);
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .loans-tab-btn.active {
   background: var(--surface);
   color: var(--primary);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  transform: translateY(-1px);
+}
+
+.loans-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 0 16px;
+  margin-bottom: 24px;
 }
 
 .loan-tax-rows {
@@ -11705,14 +11715,8 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   gap: 8px;
 }
 
-.loan-tax-name {
-  flex: 2;
-}
-
-.loan-tax-pct {
-  flex: 1;
-}
-
+.loan-tax-name { flex: 2; }
+.loan-tax-pct { flex: 1; }
 .loan-tax-del {
   background: none;
   border: none;
@@ -11722,87 +11726,103 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: 6px;
+  transition: all 0.2s;
 }
-
-.loan-tax-del:hover {
-  background: rgba(239, 68, 68, 0.1);
-}
+.loan-tax-del:hover { background: rgba(239, 68, 68, 0.1); }
 
 .loan-preview {
   background: var(--surface2);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 16px;
   margin-bottom: 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  border: 1px solid var(--border);
 }
 
 .loan-preview-row {
   display: flex;
   justify-content: space-between;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: var(--text2);
 }
 
 .loan-preview-total {
   margin-top: 8px;
-  padding-top: 8px;
+  padding-top: 12px;
   border-top: 1px dashed var(--border);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text);
-  font-size: 1rem;
+  font-size: 1.1rem;
 }
 
 .loan-card {
   padding: 0;
   overflow: hidden;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(10px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-bottom: 16px;
+}
+
+.loan-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.08);
 }
 
 .loan-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
+  padding: 20px;
   cursor: pointer;
+  background: transparent;
   transition: background 0.2s;
 }
 
 .loan-card-header:hover {
-  background: var(--surface2);
+  background: rgba(0,0,0,0.02);
 }
 
 .loan-card-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .loan-card-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  background: linear-gradient(135deg, var(--primary-light), var(--surface));
 }
 
 .loan-card-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .loan-card-name {
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: 700;
+  font-size: 1.05rem;
   color: var(--text);
+  letter-spacing: -0.3px;
 }
 
 .loan-card-lender {
   font-size: 0.85rem;
   color: var(--text2);
+  font-weight: 500;
 }
 
 .loan-card-right {
@@ -11813,141 +11833,155 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
 }
 
 .loan-card-amount {
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-weight: 800;
+  font-size: 1.2rem;
   color: var(--text);
+  letter-spacing: -0.5px;
 }
 
 .loan-card-per {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--text2);
-  font-weight: normal;
+  font-weight: 500;
+  margin-left: 2px;
 }
 
 .loan-progress-wrap {
-  padding: 0 16px 16px;
+  padding: 0 20px 20px;
 }
 
 .loan-progress-bar {
-  height: 6px;
+  height: 8px;
   background: var(--surface2);
-  border-radius: 3px;
+  border-radius: 99px;
   overflow: hidden;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
 }
 
 .loan-progress-fill {
   height: 100%;
-  background: var(--primary);
-  border-radius: 3px;
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg, var(--primary), #8b5cf6);
+  border-radius: 99px;
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .loan-progress-info {
   display: flex;
   justify-content: space-between;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 500;
   color: var(--text2);
 }
 
 .loan-expanded {
-  padding: 0 16px 16px;
-  border-top: 1px solid var(--border);
-  background: var(--surface2);
+  padding: 0 20px 20px;
+  border-top: 1px solid var(--surface2);
+  background: rgba(0,0,0,0.01);
 }
 
 .loan-detail-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin: 16px 0;
-  padding: 12px;
+  gap: 16px;
+  margin: 20px 0;
+  padding: 16px;
   background: var(--surface);
-  border-radius: 8px;
+  border-radius: 16px;
   border: 1px solid var(--border);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.02);
 }
 
 .loan-detail-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .loan-detail-label {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--text2);
+  font-weight: 500;
 }
 
 .loan-detail-value {
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 700;
   color: var(--text);
 }
 
 .loan-detail-total {
   grid-column: span 2;
   border-top: 1px dashed var(--border);
-  padding-top: 8px;
+  padding-top: 12px;
   margin-top: 4px;
 }
 
 .loan-detail-total .loan-detail-value {
   color: var(--danger);
+  font-size: 1.2rem;
 }
 
 .loan-note-display {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  padding: 12px;
-  background: var(--surface);
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  font-size: 0.9rem;
+  gap: 10px;
+  padding: 14px;
+  background: var(--surface2);
+  border-radius: 12px;
+  font-size: 0.95rem;
   color: var(--text2);
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .loan-emi-heading {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: var(--text);
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  letter-spacing: -0.3px;
 }
 
 .loan-emi-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
 .loan-emi-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px;
+  padding: 16px;
   background: var(--surface);
-  border-radius: 8px;
+  border-radius: 16px;
   border: 1px solid var(--border);
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.loan-emi-row:hover {
+  transform: translateX(4px);
+  border-color: var(--primary-light);
 }
 
 .loan-emi-row.paid {
-  opacity: 0.7;
+  opacity: 0.6;
   background: var(--surface2);
+  border-color: transparent;
+  transform: none;
 }
 
 .loan-emi-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .loan-emi-check {
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
   border: 2px solid var(--border);
   background: transparent;
   display: flex;
@@ -11955,49 +11989,66 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   justify-content: center;
   cursor: pointer;
   color: white;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.loan-emi-check:hover {
+  border-color: var(--primary);
+  transform: scale(1.05);
 }
 
 .loan-emi-check.checked {
   background: var(--success);
   border-color: var(--success);
+  transform: scale(1);
 }
 
 .loan-emi-info {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .loan-emi-month {
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text);
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .loan-emi-sub {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--text2);
+  font-weight: 500;
 }
 
 .loan-emi-right {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 4px;
+  gap: 6px;
 }
 
 .loan-emi-amount-input {
-  width: 120px;
-  padding: 4px 8px;
+  width: 130px;
+  padding: 6px 10px;
   text-align: right;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text);
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  font-size: 0.95rem;
+  background: rgba(0,0,0,0.03);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 1.05rem;
   -moz-appearance: textfield;
+  transition: all 0.2s;
 }
+
+.loan-emi-amount-input:focus {
+  background: var(--surface);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+  outline: none;
+}
+
 .loan-emi-amount-input::-webkit-outer-spin-button,
 .loan-emi-amount-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -12005,78 +12056,85 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
 }
 
 .loan-emi-note-input {
-  width: 120px;
+  width: 130px;
   padding: 4px 8px;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   background: transparent;
   border: 1px solid transparent;
   text-align: right;
   color: var(--text2);
+  transition: all 0.2s;
 }
 
 .loan-emi-note-input:focus {
   border-color: var(--border);
   background: var(--surface2);
   outline: none;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .loan-card-actions {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   justify-content: flex-end;
-  margin-top: 16px;
+  margin-top: 20px;
 }
 
 .loan-action-btn {
-  padding: 6px 12px;
-  font-size: 0.85rem;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  border-radius: 10px;
 }
 
 .loan-action-btn.del {
   color: var(--danger);
-  border-color: var(--border);
+  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.05);
 }
 
 .loan-action-btn.del:hover {
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(239, 68, 68, 0.15);
   border-color: var(--danger);
+  transform: translateY(-1px);
 }
 
 @media (min-width: 768px) {
   .loans-tab-bar {
-    margin: 0 0 24px 0;
+    margin: 0 0 32px 0;
   }
 }
 
 @media (max-width: 600px) {
-  /* Fix horizontal squishing of multi-input form rows on mobile */
   .form-row {
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
   }
   
-  /* Make the loan detail summary single column on mobile */
   .loan-detail-grid {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 16px;
   }
   
-  /* Give EMI schedule rows more breathing room on mobile */
   .loan-emi-row {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 16px;
+    padding: 20px;
   }
+  
   .loan-emi-right {
     align-items: stretch;
     width: 100%;
+    gap: 12px;
   }
+  
   .loan-emi-amount-input, .loan-emi-note-input {
     width: 100%;
     text-align: left;
+    background: var(--surface2);
   }
 }

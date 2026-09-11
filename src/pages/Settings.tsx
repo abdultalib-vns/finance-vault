@@ -586,7 +586,7 @@ export default function Settings({
           <a href="https://finaura-landingpage.vercel.app" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', height: '32px', marginRight: 8, background: 'linear-gradient(135deg, #F59E0B, #DC2626)', boxShadow: '0 2px 10px rgba(220, 38, 38, 0.25)', borderRadius: '8px', padding: '0 12px', textDecoration: 'none', opacity: 0.95, transition: 'all 0.2s ease' }} onMouseOver={e => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "translateY(-1px)"; }} onMouseOut={e => { e.currentTarget.style.opacity = "0.95"; e.currentTarget.style.transform = "translateY(0)"; }}>
             <span style={{ color: '#fff', fontSize: '13px', fontWeight: 700, letterSpacing: '0.4px', textShadow: '0 1px 2px rgba(0,0,0,0.2)' }}>👑 UPGRADE</span>
           </a>
-          <a href="https://velolaunch.lovable.app" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', height: '32px' }}>
+          <a href="https://velolaunch-aistudio.vercel.app" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', height: '32px' }}>
             <img src={veloLaunchLogo} alt="VeloLaunch" style={{ display: 'block', height: "100%", width: 'auto', objectFit: "contain", opacity: 0.9, transition: "opacity 0.2s ease" }} onMouseOver={e => e.currentTarget.style.opacity = "1"} onMouseOut={e => e.currentTarget.style.opacity = "0.9"} />
           </a>
         </div>

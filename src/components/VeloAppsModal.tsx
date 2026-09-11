@@ -10,18 +10,18 @@ interface AppInfo {
 
 // Mock data for other VeloLaunch apps
 const OTHER_APPS: AppInfo[] = [
-  { id: "1", name: "TaskMaster", icon: "📋", url: "https://velolaunch.lovable.app" },
-  { id: "2", name: "FitTrack", icon: "🏃", url: "https://velolaunch.lovable.app" },
-  { id: "3", name: "RecipeHub", icon: "🍳", url: "https://velolaunch.lovable.app" },
-  { id: "4", name: "CodeVault", icon: "💻", url: "https://velolaunch.lovable.app" },
-  { id: "5", name: "MindNote", icon: "🧠", url: "https://velolaunch.lovable.app" },
-  { id: "6", name: "TravelMate", icon: "✈️", url: "https://velolaunch.lovable.app" },
-  { id: "7", name: "WeatherNow", icon: "☁️", url: "https://velolaunch.lovable.app" },
-  { id: "8", name: "StudySync", icon: "📚", url: "https://velolaunch.lovable.app" },
-  { id: "9", name: "ArtConnect", icon: "🎨", url: "https://velolaunch.lovable.app" },
-  { id: "10", name: "MusicPro", icon: "🎵", url: "https://velolaunch.lovable.app" },
-  { id: "11", name: "PhotoGen", icon: "📸", url: "https://velolaunch.lovable.app" },
-  { id: "12", name: "VideoEdit", icon: "🎬", url: "https://velolaunch.lovable.app" },
+  { id: "1", name: "TaskMaster", icon: "📋", url: "https://velolaunch-aistudio.vercel.app" },
+  { id: "2", name: "FitTrack", icon: "🏃", url: "https://velolaunch-aistudio.vercel.app" },
+  { id: "3", name: "RecipeHub", icon: "🍳", url: "https://velolaunch-aistudio.vercel.app" },
+  { id: "4", name: "CodeVault", icon: "💻", url: "https://velolaunch-aistudio.vercel.app" },
+  { id: "5", name: "MindNote", icon: "🧠", url: "https://velolaunch-aistudio.vercel.app" },
+  { id: "6", name: "TravelMate", icon: "✈️", url: "https://velolaunch-aistudio.vercel.app" },
+  { id: "7", name: "WeatherNow", icon: "☁️", url: "https://velolaunch-aistudio.vercel.app" },
+  { id: "8", name: "StudySync", icon: "📚", url: "https://velolaunch-aistudio.vercel.app" },
+  { id: "9", name: "ArtConnect", icon: "🎨", url: "https://velolaunch-aistudio.vercel.app" },
+  { id: "10", name: "MusicPro", icon: "🎵", url: "https://velolaunch-aistudio.vercel.app" },
+  { id: "11", name: "PhotoGen", icon: "📸", url: "https://velolaunch-aistudio.vercel.app" },
+  { id: "12", name: "VideoEdit", icon: "🎬", url: "https://velolaunch-aistudio.vercel.app" },
 ];
 
 export default function VeloAppsModal({ onClose }: { onClose: () => void }) {

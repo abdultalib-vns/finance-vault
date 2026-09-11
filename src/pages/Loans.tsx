@@ -308,7 +308,7 @@ export default function Loans({ currency, items }: Props) {
       </div>
 
       {/* KPI Summary */}
-      <div className="summary-grid desktop-kpi-grid cashback-kpi-grid">
+      <div className="loans-kpi-grid desktop-kpi-grid">
         <div className="summary-card blue desktop-kpi-card">
           <div className="desktop-kpi-header">
             <span className="summary-lbl">Total Principal</span>
@@ -333,7 +333,7 @@ export default function Loans({ currency, items }: Props) {
           <span className="summary-val tabular-nums">{formatAmount(paidEmis, currency)}</span>
         </div>
 
-        <div className="summary-card slate desktop-kpi-card desktop-only-kpi">
+        <div className="summary-card slate desktop-kpi-card">
           <div className="desktop-kpi-header">
             <span className="summary-lbl">Remaining</span>
             <span className="desktop-kpi-trend neutral">Balance</span>
