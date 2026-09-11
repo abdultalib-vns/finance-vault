@@ -12051,4 +12051,32 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
     margin: 0 0 24px 0;
   }
 }
-
+
+@media (max-width: 600px) {
+  /* Fix horizontal squishing of multi-input form rows on mobile */
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  /* Make the loan detail summary single column on mobile */
+  .loan-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  /* Give EMI schedule rows more breathing room on mobile */
+  .loan-emi-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .loan-emi-right {
+    align-items: stretch;
+    width: 100%;
+  }
+  .loan-emi-amount-input, .loan-emi-note-input {
+    width: 100%;
+    text-align: left;
+  }
+}
