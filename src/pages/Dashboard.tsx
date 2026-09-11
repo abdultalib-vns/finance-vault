@@ -1,4 +1,4 @@
-import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignLeft, Calendar, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowRight, Sparkles, AlertTriangle, X, Coins, CheckCircle, EyeOff, TrendingUp } from "lucide-react";
+import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignLeft, Calendar, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowRight, Sparkles, AlertTriangle, X, Coins, CheckCircle, EyeOff, TrendingUp, Gift } from "lucide-react";
 import { useState, useEffect } from "react";
 import { FinanceItem } from "../types";
 import { Currency, formatAmount, formatCompactAmount } from "../lib/currency";
@@ -326,7 +326,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
             <span className="desktop-header-subtitle">Overview &amp; Asset Management</span>
           </div>
           <div className="header-actions">
-            <span className="header-count">{items.length} item{items.length !== 1 ? "s" : ""}</span>
+            <button type="button" className="btn-header-icon" onClick={() => window.dispatchEvent(new CustomEvent('navigate-cashback'))} aria-label="Cashback" title="Cashback"><Gift size={20} /></button>
             <NotificationBell 
               customNotifs={allUpcomingDues.map(d => ({
                 id: `due_${d.cardId}_${d.dueDate}`,

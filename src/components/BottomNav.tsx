@@ -1,5 +1,5 @@
 import { NavTab } from "../types";
-import { LayoutDashboard, CreditCard, Building2, Gift, Settings, ShieldCheck, HelpCircle, Lock } from "lucide-react";
+import { LayoutDashboard, CreditCard, Building2, Settings, ShieldCheck, HelpCircle, Lock } from "lucide-react";
 import React from "react";
 
 interface Props {
@@ -9,12 +9,23 @@ interface Props {
   onOpenHelp?: () => void;
 }
 
+const LoansIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="6" width="20" height="14" rx="2" />
+    <path d="M2 10h20" />
+    <path d="M6 14h.01" />
+    <path d="M10 14h4" />
+    <path d="M12 2v4" />
+    <path d="M8 2l4 4 4-4" />
+  </svg>
+);
+
 export default function BottomNav({ active, onChange, onLock, onOpenHelp }: Props) {
   const tabs: { key: NavTab; label: string; icon: React.ReactNode }[] = [
     { key: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
     { key: "cards",     label: "Cards",     icon: <CreditCard size={20} /> },
     { key: "banks",     label: "Banks",     icon: <Building2 size={20} /> },
-    { key: "cashback",  label: "Cashback",  icon: <Gift size={20} /> },
+    { key: "loans",     label: "Loans & EMIs", icon: <LoansIcon /> },
     { key: "settings",  label: "Settings",  icon: <Settings size={20} /> },
   ];
 

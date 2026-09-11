@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Cards from "./pages/Cards";
 import Banks from "./pages/Banks";
 import Cashback from "./pages/Cashback";
+import Loans from "./pages/Loans";
 import Settings from "./pages/Settings";
 import BottomNav from "./components/BottomNav";
 import PopupAdBanner from "./components/PopupAdBanner";
@@ -296,6 +297,13 @@ function MainApp() {
     if (sessionIdRef.current) trackTabVisit(sessionIdRef.current, newTab);
   }
 
+  // Listen for navigate-cashback event from Dashboard's Cashback button
+  useEffect(() => {
+    const handler = () => setTab("cashback");
+    window.addEventListener("navigate-cashback", handler);
+    return () => window.removeEventListener("navigate-cashback", handler);
+  }, []);
+
   if (showSplash) {
     return <SplashScreen onFinish={handleSplashDone} />;
   }
@@ -366,6 +374,9 @@ function MainApp() {
           )}
           {tab === "cashback" && (
             <Cashback currency={currency} />
+          )}
+          {tab === "loans" && (
+            <Loans currency={currency} items={items} />
           )}
           {tab === "settings" && (
             <Settings
