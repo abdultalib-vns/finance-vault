@@ -1,4 +1,4 @@
-import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignLeft, Calendar, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowRight, Sparkles, AlertTriangle, X, Coins, CheckCircle, EyeOff, TrendingUp } from "lucide-react";
+import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignLeft, Calendar, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowRight, Sparkles, AlertTriangle, X, Coins, CheckCircle, EyeOff, TrendingUp, Gift } from "lucide-react";
 import { useState, useEffect } from "react";
 import { FinanceItem } from "../types";
 import { Currency, formatAmount, formatCompactAmount } from "../lib/currency";
@@ -256,6 +256,13 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
   const cardCount    = items.filter(i => i.type === "card" || i.type === "paylater").length;
   const savingsTotal = bankTotal + fdTotal + rdTotal + mfTotal;
 
+  // Calculate actual Net Worth Growth based on Mutual Fund / Investments return
+  const mfInvested = items.filter(i => i.type === "mf").reduce((s, i) => s + (i.investedAmount || i.balance), 0);
+  const totalInvestedBase = bankTotal + fdTotal + rdTotal + mfInvested;
+  const netGrowthAmount = savingsTotal - totalInvestedBase;
+  const netGrowthPct = totalInvestedBase > 0 ? (netGrowthAmount / totalInvestedBase) * 100 : 0;
+  const netGrowthFormatted = (netGrowthPct > 0 ? "+" : "") + netGrowthPct.toFixed(1) + "%";
+
   const chartData = [
     { label: "Bank", value: bankTotal, color: "#3b82f6" },
     { label: "FD", value: fdTotal, color: "#f59e0b" },
@@ -326,7 +333,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
             <span className="desktop-header-subtitle">Overview &amp; Asset Management</span>
           </div>
           <div className="header-actions">
-            <span className="header-count">{items.length} item{items.length !== 1 ? "s" : ""}</span>
+            <button type="button" className="btn-header-icon" onClick={() => window.dispatchEvent(new CustomEvent('navigate-cashback'))} aria-label="Cashback" title="Cashback"><Gift size={20} /></button>
             <NotificationBell 
               customNotifs={allUpcomingDues.map(d => ({
                 id: `due_${d.cardId}_${d.dueDate}`,
@@ -364,7 +371,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
               <span className="summary-lbl">Net Worth Growth</span>
               <span className="desktop-kpi-trend positive"><TrendingUp size={14} /> YTD</span>
             </div>
-            <span className="summary-val tabular-nums">+{savingsTotal > 0 ? ((savingsTotal - unpaidTotal) >= 0 ? "4.8%" : "0.0%") : "0.0%"}</span>
+            <span className="summary-val tabular-nums">{netGrowthFormatted}</span>
           </div>
 
           <div className="summary-card slate desktop-kpi-card desktop-only-kpi">

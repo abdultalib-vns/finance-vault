@@ -18,7 +18,7 @@ export interface FinanceItem {
   investedAmount?: number;
 }
 
-export type NavTab = "dashboard" | "cards" | "banks" | "cashback" | "settings";
+export type NavTab = "dashboard" | "cards" | "banks" | "cashback" | "loans" | "settings";
 
 export interface Currency {
   code: string;
@@ -128,4 +128,36 @@ export interface UserProfile {
   name: string;
   email: string;
   photo: string;
+}
+
+export interface TaxEntry {
+  name: string;       // e.g. "IGST", "CGST", "SGST", "VAT", "GST"
+  percentage: number;  // e.g. 9 for 9%
+}
+
+export interface LoanEntry {
+  id: string;
+  type: "loan" | "credit_card";
+  name: string;
+  lender: string;               // Bank / NBFC / Card name
+  principalAmount: number;
+  tenureMonths: number;
+  interestRate: number;          // annual %
+  monthlyEmi: number;            // user-defined EMI amount
+  taxes: TaxEntry[];
+  totalPayable: number;          // computed: principal + interest + taxes
+  startDate: string;             // YYYY-MM
+  notes?: string;
+  createdAt: number;
+}
+
+export interface EmiPayment {
+  id: string;
+  loanId: string;
+  monthIndex: number;           // 1-based
+  monthLabel: string;           // e.g. "Jan 2026"
+  amount: number;
+  paid: boolean;
+  paidDate?: string;
+  note?: string;
 }

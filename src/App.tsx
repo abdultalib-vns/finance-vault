@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Cards from "./pages/Cards";
 import Banks from "./pages/Banks";
 import Cashback from "./pages/Cashback";
+import Loans from "./pages/Loans";
 import Settings from "./pages/Settings";
 import BottomNav from "./components/BottomNav";
 import PopupAdBanner from "./components/PopupAdBanner";
@@ -18,7 +19,7 @@ import { AlertContainer, customAlert } from "./components/CustomAlert";
 import AdminApp from "./admin/AdminApp";
 import Lottie from "lottie-react";
 import aiAnimation from "../public/FinAura_AI_Lottie.json";
-import { loadItems, loadCurrency, loadIdleTimeout, loadTheme, saveTheme, loadPinHash, loadAIOptions, loadExpenses } from "./lib/storage";
+import { loadItems, loadCurrency, loadIdleTimeout, loadTheme, saveTheme, loadPinHash, loadAIOptions, loadExpenses, loadLoans, loadEmiPayments } from "./lib/storage";
 import { getCurrency } from "./lib/currency";
 import { FinanceItem, NavTab, Currency } from "./types";
 import MobileLandscapeBlocker from "./components/MobileLandscapeBlocker";
@@ -296,6 +297,18 @@ function MainApp() {
     if (sessionIdRef.current) trackTabVisit(sessionIdRef.current, newTab);
   }
 
+  // Listen for navigate-cashback and navigate-dashboard events
+  useEffect(() => {
+    const handler = () => setTab("cashback");
+    const dashHandler = () => setTab("dashboard");
+    window.addEventListener("navigate-cashback", handler);
+    window.addEventListener("navigate-dashboard", dashHandler);
+    return () => {
+      window.removeEventListener("navigate-cashback", handler);
+      window.removeEventListener("navigate-dashboard", dashHandler);
+    };
+  }, []);
+
   if (showSplash) {
     return <SplashScreen onFinish={handleSplashDone} />;
   }
@@ -365,7 +378,10 @@ function MainApp() {
             <Banks masterKey={masterKey} currency={currency} items={items} onItemsChange={setItems} onReload={handleReload} />
           )}
           {tab === "cashback" && (
-            <Cashback currency={currency} />
+            <Cashback currency={currency} onBack={() => setTab("dashboard")} />
+          )}
+          {tab === "loans" && (
+            <Loans currency={currency} items={items} />
           )}
           {tab === "settings" && (
             <Settings
@@ -418,7 +434,12 @@ function MainApp() {
         {showAIAssistant && (
           <AIAssistant 
             aiOpts={aiOpts}
-            contextData={{ items, expenses: loadExpenses() }}
+            contextData={{ 
+              items, 
+              expenses: loadExpenses(),
+              loans: loadLoans(),
+              emiPayments: loadEmiPayments()
+            }}
             onClose={() => setShowAIAssistant(false)}
             onDataChanged={() => setItems(loadItems())}
           />

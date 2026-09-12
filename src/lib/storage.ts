@@ -1,4 +1,4 @@
-import { FinanceItem, CardExpense, CardBill, CashbackEntry, RDInstallment, BankExpense, AIOptions, UserProfile, PaymentIntent } from "../types";
+import { FinanceItem, CardExpense, CardBill, CashbackEntry, RDInstallment, BankExpense, AIOptions, UserProfile, PaymentIntent, LoanEntry, EmiPayment } from "../types";
 const ITEMS_KEY         = "finance_items";
 const PIN_HASH_KEY      = "finance_pin_hash";
 const CURRENCY_KEY      = "finance_currency";
@@ -14,6 +14,8 @@ const SECURITY_A_KEY    = "finance_security_a_hash";
 const AI_OPTIONS_KEY    = "finance_ai_options";
 const PAYMENT_INTENT_KEY = "finance_payment_intents";
 const PAY_RECORD_ENABLED_KEY = "finance_pay_record_enabled";
+const LOANS_KEY          = "finance_loans";
+const EMI_PAYMENTS_KEY   = "finance_emi_payments";
 
 // ── Finance Items ────────────────────────────────────────────────
 export function saveItems(items: FinanceItem[]): void {
@@ -280,4 +282,24 @@ export function loadPayAndRecordEnabled(): boolean {
 
 export function savePayAndRecordEnabled(enabled: boolean): void {
   localStorage.setItem(PAY_RECORD_ENABLED_KEY, JSON.stringify(enabled));
+}
+
+// ── Loans & EMIs ──────────────────────────────────────────────────
+export function saveLoans(loans: LoanEntry[]): void {
+  localStorage.setItem(LOANS_KEY, JSON.stringify(loans));
+}
+export function loadLoans(): LoanEntry[] {
+  try { return JSON.parse(localStorage.getItem(LOANS_KEY) ?? "[]") as LoanEntry[]; }
+  catch { return []; }
+}
+
+export function saveEmiPayments(payments: EmiPayment[]): void {
+  localStorage.setItem(EMI_PAYMENTS_KEY, JSON.stringify(payments));
+}
+export function loadEmiPayments(): EmiPayment[] {
+  try { return JSON.parse(localStorage.getItem(EMI_PAYMENTS_KEY) ?? "[]") as EmiPayment[]; }
+  catch { return []; }
+}
+export function getEmiPaymentsForLoan(loanId: string): EmiPayment[] {
+  return loadEmiPayments().filter((p) => p.loanId === loanId);
 }

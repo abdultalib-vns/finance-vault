@@ -115,23 +115,26 @@ export default function AuthScreen({ onUnlock }: Props) {
   }, [isNewUser]);
 
   useEffect(() => {
+    const isDismissed = sessionStorage.getItem("finaura_install_dismissed") === "true";
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+
     const handler = (e: any) => {
       e.preventDefault();
       setInstallPromptEvent(e);
-      if (isNewUser) {
+      if (!isDismissed && !isStandalone) {
         setShowInstallPopup(true);
       }
     };
     window.addEventListener("beforeinstallprompt", handler);
 
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    if (isStandalone) {
       setShowInstallPopup(false);
-    } else if (isNewUser && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+    } else if (!isDismissed && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
       setShowInstallPopup(true);
     }
 
     return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, [isNewUser]);
+  }, []);
 
   useEffect(() => {
     const handler = () => setShowInstallPopup(false);
@@ -969,7 +972,15 @@ export default function AuthScreen({ onUnlock }: Props) {
           </div>
           <div className="auth-install-actions">
             <button className="auth-install-btn-ok" onClick={handleInstall}>Install</button>
-            <button className="auth-install-btn-dismiss" onClick={() => setShowInstallPopup(false)}>Later</button>
+            <button 
+              className="auth-install-btn-dismiss" 
+              onClick={() => {
+                setShowInstallPopup(false);
+                sessionStorage.setItem("finaura_install_dismissed", "true");
+              }}
+            >
+              Later
+            </button>
           </div>
         </div>
       )}

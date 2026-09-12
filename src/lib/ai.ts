@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { AIOptions, FinanceItem, CardExpense } from "../types";
+import { AIOptions, FinanceItem, CardExpense, LoanEntry, EmiPayment } from "../types";
 import { checkVeloAILimit, incrementVeloAIUsage } from "./storage";
 import { getVeloKey, getVeloModel } from "./veloCredentials";
 import { AI_TOOLS_SCHEMA } from "./ai-tools";
@@ -175,13 +175,32 @@ async function callAI(opts: AIOptions, systemPrompt: string, messages: {role: st
   throw new Error("AI provider is not configured.");
 }
 
-export async function askVault(opts: AIOptions, messages: { role: string, content: string }[], context: { items: FinanceItem[], expenses: CardExpense[] }, lang: AppLanguage = "en"): Promise<AIResponse> {
+export async function askVault(
+  opts: AIOptions, 
+  messages: { role: string, content: string }[], 
+  context: { 
+    items: FinanceItem[], 
+    expenses: CardExpense[],
+    loans?: LoanEntry[],
+    emiPayments?: EmiPayment[]
+  }, 
+  lang: AppLanguage = "en"
+): Promise<AIResponse> {
   try {
     const systemPrompt = `You are an Agentic Financial AI Assistant built into the "Finance-Vault" app. You are known as "FinAura Assistant".
 You are given the user's current financial context in JSON format, and a list of TOOLS you can use to perform actions.
 
 When the user asks general questions, answer them naturally and concisely.
 When the user asks to perform an ACTION (like adding an expense, deleting a transaction, creating an account), you MUST use a tool.
+
+LOANS & EMIS AWARENESS:
+You have complete visibility into the user's Loans and Credit Card EMIs in \`context.loans\` and \`context.emiPayments\`.
+You can answer any questions regarding:
+- Active loans (personal, home, auto, etc.) and Credit Card EMIs.
+- Total principal, total payable amount including interest and taxes, and remaining balances.
+- Monthly EMI amounts, next payment due dates, and paid vs unpaid EMI counts.
+- Interest rates, lender names, and loan tenure.
+Always provide clear, accurate, and encouraging financial summaries when asked about loans or EMIs.
 
 To use a tool, you MUST output ONLY a JSON block wrapped in \`\`\`json containing "tool_call" and "arguments". Do NOT output any other text when calling a tool.
 Example Tool Call Output:
