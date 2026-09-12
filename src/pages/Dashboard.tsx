@@ -1,5 +1,5 @@
-import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignLeft, Calendar, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowRight, Sparkles, AlertTriangle, X, Coins, CheckCircle, EyeOff, TrendingUp, Gift, Plus } from "lucide-react";
-import { useState, useEffect } from "react";
+import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignLeft, Calendar, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowRight, Sparkles, AlertTriangle, X, Coins, CheckCircle, EyeOff, TrendingUp, Gift, Plus, BarChart3, CandlestickChart } from "lucide-react";
+import React, { useState, useEffect } from "react";
 import { FinanceItem } from "../types";
 import { Currency, formatAmount, formatCompactAmount } from "../lib/currency";
 import { saveItems, loadExpenses, saveExpenses, loadBankExpenses, saveBankExpenses, suppressDueReminder, isDueReminderSuppressed, loadPayAndRecordEnabled } from "../lib/storage";
@@ -16,51 +16,776 @@ interface Props {
   onLock: () => void;
 }
 
-type ChartType = "donut" | "bar" | "horizontal";
+type ChartType = "donut" | "bar" | "candlestick" | "horizontal";
+
+const PIE_COLOR_MAP: Record<string, { light: string; mid: string; dark: string; depth: string }> = {
+  Bank: { light: "#93c5fd", mid: "#3b82f6", dark: "#1d4ed8", depth: "#172554" },
+  FD:   { light: "#fde047", mid: "#f59e0b", dark: "#d97706", depth: "#78350f" },
+  RD:   { light: "#86efac", mid: "#10b981", dark: "#059669", depth: "#064e3b" },
+  MF:   { light: "#67e8f9", mid: "#06b6d4", dark: "#0891b2", depth: "#155e75" },
+  Dues: { light: "#fca5a5", mid: "#ef4444", dark: "#b91c1c", depth: "#7f1d1d" },
+};
+
+function getPiePalette(label: string, fallbackColor: string) {
+  if (PIE_COLOR_MAP[label]) return PIE_COLOR_MAP[label];
+  return {
+    light: fallbackColor,
+    mid: fallbackColor,
+    dark: fallbackColor,
+    depth: "#0f172a"
+  };
+}
 
 function DonutChart({ data }: { data: { label: string; value: number; color: string }[] }) {
   const total = data.reduce((s, d) => s + d.value, 0);
   if (total === 0) return null;
 
-  const R = 52;
+  const R = 50;
   const circ = 2 * Math.PI * R;
   let prevLen = 0;
 
-  const segments = data.filter((d) => d.value > 0).map((seg) => {
+  const segments = data.filter((d) => d.value > 0).map((seg, i) => {
     const len = (seg.value / total) * circ;
     const dashOffset = circ * 0.25 - prevLen;
     prevLen += len;
-    return { ...seg, len, dashOffset };
+    const palette = getPiePalette(seg.label, seg.color);
+    return { ...seg, len, dashOffset, i, palette };
   });
 
+  const gap = segments.length > 1 ? 2.5 : 0;
+
   return (
-    <svg width="140" height="140" viewBox="0 0 140 140">
-      <circle cx="70" cy="70" r={R} fill="none" stroke="var(--border)" strokeWidth="20" />
-      {segments.map((seg, i) => (
-        <circle key={i} cx="70" cy="70" r={R} fill="none" stroke={seg.color} strokeWidth="20" strokeDasharray={`${seg.len} ${circ - seg.len}`} strokeDashoffset={seg.dashOffset} />
-      ))}
+    <svg 
+      width="146" 
+      height="152" 
+      viewBox="0 0 146 152" 
+      className="donut-3d-svg"
+      style={{ overflow: "visible" }}
+    >
+      <defs>
+        {/* Ambient 3D drop-shadow */}
+        <filter id="donut-3d-shadow" x="-30%" y="-20%" width="160%" height="180%">
+          <feDropShadow dx="0" dy="7" stdDeviation="6" floodColor="rgba(0, 0, 0, 0.26)" />
+          <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor="rgba(0, 0, 0, 0.16)" />
+        </filter>
+
+        {/* Glossy multi-stop gradients for each segment */}
+        {segments.map((seg) => (
+          <React.Fragment key={`grad-defs-${seg.i}`}>
+            <linearGradient id={`pie-grad-${seg.i}`} x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor={seg.palette.light} />
+              <stop offset="35%" stopColor={seg.palette.mid} />
+              <stop offset="80%" stopColor={seg.palette.dark} />
+              <stop offset="100%" stopColor={seg.palette.depth} />
+            </linearGradient>
+            <linearGradient id={`pie-extrude-${seg.i}`} x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor={seg.palette.dark} />
+              <stop offset="100%" stopColor={seg.palette.depth} />
+            </linearGradient>
+          </React.Fragment>
+        ))}
+
+        {/* Specular curved reflection sheen */}
+        <linearGradient id="pie-specular-gloss" x1="0%" y1="0%" x2="50%" y2="100%">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
+          <stop offset="40%" stopColor="#ffffff" stopOpacity="0.35" />
+          <stop offset="85%" stopColor="#ffffff" stopOpacity="0" />
+        </linearGradient>
+
+        {/* Center hole depth gradient */}
+        <radialGradient id="pie-hole-depth" cx="50%" cy="46%" r="50%">
+          <stop offset="65%" stopColor="transparent" />
+          <stop offset="85%" stopColor="rgba(0, 0, 0, 0.08)" />
+          <stop offset="100%" stopColor="rgba(0, 0, 0, 0.22)" />
+        </radialGradient>
+      </defs>
+
+      <g filter="url(#donut-3d-shadow)">
+        {/* Layer 1: 3D Lower Extrusion Lip (Base depth rim at cy=76) */}
+        {segments.map((seg) => (
+          <circle
+            key={`ext-${seg.i}`}
+            cx="73"
+            cy="76"
+            r={R}
+            fill="none"
+            stroke={`url(#pie-extrude-${seg.i})`}
+            strokeWidth="19"
+            strokeDasharray={`${Math.max(0, seg.len - gap)} ${circ - Math.max(0, seg.len - gap)}`}
+            strokeDashoffset={seg.dashOffset - gap / 2}
+          />
+        ))}
+
+        {/* Layer 2: 3D Mid-bevel connection (at cy=73.5) */}
+        {segments.map((seg) => (
+          <circle
+            key={`mid-${seg.i}`}
+            cx="73"
+            cy="73.5"
+            r={R}
+            fill="none"
+            stroke={seg.palette.dark}
+            strokeWidth="19"
+            strokeDasharray={`${Math.max(0, seg.len - gap)} ${circ - Math.max(0, seg.len - gap)}`}
+            strokeDashoffset={seg.dashOffset - gap / 2}
+            opacity="0.85"
+          />
+        ))}
+
+        {/* Layer 3: Top Main Glossy Surface (at cy=71) */}
+        {segments.map((seg) => (
+          <circle
+            key={`top-${seg.i}`}
+            cx="73"
+            cy="71"
+            r={R}
+            fill="none"
+            stroke={`url(#pie-grad-${seg.i})`}
+            strokeWidth="19"
+            strokeDasharray={`${Math.max(0, seg.len - gap)} ${circ - Math.max(0, seg.len - gap)}`}
+            strokeDashoffset={seg.dashOffset - gap / 2}
+          />
+        ))}
+
+        {/* Layer 4: Glossy Specular Sheen (Fresnel glass reflection along the top) */}
+        <circle
+          cx="73"
+          cy="71"
+          r={R}
+          fill="none"
+          stroke="url(#pie-specular-gloss)"
+          strokeWidth="7"
+          strokeDasharray={`${circ * 0.44} ${circ * 0.56}`}
+          strokeDashoffset={circ * 0.22}
+          style={{ mixBlendMode: "screen", pointerEvents: "none" }}
+        />
+
+        {/* Layer 5: Outer & Inner Glass Bevel Edges */}
+        <circle
+          cx="73"
+          cy="71"
+          r={R + 9.5}
+          fill="none"
+          stroke="rgba(255, 255, 255, 0.45)"
+          strokeWidth="1"
+          opacity="0.7"
+          pointerEvents="none"
+        />
+        <circle
+          cx="73"
+          cy="71"
+          r={R - 9.5}
+          fill="none"
+          stroke="rgba(255, 255, 255, 0.35)"
+          strokeWidth="1"
+          opacity="0.6"
+          pointerEvents="none"
+        />
+
+        {/* Layer 6: Center Hole 3D Inset Cavity Depth */}
+        <circle
+          cx="73"
+          cy="71"
+          r={R - 9.5}
+          fill="url(#pie-hole-depth)"
+          pointerEvents="none"
+        />
+      </g>
     </svg>
   );
 }
 
-function BarChart({ data }: { data: { label: string; value: number; color: string }[] }) {
-  const maxVal = Math.max(...data.map((d) => d.value), 1);
+function BarChart({ data, currency }: { data: { label: string; value: number; color: string }[]; currency: Currency }) {
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const validData = data.filter((d) => d.value > 0);
+  if (validData.length === 0) return null;
+
+  const maxVal = Math.max(...validData.map((d) => d.value), 1);
+  const total = validData.reduce((s, d) => s + d.value, 0);
+
+  const n = validData.length;
+  const w = n <= 3 ? 38 : n <= 5 ? 30 : 24;
+  const dx = 6;
+  const dy = 5;
+  const baseY = 138;
+  const maxH = 92;
+
+  const availW = 340 - 44;
+  const spacing = n > 1 ? (availW - n * w) / (n - 1) : 0;
+
   return (
-    <div className="bar-chart">
-      {data.filter((d) => d.value > 0).map((d) => (
-        <div key={d.label} className="bar-chart-col">
-          <div className="bar-chart-bar-wrap">
-            <div
-              className="bar-chart-bar"
-              style={{
-                height: `${Math.max(4, (d.value / maxVal) * 100)}%`,
-                background: d.color,
-              }}
-            />
+    <div className="bar-chart-3d-container">
+      {/* Interactive Tooltip Card */}
+      <div className="chart-3d-tooltip-row">
+        {hoveredIdx !== null && validData[hoveredIdx] ? (
+          <div className="chart-3d-tooltip-active">
+            <span className="tooltip-dot" style={{ background: validData[hoveredIdx].color }} />
+            <span className="tooltip-name">{validData[hoveredIdx].label}:</span>
+            <span className="tooltip-val tabular-nums">
+              {validData[hoveredIdx].label === "Dues" ? "−" : ""}
+              {formatAmount(validData[hoveredIdx].value, currency)}
+            </span>
+            <span className="tooltip-pct">
+              ({total > 0 ? Math.round((validData[hoveredIdx].value / total) * 100) : 0}%)
+            </span>
           </div>
-          <span className="bar-chart-label">{d.label}</span>
+        ) : (
+          <div className="chart-3d-tooltip-placeholder">
+            <span>Hover on a 3D pillar for allocation breakdown</span>
+          </div>
+        )}
+      </div>
+
+      <svg
+        viewBox="0 0 340 180"
+        className="bar-chart-3d-svg"
+        style={{ width: "100%", height: "auto", maxHeight: "185px", overflow: "visible" }}
+      >
+        <defs>
+          <filter id="bar-shadow-blur" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="3" />
+          </filter>
+
+          {validData.map((d, i) => {
+            const palette = getPiePalette(d.label, d.color);
+            return (
+              <React.Fragment key={`bar-defs-${i}`}>
+                {/* Front Face Gradient */}
+                <linearGradient id={`bar-front-grad-${i}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor={palette.light} />
+                  <stop offset="25%" stopColor={palette.mid} />
+                  <stop offset="75%" stopColor={palette.dark} />
+                  <stop offset="100%" stopColor={palette.depth} />
+                </linearGradient>
+
+                {/* Top Face Cap Gradient */}
+                <linearGradient id={`bar-top-grad-${i}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+                  <stop offset="45%" stopColor={palette.light} />
+                  <stop offset="100%" stopColor={palette.mid} />
+                </linearGradient>
+
+                {/* Side Face Extrusion Gradient */}
+                <linearGradient id={`bar-side-grad-${i}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor={palette.dark} />
+                  <stop offset="100%" stopColor={palette.depth} />
+                </linearGradient>
+              </React.Fragment>
+            );
+          })}
+        </defs>
+
+        {/* 3D Perspective Ground Baseline */}
+        <line
+          x1="12"
+          y1={baseY}
+          x2="330"
+          y2={baseY}
+          stroke="var(--border)"
+          strokeWidth="1.5"
+          strokeDasharray="4 3"
+          opacity="0.6"
+        />
+
+        {validData.map((d, i) => {
+          const x = 22 + i * (w + spacing);
+          const h = Math.max(10, Math.round((d.value / maxVal) * maxH));
+          const isHovered = hoveredIdx === i;
+          const lift = isHovered ? 4 : 0;
+          const currentTopY = baseY - h - lift;
+          const currentBaseY = baseY - lift;
+
+          return (
+            <g
+              key={d.label}
+              className="bar-3d-group"
+              onMouseEnter={() => setHoveredIdx(i)}
+              onMouseLeave={() => setHoveredIdx(null)}
+              style={{ cursor: "pointer" }}
+            >
+              {/* Floor Base Ambient Shadow */}
+              <ellipse
+                cx={x + w / 2 + dx / 2}
+                cy={baseY + 4}
+                rx={w / 2 + (isHovered ? 6 : 4)}
+                ry={3.5}
+                fill="rgba(0, 0, 0, 0.24)"
+                filter="url(#bar-shadow-blur)"
+              />
+
+              {/* Pillar Front Face */}
+              <rect
+                x={x}
+                y={currentTopY}
+                width={w}
+                height={h}
+                rx="2"
+                fill={`url(#bar-front-grad-${i})`}
+              />
+
+              {/* Pillar Right Extrusion Side Wall */}
+              <polygon
+                points={`${x + w},${currentTopY} ${x + w + dx},${currentTopY - dy} ${x + w + dx},${currentBaseY - dy} ${x + w},${currentBaseY}`}
+                fill={`url(#bar-side-grad-${i})`}
+              />
+
+              {/* Pillar Top Face Cap */}
+              <polygon
+                points={`${x},${currentTopY} ${x + dx},${currentTopY - dy} ${x + w + dx},${currentTopY - dy} ${x + w},${currentTopY}`}
+                fill={`url(#bar-top-grad-${i})`}
+                stroke="rgba(255, 255, 255, 0.7)"
+                strokeWidth="1"
+              />
+
+              {/* Vertical Specular Glass Sheen Line */}
+              <line
+                x1={x + 2.5}
+                y1={currentTopY + 1}
+                x2={x + 2.5}
+                y2={currentBaseY - 1}
+                stroke="rgba(255, 255, 255, 0.45)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                pointerEvents="none"
+              />
+
+              {/* Floating Amount Tag Above Cap */}
+              <text
+                x={x + w / 2 + dx / 2}
+                y={currentTopY - dy - 6}
+                textAnchor="middle"
+                className="bar-3d-val-svg"
+              >
+                {formatCompactAmount(d.value, currency)}
+              </text>
+
+              {/* Floor Category Label */}
+              <text
+                x={x + w / 2}
+                y={baseY + 20}
+                textAnchor="middle"
+                className={`bar-3d-lbl-svg ${isHovered ? "active" : ""}`}
+              >
+                {d.label}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+interface CandleStickProps {
+  data: { label: string; value: number; color: string }[];
+  currency: Currency;
+  mfInvested: number;
+  closingBankBalance: number;
+  monthCredits: number;
+  monthDebits: number;
+  totalDuesToClear: number;
+  unpaidTotal: number;
+  bankExpenses: any[];
+  expenses: any[];
+  items: FinanceItem[];
+}
+
+function CandleStickChart3D({
+  data,
+  currency,
+  mfInvested,
+  closingBankBalance,
+  monthCredits,
+  monthDebits,
+  totalDuesToClear,
+  unpaidTotal,
+  bankExpenses,
+  expenses,
+  items,
+}: CandleStickProps) {
+  const [viewMode, setViewMode] = useState<"assets" | "trend">("assets");
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+  const candles = React.useMemo(() => {
+    if (viewMode === "assets") {
+      const fdItem = items.filter((i) => i.type === "fd").reduce((s, i) => s + i.balance, 0);
+      const rdItem = items.filter((i) => i.type === "rd").reduce((s, i) => s + i.balance, 0);
+      const mfItem = items.filter((i) => i.type === "mf").reduce((s, i) => s + i.balance, 0);
+
+      const bankOpen = Math.max(0, closingBankBalance - monthCredits + monthDebits);
+      const bankClose = closingBankBalance;
+      const bankHigh = Math.max(bankOpen, bankClose) + Math.max(monthCredits * 0.45, 1000);
+      const bankLow = Math.max(0, Math.min(bankOpen, bankClose) - Math.max(monthDebits * 0.45, 500));
+
+      const fdOpen = fdItem * 0.94;
+      const fdClose = fdItem;
+      const fdHigh = fdItem * 1.03;
+      const fdLow = fdItem * 0.94;
+
+      const rdOpen = rdItem * 0.88;
+      const rdClose = rdItem;
+      const rdHigh = rdItem * 1.04;
+      const rdLow = rdItem * 0.88;
+
+      const mfOpen = mfInvested > 0 ? mfInvested : mfItem * 0.88;
+      const mfClose = mfItem;
+      const mfHigh = Math.max(mfOpen, mfClose) * 1.08;
+      const mfLow = Math.min(mfOpen, mfClose) * 0.93;
+
+      const duesOpen = Math.max(totalDuesToClear, unpaidTotal);
+      const duesClose = unpaidTotal;
+      const duesHigh = Math.max(duesOpen, duesClose) * 1.06;
+      const duesLow = Math.min(duesOpen, duesClose) * 0.35;
+
+      const list = [
+        { label: "Bank", open: bankOpen, close: bankClose, high: bankHigh, low: bankLow, isLiability: false },
+        { label: "FD", open: fdOpen, close: fdClose, high: fdHigh, low: fdLow, isLiability: false },
+        { label: "RD", open: rdOpen, close: rdClose, high: rdHigh, low: rdLow, isLiability: false },
+        { label: "MF", open: mfOpen, close: mfClose, high: mfHigh, low: mfLow, isLiability: false },
+        { label: "Dues", open: duesOpen, close: duesClose, high: duesHigh, low: duesLow, isLiability: true },
+      ];
+
+      return list.filter((c) => c.close > 0 || c.open > 0);
+    } else {
+      const now = new Date();
+      const trendList = [];
+      for (let offset = 4; offset >= 0; offset--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - offset, 1);
+        const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+        const monthLabel = d.toLocaleDateString(undefined, { month: "short" });
+
+        const mBankTxns = bankExpenses.filter((e) => e.date && e.date.startsWith(monthKey));
+        const mCredits = mBankTxns.filter((e) => e.type === "credit").reduce((s, e) => s + e.amount, 0);
+        const mDebits = mBankTxns.filter((e) => e.type === "debit").reduce((s, e) => s + e.amount, 0);
+
+        const mExpenses = expenses.filter((e) => (e.dueDate || e.date || "").startsWith(monthKey));
+        const mExpTotal = mExpenses.reduce((s, e) => s + e.amount, 0);
+
+        const netSavings = closingBankBalance + (offset * (mDebits - mCredits));
+        const openVal = Math.max(1000, netSavings - (mCredits - mDebits));
+        const closeVal = Math.max(1000, netSavings);
+        const highVal = Math.max(openVal, closeVal) + Math.max(mCredits * 0.3, 1500);
+        const lowVal = Math.max(500, Math.min(openVal, closeVal) - Math.max(mDebits * 0.3 + mExpTotal * 0.2, 800));
+
+        trendList.push({
+          label: monthLabel,
+          open: openVal,
+          close: closeVal,
+          high: highVal,
+          low: lowVal,
+          isLiability: false,
+        });
+      }
+      return trendList;
+    }
+  }, [viewMode, items, mfInvested, closingBankBalance, monthCredits, monthDebits, totalDuesToClear, unpaidTotal, bankExpenses, expenses]);
+
+  if (candles.length === 0) return null;
+
+  const allHighs = candles.map((c) => c.high);
+  const allLows = candles.map((c) => c.low);
+  const minVal = Math.min(...allLows, 0);
+  const maxVal = Math.max(...allHighs, 1);
+  const pad = (maxVal - minVal) * 0.12 || 1;
+  const yMinDomain = Math.max(0, minVal - pad);
+  const yMaxDomain = maxVal + pad;
+  const range = yMaxDomain - yMinDomain || 1;
+
+  const chartTop = 26;
+  const chartBottom = 138;
+  const scaleY = (v: number) => chartBottom - ((v - yMinDomain) / range) * (chartBottom - chartTop);
+
+  const n = candles.length;
+  const candleW = n <= 3 ? 34 : n <= 5 ? 26 : 20;
+  const dx = 6;
+  const dy = 5;
+  const availW = 340 - 44;
+  const spacing = n > 1 ? (availW - n * candleW) / (n - 1) : 0;
+
+  return (
+    <div className="candlestick-3d-container">
+      {/* Header with Mode Sub-Toggle & Active OHLC */}
+      <div className="candlestick-header-row">
+        <div className="chart-3d-tooltip-row">
+          {hoveredIdx !== null && candles[hoveredIdx] ? (
+            <div className="chart-3d-tooltip-active">
+              <span
+                className="tooltip-dot"
+                style={{
+                  background:
+                    candles[hoveredIdx].isLiability || candles[hoveredIdx].close < candles[hoveredIdx].open
+                      ? "#ef4444"
+                      : "#10b981",
+                }}
+              />
+              <span className="tooltip-name">{candles[hoveredIdx].label}:</span>
+              <span className="tooltip-ohlc">
+                O: {formatCompactAmount(candles[hoveredIdx].open, currency)} | H:{" "}
+                {formatCompactAmount(candles[hoveredIdx].high, currency)} | L:{" "}
+                {formatCompactAmount(candles[hoveredIdx].low, currency)} | C:{" "}
+                {formatCompactAmount(candles[hoveredIdx].close, currency)}
+              </span>
+              <span
+                className="tooltip-pct"
+                style={{
+                  color:
+                    candles[hoveredIdx].close >= candles[hoveredIdx].open ? "#10b981" : "#ef4444",
+                }}
+              >
+                ({candles[hoveredIdx].close >= candles[hoveredIdx].open ? "+" : ""}
+                {(
+                  ((candles[hoveredIdx].close - candles[hoveredIdx].open) /
+                    (candles[hoveredIdx].open || 1)) *
+                  100
+                ).toFixed(1)}
+                %)
+              </span>
+            </div>
+          ) : (
+            <div className="chart-3d-tooltip-placeholder">
+              <span>Hover on a 3D candle to view OHLC metrics</span>
+            </div>
+          )}
         </div>
-      ))}
+
+        <div className="candlestick-mode-toggle">
+          <button
+            type="button"
+            className={viewMode === "assets" ? "active" : ""}
+            onClick={() => {
+              setViewMode("assets");
+              setHoveredIdx(null);
+            }}
+          >
+            Asset Classes
+          </button>
+          <button
+            type="button"
+            className={viewMode === "trend" ? "active" : ""}
+            onClick={() => {
+              setViewMode("trend");
+              setHoveredIdx(null);
+            }}
+          >
+            Monthly Trend
+          </button>
+        </div>
+      </div>
+
+      <svg
+        viewBox="0 0 340 180"
+        className="candlestick-3d-svg"
+        style={{ width: "100%", height: "auto", maxHeight: "185px", overflow: "visible" }}
+      >
+        <defs>
+          <filter id="candle-shadow-blur" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="3" />
+          </filter>
+
+          {/* Bullish (Emerald Green) 3D Gradients */}
+          <linearGradient id="candle-bullish-front" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#6ee7b7" />
+            <stop offset="25%" stopColor="#10b981" />
+            <stop offset="75%" stopColor="#059669" />
+            <stop offset="100%" stopColor="#064e3b" />
+          </linearGradient>
+          <linearGradient id="candle-bullish-top" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+            <stop offset="45%" stopColor="#a7f3d0" />
+            <stop offset="100%" stopColor="#34d399" />
+          </linearGradient>
+          <linearGradient id="candle-bullish-side" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#047857" />
+            <stop offset="100%" stopColor="#064e3b" />
+          </linearGradient>
+
+          {/* Bearish (Ruby Red) 3D Gradients */}
+          <linearGradient id="candle-bearish-front" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#fca5a5" />
+            <stop offset="25%" stopColor="#ef4444" />
+            <stop offset="75%" stopColor="#dc2626" />
+            <stop offset="100%" stopColor="#7f1d1d" />
+          </linearGradient>
+          <linearGradient id="candle-bearish-top" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+            <stop offset="45%" stopColor="#fecaca" />
+            <stop offset="100%" stopColor="#f87171" />
+          </linearGradient>
+          <linearGradient id="candle-bearish-side" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#b91c1c" />
+            <stop offset="100%" stopColor="#7f1d1d" />
+          </linearGradient>
+        </defs>
+
+        {/* 3 Reference Horizontal Gridlines (Resistance, Mid, Support) */}
+        <line x1="12" y1={chartTop + 4} x2="330" y2={chartTop + 4} stroke="var(--border)" strokeWidth="1" strokeDasharray="3 3" opacity="0.45" />
+        <line x1="12" y1={(chartTop + chartBottom) / 2} x2="330" y2={(chartTop + chartBottom) / 2} stroke="var(--border)" strokeWidth="1" strokeDasharray="3 3" opacity="0.45" />
+        <line x1="12" y1={chartBottom} x2="330" y2={chartBottom} stroke="var(--border)" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.6" />
+
+        {candles.map((c, i) => {
+          const x = 22 + i * (candleW + spacing);
+          const isHovered = hoveredIdx === i;
+          const lift = isHovered ? 4 : 0;
+
+          const yHigh = scaleY(c.high) - lift;
+          const yLow = scaleY(c.low) - lift;
+          const yOpen = scaleY(c.open) - lift;
+          const yClose = scaleY(c.close) - lift;
+
+          const isBullish = !c.isLiability && c.close >= c.open;
+          const bodyTop = Math.min(yOpen, yClose);
+          const bodyBottom = Math.max(yOpen, yClose);
+          const bodyH = Math.max(7, bodyBottom - bodyTop);
+
+          const frontGrad = isBullish ? "url(#candle-bullish-front)" : "url(#candle-bearish-front)";
+          const topGrad = isBullish ? "url(#candle-bullish-top)" : "url(#candle-bearish-top)";
+          const sideGrad = isBullish ? "url(#candle-bullish-side)" : "url(#candle-bearish-side)";
+          const wickColor = isBullish ? "#10b981" : "#ef4444";
+          const wickShadowColor = isBullish ? "#064e3b" : "#7f1d1d";
+          const tipColor = isBullish ? "#6ee7b7" : "#fca5a5";
+
+          const pctChange = (((c.close - c.open) / (c.open || 1)) * 100).toFixed(1);
+
+          return (
+            <g
+              key={c.label}
+              className="candle-3d-group"
+              onMouseEnter={() => setHoveredIdx(i)}
+              onMouseLeave={() => setHoveredIdx(null)}
+              style={{ cursor: "pointer" }}
+            >
+              {/* Ground Shadow underneath candle body */}
+              <ellipse
+                cx={x + candleW / 2 + dx / 2}
+                cy={chartBottom + 4}
+                rx={candleW / 2 + (isHovered ? 5 : 3)}
+                ry={3}
+                fill={isBullish ? "rgba(16, 185, 129, 0.25)" : "rgba(239, 68, 68, 0.25)"}
+                filter="url(#candle-shadow-blur)"
+              />
+
+              {/* ── Upper Wick ── */}
+              <line
+                x1={x + candleW / 2 + 1}
+                y1={yHigh}
+                x2={x + candleW / 2 + 1}
+                y2={bodyTop}
+                stroke={wickShadowColor}
+                strokeWidth="3.2"
+                strokeLinecap="round"
+              />
+              <line
+                x1={x + candleW / 2}
+                y1={yHigh}
+                x2={x + candleW / 2}
+                y2={bodyTop}
+                stroke={wickColor}
+                strokeWidth="2.8"
+                strokeLinecap="round"
+              />
+              <line
+                x1={x + candleW / 2 - 0.6}
+                y1={yHigh}
+                x2={x + candleW / 2 - 0.6}
+                y2={bodyTop}
+                stroke="#ffffff"
+                strokeWidth="0.8"
+                opacity="0.75"
+              />
+              <circle cx={x + candleW / 2} cy={yHigh} r="2.2" fill={tipColor} stroke="#ffffff" strokeWidth="0.8" />
+
+              {/* ── Lower Wick ── */}
+              <line
+                x1={x + candleW / 2 + 1}
+                y1={bodyBottom}
+                x2={x + candleW / 2 + 1}
+                y2={yLow}
+                stroke={wickShadowColor}
+                strokeWidth="3.2"
+                strokeLinecap="round"
+              />
+              <line
+                x1={x + candleW / 2}
+                y1={bodyBottom}
+                x2={x + candleW / 2}
+                y2={yLow}
+                stroke={wickColor}
+                strokeWidth="2.8"
+                strokeLinecap="round"
+              />
+              <line
+                x1={x + candleW / 2 - 0.6}
+                y1={bodyBottom}
+                x2={x + candleW / 2 - 0.6}
+                y2={yLow}
+                stroke="#ffffff"
+                strokeWidth="0.8"
+                opacity="0.75"
+              />
+              <circle cx={x + candleW / 2} cy={yLow} r="2.2" fill={tipColor} stroke="#ffffff" strokeWidth="0.8" />
+
+              {/* ── 3D Candle Body Block ── */}
+              {/* Front Face */}
+              <rect
+                x={x}
+                y={bodyTop}
+                width={candleW}
+                height={bodyH}
+                rx="2"
+                fill={frontGrad}
+              />
+
+              {/* Right Extrusion Side Wall */}
+              <polygon
+                points={`${x + candleW},${bodyTop} ${x + candleW + dx},${bodyTop - dy} ${x + candleW + dx},${bodyBottom - dy} ${x + candleW},${bodyBottom}`}
+                fill={sideGrad}
+              />
+
+              {/* Top Face Cap (Isometric Diamond) */}
+              <polygon
+                points={`${x},${bodyTop} ${x + dx},${bodyTop - dy} ${x + candleW + dx},${bodyTop - dy} ${x + candleW},${bodyTop}`}
+                fill={topGrad}
+                stroke="rgba(255, 255, 255, 0.75)"
+                strokeWidth="1"
+              />
+
+              {/* Vertical Specular Glass Sheen Line */}
+              <line
+                x1={x + 2}
+                y1={bodyTop + 1}
+                x2={x + 2}
+                y2={bodyBottom - 1}
+                stroke="rgba(255, 255, 255, 0.55)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                pointerEvents="none"
+              />
+
+              {/* Floor Label */}
+              <text
+                x={x + candleW / 2}
+                y={chartBottom + 18}
+                textAnchor="middle"
+                className={`candle-3d-lbl ${isHovered ? "active" : ""}`}
+              >
+                {c.label}
+              </text>
+
+              {/* Trend % Tag */}
+              <text
+                x={x + candleW / 2}
+                y={chartBottom + 30}
+                textAnchor="middle"
+                fill={isBullish ? "#10b981" : "#ef4444"}
+                className="candle-pct-tag"
+              >
+                {isBullish ? "▲" : "▼"}
+                {Math.abs(Number(pctChange))}%
+              </text>
+            </g>
+          );
+        })}
+      </svg>
     </div>
   );
 }
@@ -394,9 +1119,10 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
                 <h3 className="desktop-card-title">Net Worth Allocation</h3>
                 {/* Chart Type Switcher */}
                 <div className="chart-type-switcher">
-                  <button className={`chart-type-btn ${chartType === "donut" ? "active" : ""}`} onClick={() => setChartType("donut")} title="Donut Chart"><PieChart size={16} /></button>
-                  <button className={`chart-type-btn ${chartType === "bar" ? "active" : ""}`} onClick={() => setChartType("bar")} title="Bar Chart"><LayoutDashboard size={20} /></button>
-                  <button className={`chart-type-btn ${chartType === "horizontal" ? "active" : ""}`} onClick={() => setChartType("horizontal")} title="Horizontal Bars"><AlignLeft size={16} /></button>
+                  <button className={`chart-type-btn ${chartType === "donut" ? "active" : ""}`} onClick={() => setChartType("donut")} title="3D Donut Chart"><PieChart size={16} color={chartType === "donut" ? "#ffffff" : "currentColor"} /></button>
+                  <button className={`chart-type-btn ${chartType === "bar" ? "active" : ""}`} onClick={() => setChartType("bar")} title="3D Bar Chart"><BarChart3 size={16} color={chartType === "bar" ? "#ffffff" : "currentColor"} /></button>
+                  <button className={`chart-type-btn ${chartType === "candlestick" ? "active" : ""}`} onClick={() => setChartType("candlestick")} title="3D Candlestick Chart"><CandlestickChart size={16} color={chartType === "candlestick" ? "#ffffff" : "currentColor"} /></button>
+                  <button className={`chart-type-btn ${chartType === "horizontal" ? "active" : ""}`} onClick={() => setChartType("horizontal")} title="Horizontal Bars"><AlignLeft size={16} color={chartType === "horizontal" ? "#ffffff" : "currentColor"} /></button>
                 </div>
               </div>
 
@@ -456,7 +1182,36 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
 
               {chartType === "bar" && (
                 <div className="chart-bar-wrap">
-                  <BarChart data={chartData} />
+                  <BarChart data={chartData} currency={currency} />
+                  <div className="chart-legend">
+                    {chartData.map(d => (
+                      <div key={d.label} className="legend-item">
+                        <span className="legend-dot" style={{ background: d.color }} />
+                        <span className="legend-label">{d.label}</span>
+                        <span className="legend-val tabular-nums" style={d.label === "Dues" ? { color: "var(--danger)" } : undefined}>
+                          {d.label === "Dues" ? `−${formatAmount(d.value, currency)}` : formatAmount(d.value, currency)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {chartType === "candlestick" && (
+                <div className="chart-candlestick-wrap">
+                  <CandleStickChart3D
+                    data={chartData}
+                    currency={currency}
+                    mfInvested={mfInvested}
+                    closingBankBalance={closingBankBalance}
+                    monthCredits={monthCredits}
+                    monthDebits={monthDebits}
+                    totalDuesToClear={totalDuesToClear}
+                    unpaidTotal={unpaidTotal}
+                    bankExpenses={bankExpAll}
+                    expenses={expenses}
+                    items={items}
+                  />
                   <div className="chart-legend">
                     {chartData.map(d => (
                       <div key={d.label} className="legend-item">
