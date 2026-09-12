@@ -2176,10 +2176,12 @@ html, body {
 .filter-chips {
   display: flex;
   gap: 6px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  width: 100%;
 }
 
 .filter-chip {
+  flex: 1;
   padding: 6px 12px;
   border-radius: 99px;
   font-size: 0.8125rem;
@@ -2189,6 +2191,11 @@ html, body {
   color: var(--text2);
   transition: all 0.15s;
   white-space: nowrap;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 .filter-chip.active {
@@ -3051,7 +3058,7 @@ html, body {
 .fab-btn {
   position: absolute;       /* anchored to .app-shell, not the viewport */
   right: 18px;
-  bottom: calc(var(--bottom-nav-h) + 14px);  /* sits above the bottom nav */
+  bottom: calc(var(--bottom-nav-h) + 16px);  /* sits above the bottom nav — 2px higher */
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -3082,7 +3089,7 @@ html, body {
 }
 
 .pay-fab-btn {
-  bottom: calc(var(--bottom-nav-h) + 84px) !important;
+  bottom: calc(var(--bottom-nav-h) + 86px) !important;
   background: linear-gradient(135deg, #F59E0B, #DC2626) !important;
   color: #fff !important;
   font-size: 1.25rem;
@@ -3158,8 +3165,8 @@ html, body {
   height: 36px;
   border-radius: 50%;
   border: none;
-  background: rgba(255, 255, 255, 0.18);
-  color: var(--primary-fg);
+  background: rgba(0, 0, 0, 0.08);
+  color: #111827;
   font-size: 1rem;
   cursor: pointer;
   display: inline-flex;
@@ -3167,6 +3174,34 @@ html, body {
   justify-content: center;
   transition: background 0.15s ease, transform 0.15s ease;
   flex-shrink: 0;
+}
+
+/* Dark mode: white SVGs on subtle white-glass background */
+:root.dark-mode .btn-header-icon {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+/* SVG Color Standardization — black in light, white in dark */
+.page-header svg,
+.page-header-row svg,
+.btn-header-icon svg {
+  color: #111827;
+  stroke: #111827;
+}
+:root.dark-mode .page-header svg,
+:root.dark-mode .page-header-row svg,
+:root.dark-mode .btn-header-icon svg {
+  color: #ffffff;
+  stroke: #ffffff;
+}
+
+/* Active/selected buttons: always white SVGs + labels */
+.nav-btn.active svg,
+.filter-chip.active svg,
+.loans-tab-btn.active svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
 }
 
 .btn-header-icon:hover {
@@ -3562,9 +3597,9 @@ html, body {
 .payment-app-name { font-size: 0.7rem; font-weight: 500; text-align: center; line-height: 1.2; }
 
 /* ΓöÇΓöÇ Get New Card Dashboard ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
-.new-card-hero { text-align: center; padding: 20px 16px 12px; }
-.new-card-hero-icon { font-size: 2.5rem; }
-.new-card-hero-title { font-size: 1.1rem; font-weight: 700; margin-top: 6px; }
+.new-card-hero { text-align: center; padding: 10px 16px 8px; }
+.new-card-hero-icon { display: none; }
+.new-card-hero-title { font-size: 1.1rem; font-weight: 700; margin-top: 0; }
 .new-card-hero-sub { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
 
 .new-card-list { display: flex; flex-direction: column; gap: 16px; margin: 10px -8px 0 -8px; }
@@ -11831,6 +11866,61 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   margin-bottom: 24px;
 }
 
+/* ── Loans KPI Accent Borders ──────────────────────── */
+.loans-kpi-grid .summary-card.blue {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  border: 1.5px solid #60a5fa;
+  box-shadow: 0 2px 8px rgba(96, 165, 250, 0.15);
+}
+.loans-kpi-grid .summary-card.red {
+  border: 1.5px solid #f87171;
+  box-shadow: 0 2px 8px rgba(248, 113, 113, 0.15);
+}
+.loans-kpi-grid .summary-card.green {
+  border: 1.5px solid #34d399;
+  box-shadow: 0 2px 8px rgba(52, 211, 153, 0.15);
+}
+.loans-kpi-grid .summary-card.slate {
+  background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+  border: 1.5px solid #94a3b8;
+  box-shadow: 0 2px 8px rgba(148, 163, 184, 0.15);
+}
+
+/* ── Dark mode KPI accent borders ─────────────────── */
+:root.dark-mode .loans-kpi-grid .summary-card.blue {
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.12), rgba(59, 130, 246, 0.08));
+  border-color: rgba(96, 165, 250, 0.5);
+  box-shadow: 0 2px 8px rgba(96, 165, 250, 0.1);
+}
+:root.dark-mode .loans-kpi-grid .summary-card.red {
+  background: linear-gradient(135deg, rgba(248, 113, 113, 0.12), rgba(239, 68, 68, 0.08));
+  border-color: rgba(248, 113, 113, 0.5);
+  box-shadow: 0 2px 8px rgba(248, 113, 113, 0.1);
+}
+:root.dark-mode .loans-kpi-grid .summary-card.green {
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.12), rgba(16, 185, 129, 0.08));
+  border-color: rgba(52, 211, 153, 0.5);
+  box-shadow: 0 2px 8px rgba(52, 211, 153, 0.1);
+}
+:root.dark-mode .loans-kpi-grid .summary-card.slate {
+  background: linear-gradient(135deg, rgba(148, 163, 184, 0.12), rgba(100, 116, 139, 0.08));
+  border-color: rgba(148, 163, 184, 0.5);
+  box-shadow: 0 2px 8px rgba(148, 163, 184, 0.1);
+}
+
+/* ── Mobile 2x2 grid (portrait) ───────────────────── */
+@media (max-width: 767px) {
+  .loans-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    padding: 0 12px !important;
+  }
+  .loans-kpi-grid .summary-card {
+    border-radius: 14px;
+    padding: 14px 12px;
+  }
+}
+
 .loan-tax-rows {
   display: flex;
   flex-direction: column;
@@ -11844,8 +11934,8 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   gap: 8px;
 }
 
-.loan-tax-name { flex: 2; }
-.loan-tax-pct { flex: 1; }
+.loan-tax-name { flex: 1; min-width: 0; }
+.loan-tax-pct { width: 80px; flex-shrink: 0; text-align: right; }
 .loan-tax-del {
   background: none;
   border: none;
