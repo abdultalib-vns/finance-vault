@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { CreditCard, Gift, ArrowRight, CheckCircle, Calendar, ChevronLeft, ChevronRight, AlertTriangle, X, Coins, Receipt, Sparkles, Building2, TrendingUp, RefreshCw, ClipboardList, Gem, Star, EyeOff, Eye, Pin, Hourglass, CheckCircle2 } from "lucide-react";
+import { CreditCard, Gift, ArrowRight, CheckCircle, Calendar, ChevronLeft, ChevronRight, AlertTriangle, X, Coins, Receipt, Sparkles, Building2, TrendingUp, RefreshCw, ClipboardList, Gem, Star, EyeOff, Eye, Pin, Hourglass, CheckCircle2, Plus } from "lucide-react";
 import { FinanceItem, CardExpense, ExpenseStatus, PaymentApp } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
 import { loadExpenses, saveExpenses, saveItems, saveCashbacks, loadCashbacks, loadPayAndRecordEnabled } from "../lib/storage";
@@ -210,7 +210,9 @@ function BalanceView({ items, currency, onSelect, masterKey, onAddCard, onEdit, 
           <Coins size={24} />
         </button>
       )}
-      <button className="fab-btn" onClick={() => setShowAddForm(true)} aria-label="Add Card / Pay Later" title="Add Card / Pay Later">+</button>
+      <button className="fab-btn" onClick={() => setShowAddForm(true)} aria-label="Add Card / Pay Later" title="Add Card / Pay Later">
+        <Plus size={26} strokeWidth={2.5} />
+      </button>
 
         {showAddForm && (
           <div className="modal-overlay" onClick={() => setShowAddForm(false)}>

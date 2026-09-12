@@ -333,7 +333,9 @@ function AccountsTab({ items, masterKey, currency, onAddItem, onEdit, onDelete, 
       )}
 
       <PullToRefresh onRefresh={onReload ?? (() => {})} className="content">
-        <button className="fab-btn" onClick={() => setShowAddForm(true)} aria-label="Add Bank Account" title="Add Bank Account">+</button>
+        <button className="fab-btn" onClick={() => setShowAddForm(true)} aria-label="Add Bank Account" title="Add Bank Account">
+          <Plus size={26} strokeWidth={2.5} />
+        </button>
 
         {showAddForm && (
           <div className="modal-overlay" onClick={() => setShowAddForm(false)}>
@@ -401,7 +403,9 @@ function InvestmentsTab({ items, currency, masterKey, onAddItem, onSelectFD, onS
       )}
 
       <PullToRefresh onRefresh={onReload ?? (() => {})} className="content">
-        <button className="fab-btn" onClick={() => setShowAddForm(true)} aria-label="Add Investment" title="Add Investment">+</button>
+        <button className="fab-btn" onClick={() => setShowAddForm(true)} aria-label="Add Investment" title="Add Investment">
+          <Plus size={26} strokeWidth={2.5} />
+        </button>
 
         {showAddForm && (
           <div className="modal-overlay" onClick={() => setShowAddForm(false)}>

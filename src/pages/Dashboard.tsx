@@ -1,4 +1,4 @@
-import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignLeft, Calendar, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowRight, Sparkles, AlertTriangle, X, Coins, CheckCircle, EyeOff, TrendingUp, Gift } from "lucide-react";
+import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignLeft, Calendar, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowRight, Sparkles, AlertTriangle, X, Coins, CheckCircle, EyeOff, TrendingUp, Gift, Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { FinanceItem } from "../types";
 import { Currency, formatAmount, formatCompactAmount } from "../lib/currency";
@@ -629,7 +629,9 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
           <Coins size={24} />
         </button>
       )}
-      <button className="fab-btn" onClick={() => setShowAddForm(true)} aria-label="Add Entry" title="Add Entry">+</button>
+      <button className="fab-btn" onClick={() => setShowAddForm(true)} aria-label="Add Entry" title="Add Entry">
+        <Plus size={26} strokeWidth={2.5} />
+      </button>
       {showAddForm && (
         <div className="modal-overlay" onClick={() => setShowAddForm(false)}>
           <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>

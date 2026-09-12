@@ -1,4 +1,4 @@
-import { LayoutDashboard, CreditCard, Building2, Calendar, TrendingUp, RefreshCw, ClipboardList } from "lucide-react";
+import { LayoutDashboard, CreditCard, Building2, Calendar, TrendingUp, RefreshCw, ClipboardList, Plus } from "lucide-react";
 import React, { useState } from "react";
 import { FinanceItem } from "../types";
 import { encryptData, decryptData } from "../lib/crypto";
@@ -125,7 +125,7 @@ export default function AddItemForm({
           aria-label={buttonLabel ?? "Add Entry"}
           title={buttonLabel ?? "Add Entry"}
         >
-          +
+          <Plus size={26} strokeWidth={2.5} />
         </button>
       );
     }

@@ -504,12 +504,20 @@ export default function Loans({ currency, items }: Props) {
                       </div>
                       <div className="loan-card-text">
                         <span className="loan-card-name">{loan.name}</span>
-                        <span className="loan-card-lender">{loan.lender} · {loan.tenureMonths} months @ {loan.interestRate}%</span>
+                        <div className="loan-card-meta">
+                          <span className="loan-meta-chip lender">{loan.lender}</span>
+                          <span className="loan-meta-chip terms">{loan.tenureMonths} mos @ {loan.interestRate}%</span>
+                        </div>
                       </div>
                     </div>
                     <div className="loan-card-right">
-                      <span className="loan-card-amount tabular-nums">{formatAmount(loan.monthlyEmi, currency)}<span className="loan-card-per">/mo</span></span>
-                      {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                      <div className="loan-card-amount-block">
+                        <span className="loan-card-amount-lbl">Monthly EMI</span>
+                        <span className="loan-card-amount tabular-nums">{formatAmount(loan.monthlyEmi, currency)}<span className="loan-card-per">/mo</span></span>
+                      </div>
+                      <div className="loan-card-expand-icon">
+                        {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                      </div>
                     </div>
                   </div>
 
@@ -519,8 +527,14 @@ export default function Loans({ currency, items }: Props) {
                       <div className="loan-progress-fill" style={{ width: `${progress}%` }} />
                     </div>
                     <div className="loan-progress-info">
-                      <span className="tabular-nums">{paidCount}/{loan.tenureMonths} EMIs paid</span>
-                      <span className="tabular-nums">{formatAmount(paidAmount, currency)} / {formatAmount(loan.totalPayable, currency)}</span>
+                      <div className="loan-progress-stat left">
+                        <span className="loan-stat-title">EMIs Paid</span>
+                        <span className="loan-stat-val tabular-nums">{paidCount}/{loan.tenureMonths} <span className="loan-stat-pct">({progress}%)</span></span>
+                      </div>
+                      <div className="loan-progress-stat right">
+                        <span className="loan-stat-title">Repaid / Total</span>
+                        <span className="loan-stat-val tabular-nums">{formatAmount(paidAmount, currency)} <span className="loan-stat-total">/ {formatAmount(loan.totalPayable, currency)}</span></span>
+                      </div>
                     </div>
                   </div>
 

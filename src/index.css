@@ -2119,9 +2119,193 @@ html, body {
   letter-spacing: 0.04em;
 }
 
+/* ── Mobile Dashboard Header: Blurry Glassmorphism (Total Savings Green & Outstanding Dues Red) ── */
+@media (max-width: 1023px) {
+  .dashboard-header .summary-card.green {
+    background: linear-gradient(135deg, rgba(5, 120, 85, 0.74) 0%, rgba(16, 185, 129, 0.58) 100%) !important;
+    backdrop-filter: blur(24px) saturate(220%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(220%) !important;
+    border: 1.5px solid rgba(167, 243, 208, 0.65) !important;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.22),
+      0 2px 8px rgba(16, 185, 129, 0.35),
+      inset 0 1.5px 2px rgba(255, 255, 255, 0.65),
+      inset 0 -1px 1px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .dashboard-header .summary-card.green .summary-lbl {
+    color: #d1fae5 !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.06em !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  .dashboard-header .summary-card.green .summary-val {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45) !important;
+  }
+
+  .dashboard-header .summary-card.green .desktop-kpi-trend.positive {
+    color: #a7f3d0 !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .dashboard-header .summary-card.red {
+    background: linear-gradient(135deg, rgba(185, 28, 28, 0.74) 0%, rgba(239, 68, 68, 0.58) 100%) !important;
+    backdrop-filter: blur(24px) saturate(220%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(220%) !important;
+    border: 1.5px solid rgba(254, 202, 202, 0.65) !important;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.22),
+      0 2px 8px rgba(239, 68, 68, 0.35),
+      inset 0 1.5px 2px rgba(255, 255, 255, 0.65),
+      inset 0 -1px 1px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .dashboard-header .summary-card.red .summary-lbl {
+    color: #ffe4e6 !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.06em !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  .dashboard-header .summary-card.red .summary-val {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45) !important;
+  }
+
+  .dashboard-header .summary-card.red .desktop-kpi-trend.negative {
+    color: #fecaca !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  }
+}
+
+/* ── Dark Mode: Rich Frosted Glassmorphism for KPI Cards ── */
 :root.dark-mode .summary-card.green,
-:root.dark-mode .summary-card.red {
-  background: linear-gradient(135deg, rgba(255,255,255,0.16), rgba(255,255,255,0.1));
+.dark-mode .summary-card.green {
+  background: linear-gradient(135deg, rgba(5, 120, 85, 0.74) 0%, rgba(16, 185, 129, 0.58) 100%) !important;
+  backdrop-filter: blur(24px) saturate(220%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(220%) !important;
+  border: 1.5px solid rgba(167, 243, 208, 0.65) !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.22),
+    0 2px 8px rgba(16, 185, 129, 0.35),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.65),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.15) !important;
+}
+:root.dark-mode .summary-card.green .summary-lbl,
+.dark-mode .summary-card.green .summary-lbl {
+  color: #d1fae5 !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+}
+:root.dark-mode .summary-card.green .summary-val,
+.dark-mode .summary-card.green .summary-val {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45) !important;
+}
+:root.dark-mode .summary-card.green .desktop-kpi-trend.positive,
+.dark-mode .summary-card.green .desktop-kpi-trend.positive {
+  color: #a7f3d0 !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+:root.dark-mode .summary-card.red,
+.dark-mode .summary-card.red {
+  background: linear-gradient(135deg, rgba(185, 28, 28, 0.74) 0%, rgba(239, 68, 68, 0.58) 100%) !important;
+  backdrop-filter: blur(24px) saturate(220%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(220%) !important;
+  border: 1.5px solid rgba(254, 202, 202, 0.65) !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.22),
+    0 2px 8px rgba(239, 68, 68, 0.35),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.65),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.15) !important;
+}
+:root.dark-mode .summary-card.red .summary-lbl,
+.dark-mode .summary-card.red .summary-lbl {
+  color: #ffe4e6 !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+}
+:root.dark-mode .summary-card.red .summary-val,
+.dark-mode .summary-card.red .summary-val {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45) !important;
+}
+:root.dark-mode .summary-card.red .desktop-kpi-trend.negative,
+.dark-mode .summary-card.red .desktop-kpi-trend.negative {
+  color: #fecaca !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ── Gold KPI Card (Total Earned in Cashback Tracker) ── */
+.summary-card.gold,
+:root:not(.dark-mode) .summary-card.gold {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+  border: 1.5px solid #f59e0b !important;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.16) !important;
+}
+.summary-card.gold .summary-lbl,
+:root:not(.dark-mode) .summary-card.gold .summary-lbl {
+  color: #92400e !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  text-shadow: none !important;
+}
+.summary-card.gold .summary-val,
+:root:not(.dark-mode) .summary-card.gold .summary-val {
+  color: #78350f !important;
+  font-weight: 800 !important;
+  text-shadow: none !important;
+}
+.summary-card.gold .desktop-kpi-trend,
+:root:not(.dark-mode) .summary-card.gold .desktop-kpi-trend {
+  color: #b45309 !important;
+  font-weight: 700 !important;
+  text-shadow: none !important;
+}
+
+:root.dark-mode .summary-card.gold,
+.dark-mode .summary-card.gold {
+  background: linear-gradient(135deg, rgba(180, 83, 9, 0.74) 0%, rgba(217, 119, 6, 0.58) 100%) !important;
+  backdrop-filter: blur(24px) saturate(220%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(220%) !important;
+  border: 1.5px solid rgba(253, 230, 138, 0.65) !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.22),
+    0 2px 8px rgba(245, 158, 11, 0.35),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.65),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.15) !important;
+}
+:root.dark-mode .summary-card.gold .summary-lbl,
+.dark-mode .summary-card.gold .summary-lbl {
+  color: #fef3c7 !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+}
+:root.dark-mode .summary-card.gold .summary-val,
+.dark-mode .summary-card.gold .summary-val {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45) !important;
+}
+:root.dark-mode .summary-card.gold .desktop-kpi-trend,
+.dark-mode .summary-card.gold .desktop-kpi-trend {
+  color: #fde68a !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
 }
 
 :root.dark-mode .summary-val,
@@ -3054,34 +3238,59 @@ html, body {
   gap: 12px;
 }
 
-/* ΓöÇΓöÇ Floating Action Button ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* ── Floating Action Button ─────────────────────────────── */
 .fab-btn {
   position: absolute;       /* anchored to .app-shell, not the viewport */
   right: 18px;
-  bottom: calc(var(--bottom-nav-h) + 16px);  /* sits above the bottom nav — 2px higher */
+  bottom: calc(var(--bottom-nav-h) + 21px);  /* sits above the bottom nav — +5px higher */
   width: 56px;
   height: 56px;
   border-radius: 50%;
   border: none;
-  background: linear-gradient(135deg, var(--primary), #4f46e5);
-  color: #fff;
+  background: var(--primary);
+  color: #ffffff;
   font-size: 1.875rem;
   font-weight: 300;
   line-height: 1;
   cursor: pointer;
-  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.45),
-              0 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2), 0 2px 8px var(--primary-light, rgba(37, 99, 235, 0.25));
   z-index: 60;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease, color 0.2s ease;
+}
+
+/* Light mode: (+) FAB adapts the theme applied via admin panel */
+:root:not(.dark-mode) .fab-btn:not(.pay-fab-btn):not(.ai-fab-btn) {
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2), 0 2px 8px var(--primary-light, rgba(37, 99, 235, 0.25)) !important;
+}
+
+:root:not(.dark-mode) .fab-btn:not(.pay-fab-btn):not(.ai-fab-btn) svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* Dark mode: (+) FAB is white with black SVG of + */
+:root.dark-mode .fab-btn:not(.pay-fab-btn):not(.ai-fab-btn),
+.dark-mode .fab-btn:not(.pay-fab-btn):not(.ai-fab-btn) {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border: none !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), 0 0 16px rgba(255, 255, 255, 0.25) !important;
+}
+
+:root.dark-mode .fab-btn:not(.pay-fab-btn):not(.ai-fab-btn) svg,
+.dark-mode .fab-btn:not(.pay-fab-btn):not(.ai-fab-btn) svg {
+  color: #111827 !important;
+  stroke: #111827 !important;
 }
 
 .fab-btn:hover {
   transform: scale(1.05);
-  box-shadow: 0 8px 22px rgba(79, 70, 229, 0.55),
-              0 2px 6px rgba(0, 0, 0, 0.18);
 }
 
 .fab-btn:active {
@@ -3089,7 +3298,7 @@ html, body {
 }
 
 .pay-fab-btn {
-  bottom: calc(var(--bottom-nav-h) + 86px) !important;
+  bottom: calc(var(--bottom-nav-h) + 91px) !important;  /* +5px higher */
   background: linear-gradient(135deg, #F59E0B, #DC2626) !important;
   color: #fff !important;
   font-size: 1.25rem;
@@ -3103,7 +3312,7 @@ html, body {
               0 2px 6px rgba(0, 0, 0, 0.18);
 }
 
-/* ΓöÇΓöÇ Biometric Sign-In ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* ── Biometric Sign-In ─────────────────────────────────── */
 .auth-divider {
   display: flex;
   align-items: center;
@@ -3153,7 +3362,7 @@ html, body {
   cursor: not-allowed;
 }
 
-/* ΓöÇΓöÇ Header logout button ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* ── Header Action Buttons & Icons ──────────────────────── */
 .header-actions {
   display: flex;
   align-items: center;
@@ -3165,8 +3374,8 @@ html, body {
   height: 36px;
   border-radius: 50%;
   border: none;
-  background: rgba(0, 0, 0, 0.08);
-  color: #111827;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
   font-size: 1rem;
   cursor: pointer;
   display: inline-flex;
@@ -3176,30 +3385,91 @@ html, body {
   flex-shrink: 0;
 }
 
-/* Dark mode: white SVGs on subtle white-glass background */
-:root.dark-mode .btn-header-icon {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+/* Header action icons: Logout, Cashback tracker, Notification — ALWAYS white in both light and dark mode on mobile colored header */
+@media (max-width: 1023px) {
+  .header-actions .btn-header-icon,
+  .header-actions .btn-logout,
+  .header-actions .notif-bell-btn,
+  .dashboard-header .btn-header-icon,
+  .dashboard-header .btn-logout,
+  .dashboard-header .notif-bell-btn,
+  .btn-logout,
+  .notif-bell-btn {
+    background: rgba(255, 255, 255, 0.18) !important;
+    color: #ffffff !important;
+  }
+
+  .header-actions .btn-header-icon svg,
+  .header-actions .btn-logout svg,
+  .header-actions .notif-bell-btn svg,
+  .dashboard-header .btn-header-icon svg,
+  .dashboard-header .btn-logout svg,
+  .dashboard-header .notif-bell-btn svg,
+  .btn-logout svg,
+  .notif-bell-btn svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+  }
+
+  .header-actions .btn-header-icon:hover,
+  .header-actions .btn-logout:hover,
+  .header-actions .notif-bell-btn:hover,
+  .dashboard-header .btn-header-icon:hover,
+  .dashboard-header .btn-logout:hover,
+  .dashboard-header .notif-bell-btn:hover,
+  .btn-logout:hover,
+  .notif-bell-btn:hover {
+    background: rgba(255, 255, 255, 0.28) !important;
+  }
+
+  :root.dark-mode .header-actions .btn-header-icon,
+  :root.dark-mode .dashboard-header .btn-header-icon {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+  }
 }
 
-/* SVG Color Standardization — black in light, white in dark */
-.page-header svg,
-.page-header-row svg,
-.btn-header-icon svg {
+/* SVG Color Standardization for page headers on surface backgrounds */
+.page-header:not(.dashboard-header) svg,
+.page-header-row svg {
   color: #111827;
   stroke: #111827;
 }
-:root.dark-mode .page-header svg,
-:root.dark-mode .page-header-row svg,
-:root.dark-mode .btn-header-icon svg {
+:root.dark-mode .page-header:not(.dashboard-header) svg,
+:root.dark-mode .page-header-row svg {
   color: #ffffff;
   stroke: #ffffff;
 }
 
-/* Active/selected buttons: always white SVGs + labels */
-.nav-btn.active svg,
+/* Active filter chips & tab buttons */
 .filter-chip.active svg,
 .loans-tab-btn.active svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* Bottom Navigation Bar SVGs:
+   Light mode: Grey when unselected, Black when selected.
+   Dark mode: already fine (white / accent). */
+:root:not(.dark-mode) .bottom-nav .nav-btn svg,
+:root:not(.dark-mode) .nav-btn:not(.active) svg {
+  color: #64748b !important;
+  stroke: #64748b !important;
+}
+
+:root:not(.dark-mode) .bottom-nav .nav-btn.active svg,
+:root:not(.dark-mode) .nav-btn.active svg {
+  color: #111827 !important;
+  stroke: #111827 !important;
+}
+
+:root:not(.dark-mode) .bottom-nav .nav-btn.active .nav-label,
+:root:not(.dark-mode) .nav-btn.active .nav-label {
+  color: #111827 !important;
+}
+
+:root.dark-mode .bottom-nav .nav-btn.active svg,
+:root.dark-mode .nav-btn.active svg {
   color: #ffffff !important;
   stroke: #ffffff !important;
 }
@@ -7865,10 +8135,75 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
     border-radius: 20px !important;
   }
 
-  .btn-logout,
-  .reveal-toggle,
-  .btn-header-icon,
-  .notif-bell-btn {
+  /* Desktop Header Actions (Light Mode) - High contrast dark slate icons on clean white surface */
+  :root:not(.dark-mode) .dashboard-header .btn-logout,
+  :root:not(.dark-mode) .dashboard-header .reveal-toggle,
+  :root:not(.dark-mode) .dashboard-header .btn-header-icon,
+  :root:not(.dark-mode) .dashboard-header .notif-bell-btn,
+  :root:not(.dark-mode) .header-actions .btn-logout,
+  :root:not(.dark-mode) .header-actions .btn-header-icon,
+  :root:not(.dark-mode) .header-actions .notif-bell-btn,
+  :root:not(.dark-mode) .btn-logout,
+  :root:not(.dark-mode) .reveal-toggle,
+  :root:not(.dark-mode) .btn-header-icon,
+  :root:not(.dark-mode) .notif-bell-btn {
+    background: #ffffff !important;
+    border: 1.5px solid #cbd5e1 !important;
+    color: #1e293b !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease-out !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  :root:not(.dark-mode) .dashboard-header .btn-logout svg,
+  :root:not(.dark-mode) .dashboard-header .reveal-toggle svg,
+  :root:not(.dark-mode) .dashboard-header .btn-header-icon svg,
+  :root:not(.dark-mode) .dashboard-header .notif-bell-btn svg,
+  :root:not(.dark-mode) .header-actions .btn-logout svg,
+  :root:not(.dark-mode) .header-actions .btn-header-icon svg,
+  :root:not(.dark-mode) .header-actions .notif-bell-btn svg,
+  :root:not(.dark-mode) .btn-logout svg,
+  :root:not(.dark-mode) .reveal-toggle svg,
+  :root:not(.dark-mode) .btn-header-icon svg,
+  :root:not(.dark-mode) .notif-bell-btn svg {
+    color: #1e293b !important;
+    stroke: #1e293b !important;
+  }
+
+  :root:not(.dark-mode) .btn-logout:hover,
+  :root:not(.dark-mode) .reveal-toggle:hover,
+  :root:not(.dark-mode) .btn-header-icon:hover,
+  :root:not(.dark-mode) .notif-bell-btn:hover {
+    background: #f1f5f9 !important;
+    border-color: #94a3b8 !important;
+    color: #0f172a !important;
+  }
+
+  :root:not(.dark-mode) .btn-logout:hover svg,
+  :root:not(.dark-mode) .reveal-toggle:hover svg,
+  :root:not(.dark-mode) .btn-header-icon:hover svg,
+  :root:not(.dark-mode) .notif-bell-btn:hover svg {
+    color: #0f172a !important;
+    stroke: #0f172a !important;
+  }
+
+  :root.dark-mode .dashboard-header .btn-logout,
+  :root.dark-mode .dashboard-header .reveal-toggle,
+  :root.dark-mode .dashboard-header .btn-header-icon,
+  :root.dark-mode .dashboard-header .notif-bell-btn,
+  :root.dark-mode .header-actions .btn-logout,
+  :root.dark-mode .header-actions .btn-header-icon,
+  :root.dark-mode .header-actions .notif-bell-btn,
+  :root.dark-mode .btn-logout,
+  :root.dark-mode .reveal-toggle,
+  :root.dark-mode .btn-header-icon,
+  :root.dark-mode .notif-bell-btn {
     background: var(--dt-surface) !important;
     border: 1px solid var(--dt-border) !important;
     color: var(--dt-text-secondary) !important;
@@ -7882,10 +8217,25 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
     transition: all 0.15s ease-out !important;
   }
 
-  .btn-logout:hover,
-  .reveal-toggle:hover,
-  .btn-header-icon:hover,
-  .notif-bell-btn:hover {
+  :root.dark-mode .dashboard-header .btn-logout svg,
+  :root.dark-mode .dashboard-header .reveal-toggle svg,
+  :root.dark-mode .dashboard-header .btn-header-icon svg,
+  :root.dark-mode .dashboard-header .notif-bell-btn svg,
+  :root.dark-mode .header-actions .btn-logout svg,
+  :root.dark-mode .header-actions .btn-header-icon svg,
+  :root.dark-mode .header-actions .notif-bell-btn svg,
+  :root.dark-mode .btn-logout svg,
+  :root.dark-mode .reveal-toggle svg,
+  :root.dark-mode .btn-header-icon svg,
+  :root.dark-mode .notif-bell-btn svg {
+    color: #f8fafc !important;
+    stroke: #f8fafc !important;
+  }
+
+  :root.dark-mode .btn-logout:hover,
+  :root.dark-mode .reveal-toggle:hover,
+  :root.dark-mode .btn-header-icon:hover,
+  :root.dark-mode .notif-bell-btn:hover {
     background: var(--dt-surface-elevated) !important;
     color: var(--dt-text-primary) !important;
     border-color: var(--dt-border-light) !important;
@@ -7922,6 +8272,154 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
 
   .desktop-kpi-card:hover {
     border-color: var(--dt-text-secondary) !important;
+  }
+
+  /* ── High Contrast KPI Cards on Desktop Light Mode ── */
+  :root:not(.dark-mode) .summary-card.green,
+  :root:not(.dark-mode) .desktop-kpi-card.green {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+    border: 1.5px solid #10b981 !important;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.12), 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  }
+  :root:not(.dark-mode) .summary-card.green .summary-lbl,
+  :root:not(.dark-mode) .desktop-kpi-card.green .summary-lbl,
+  :root:not(.dark-mode) .dashboard-header .summary-card.green .summary-lbl {
+    color: #065f46 !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    text-shadow: none !important;
+  }
+  :root:not(.dark-mode) .summary-card.green .summary-val,
+  :root:not(.dark-mode) .desktop-kpi-card.green .summary-val,
+  :root:not(.dark-mode) .dashboard-header .summary-card.green .summary-val {
+    color: #064e3b !important;
+    font-weight: 800 !important;
+    text-shadow: none !important;
+  }
+  :root:not(.dark-mode) .summary-card.green .desktop-kpi-trend,
+  :root:not(.dark-mode) .desktop-kpi-card.green .desktop-kpi-trend,
+  :root:not(.dark-mode) .summary-card.green .desktop-kpi-trend.positive,
+  :root:not(.dark-mode) .desktop-kpi-card.green .desktop-kpi-trend.positive {
+    color: #047857 !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+  }
+
+  :root:not(.dark-mode) .summary-card.red,
+  :root:not(.dark-mode) .desktop-kpi-card.red {
+    background: linear-gradient(135deg, #fff1f2 0%, #fee2e2 100%) !important;
+    border: 1.5px solid #f43f5e !important;
+    box-shadow: 0 4px 14px rgba(244, 63, 94, 0.12), 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  }
+  :root:not(.dark-mode) .summary-card.red .summary-lbl,
+  :root:not(.dark-mode) .desktop-kpi-card.red .summary-lbl,
+  :root:not(.dark-mode) .dashboard-header .summary-card.red .summary-lbl {
+    color: #9f1239 !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    text-shadow: none !important;
+  }
+  :root:not(.dark-mode) .summary-card.red .summary-val,
+  :root:not(.dark-mode) .desktop-kpi-card.red .summary-val,
+  :root:not(.dark-mode) .dashboard-header .summary-card.red .summary-val {
+    color: #881337 !important;
+    font-weight: 800 !important;
+    text-shadow: none !important;
+  }
+  :root:not(.dark-mode) .summary-card.red .desktop-kpi-trend,
+  :root:not(.dark-mode) .desktop-kpi-card.red .desktop-kpi-trend,
+  :root:not(.dark-mode) .summary-card.red .desktop-kpi-trend.negative,
+  :root:not(.dark-mode) .desktop-kpi-card.red .desktop-kpi-trend.negative {
+    color: #be123c !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+  }
+
+  :root:not(.dark-mode) .summary-card.gold,
+  :root:not(.dark-mode) .desktop-kpi-card.gold {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+    border: 1.5px solid #f59e0b !important;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.16), 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  }
+  :root:not(.dark-mode) .summary-card.gold .summary-lbl,
+  :root:not(.dark-mode) .desktop-kpi-card.gold .summary-lbl {
+    color: #92400e !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    text-shadow: none !important;
+  }
+  :root:not(.dark-mode) .summary-card.gold .summary-val,
+  :root:not(.dark-mode) .desktop-kpi-card.gold .summary-val {
+    color: #78350f !important;
+    font-weight: 800 !important;
+    text-shadow: none !important;
+  }
+  :root:not(.dark-mode) .summary-card.gold .desktop-kpi-trend,
+  :root:not(.dark-mode) .desktop-kpi-card.gold .desktop-kpi-trend {
+    color: #b45309 !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+  }
+
+  :root:not(.dark-mode) .summary-card.blue,
+  :root:not(.dark-mode) .desktop-kpi-card.blue {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+    border: 1.5px solid #3b82f6 !important;
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.12), 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  }
+  :root:not(.dark-mode) .summary-card.blue .summary-lbl,
+  :root:not(.dark-mode) .desktop-kpi-card.blue .summary-lbl {
+    color: #1e40af !important;
+    font-weight: 700 !important;
+  }
+  :root:not(.dark-mode) .summary-card.blue .summary-val,
+  :root:not(.dark-mode) .desktop-kpi-card.blue .summary-val {
+    color: #172554 !important;
+    font-weight: 800 !important;
+  }
+  :root:not(.dark-mode) .summary-card.blue .desktop-kpi-trend,
+  :root:not(.dark-mode) .desktop-kpi-card.blue .desktop-kpi-trend {
+    color: #1d4ed8 !important;
+    font-weight: 700 !important;
+  }
+
+  :root:not(.dark-mode) .summary-card.slate,
+  :root:not(.dark-mode) .desktop-kpi-card.slate {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+    border: 1.5px solid #cbd5e1 !important;
+  }
+  :root:not(.dark-mode) .summary-card.slate .summary-lbl,
+  :root:not(.dark-mode) .desktop-kpi-card.slate .summary-lbl {
+    color: #475569 !important;
+    font-weight: 700 !important;
+  }
+  :root:not(.dark-mode) .summary-card.slate .summary-val,
+  :root:not(.dark-mode) .desktop-kpi-card.slate .summary-val {
+    color: #0f172a !important;
+    font-weight: 800 !important;
+  }
+  :root:not(.dark-mode) .summary-card.slate .desktop-kpi-trend,
+  :root:not(.dark-mode) .desktop-kpi-card.slate .desktop-kpi-trend {
+    color: #64748b !important;
+    font-weight: 700 !important;
+  }
+
+  /* ── Dark Mode KPI Cards on Desktop ── */
+  :root.dark-mode .summary-card.green,
+  :root.dark-mode .desktop-kpi-card.green {
+    background: linear-gradient(135deg, rgba(5, 120, 85, 0.74) 0%, rgba(16, 185, 129, 0.58) 100%) !important;
+    backdrop-filter: blur(24px) saturate(220%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(220%) !important;
+    border: 1.5px solid rgba(167, 243, 208, 0.65) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22), 0 2px 8px rgba(16, 185, 129, 0.35), inset 0 1.5px 2px rgba(255, 255, 255, 0.65) !important;
+  }
+  :root.dark-mode .summary-card.red,
+  :root.dark-mode .desktop-kpi-card.red {
+    background: linear-gradient(135deg, rgba(185, 28, 28, 0.74) 0%, rgba(239, 68, 68, 0.58) 100%) !important;
+    backdrop-filter: blur(24px) saturate(220%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(220%) !important;
+    border: 1.5px solid rgba(254, 202, 202, 0.65) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22), 0 2px 8px rgba(239, 68, 68, 0.35), inset 0 1.5px 2px rgba(255, 255, 255, 0.65) !important;
   }
 
   .desktop-kpi-header {
@@ -8753,9 +9251,7 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
     right: 32px !important;
     left: auto !important;
     transform: none !important;
-    background: var(--dt-surface) !important;
-    border: 1px solid var(--dt-border) !important;
-    color: var(--dt-text-primary) !important;
+    border: none !important;
     box-shadow: 0 4px 16px rgba(0,0,0,0.2) !important;
     width: 52px !important;
     height: 52px !important;
@@ -8768,14 +9264,30 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
     transition: all 0.15s ease-out !important;
   }
 
-  :root.dark-mode .fab-btn {
-    background: #141518 !important;
-    color: var(--dt-silver-start) !important;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.5) !important;
+  .fab-btn:not(.pay-fab-btn):not(.ai-fab-btn) {
+    background: var(--primary) !important;
+    color: #ffffff !important;
+    border: none !important;
+  }
+
+  .fab-btn:not(.pay-fab-btn):not(.ai-fab-btn) svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+  }
+
+  :root.dark-mode .fab-btn:not(.pay-fab-btn):not(.ai-fab-btn) {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: none !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5), 0 0 14px rgba(255, 255, 255, 0.25) !important;
+  }
+
+  :root.dark-mode .fab-btn:not(.pay-fab-btn):not(.ai-fab-btn) svg {
+    color: #111827 !important;
+    stroke: #111827 !important;
   }
 
   .fab-btn:hover {
-    border-color: var(--dt-silver-start) !important;
     transform: scale(1.05) !important;
   }
 
@@ -12012,6 +12524,8 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   display: flex;
   align-items: center;
   gap: 16px;
+  flex: 1;
+  min-width: 0;
 }
 
 .loan-card-icon {
@@ -12023,12 +12537,14 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   justify-content: center;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   background: linear-gradient(135deg, var(--primary-light), var(--surface));
+  flex-shrink: 0;
 }
 
 .loan-card-text {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
 .loan-card-name {
@@ -12038,17 +12554,59 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   letter-spacing: -0.3px;
 }
 
-.loan-card-lender {
-  font-size: 0.85rem;
+.loan-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.loan-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--surface2);
   color: var(--text2);
-  font-weight: 500;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.loan-meta-chip.lender {
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--primary);
+  border-color: rgba(37, 99, 235, 0.2);
+}
+
+:root.dark-mode .loan-meta-chip.lender {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.25);
 }
 
 .loan-card-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   color: var(--text2);
+  flex-shrink: 0;
+}
+
+.loan-card-amount-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.loan-card-amount-lbl {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text3, #64748b);
 }
 
 .loan-card-amount {
@@ -12065,6 +12623,14 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   margin-left: 2px;
 }
 
+.loan-card-expand-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text2);
+  transition: transform 0.2s ease;
+}
+
 .loan-progress-wrap {
   padding: 0 20px 20px;
 }
@@ -12074,7 +12640,7 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   background: var(--surface2);
   border-radius: 99px;
   overflow: hidden;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
 }
 
@@ -12088,9 +12654,51 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
 .loan-progress-info {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--text2);
+}
+
+.loan-progress-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.loan-progress-stat.right {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.loan-stat-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text3, #64748b);
+}
+
+.loan-stat-val {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.loan-stat-pct {
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+:root.dark-mode .loan-stat-pct {
+  color: #38bdf8;
+}
+
+.loan-stat-total {
+  font-size: 0.775rem;
+  font-weight: 500;
+  color: var(--text3, #64748b);
 }
 
 .loan-expanded {
@@ -12295,18 +12903,21 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
 .loan-card-actions {
   display: flex;
   gap: 12px;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 20px;
+  margin-bottom: 24px;
 }
 
 .loan-action-btn {
-  padding: 8px 16px;
+  padding: 8px 20px;
   font-size: 0.9rem;
   font-weight: 600;
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   border-radius: 10px;
+  min-width: 100px;
 }
 
 .loan-action-btn.del {
@@ -12319,6 +12930,132 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   background: rgba(239, 68, 68, 0.15);
   border-color: var(--danger);
   transform: translateY(-1px);
+}
+
+/* ── Loan & EMI Card Mobile Portrait Layout (< 768px) ──────── */
+@media (max-width: 767px) {
+  .loan-card {
+    border-radius: 18px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  }
+
+  .loan-card-header {
+    padding: 16px 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .loan-card-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .loan-card-icon {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+
+  .loan-card-text {
+    flex: 1;
+    min-width: 0;
+    gap: 5px;
+  }
+
+  .loan-card-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--text);
+    word-break: break-word;
+  }
+
+  .loan-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 2px;
+  }
+
+  .loan-meta-chip {
+    font-size: 0.72rem;
+    padding: 2.5px 8px;
+    border-radius: 6px;
+  }
+
+  /* Featured Monthly EMI banner on Mobile Portrait */
+  .loan-card-right {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    gap: 10px;
+  }
+
+  .loan-card-amount-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .loan-card-amount-lbl {
+    font-size: 0.65rem;
+    letter-spacing: 0.6px;
+  }
+
+  .loan-card-amount {
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  .loan-card-expand-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .loan-progress-wrap {
+    padding: 0 14px 16px;
+  }
+
+  .loan-progress-bar {
+    height: 7px;
+    margin-bottom: 10px;
+  }
+
+  .loan-progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .loan-stat-title {
+    font-size: 0.65rem;
+  }
+
+  .loan-stat-val {
+    font-size: 0.825rem;
+  }
 }
 
 @media (min-width: 768px) {
