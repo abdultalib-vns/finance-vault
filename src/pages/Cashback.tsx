@@ -1,4 +1,4 @@
-import { Gift } from "lucide-react";
+import { Gift, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { CashbackEntry } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
@@ -7,9 +7,10 @@ import { generateId } from "../lib/utils";
 
 interface Props {
   currency: Currency;
+  onBack?: () => void;
 }
 
-export default function Cashback({ currency }: Props) {
+export default function Cashback({ currency, onBack }: Props) {
   const [entries, setEntries] = useState<CashbackEntry[]>(() =>
     [...loadCashbacks()].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   );
@@ -69,9 +70,23 @@ export default function Cashback({ currency }: Props) {
     <div className="screen">
       <header className="page-header">
         <div className="page-header-row">
-          <div>
-            <h2 className="header-title"><Gift size={20} /> Cashback Tracker</h2>
-            <span className="desktop-header-subtitle">Rewards, Rebates &amp; Performance</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <button
+              type="button"
+              className="btn-header-icon page-header-back-btn"
+              onClick={() => {
+                if (onBack) onBack();
+                else window.dispatchEvent(new CustomEvent('navigate-dashboard'));
+              }}
+              aria-label="Back"
+              title="Back to Dashboard"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <div>
+              <h2 className="header-title"><Gift size={20} /> Cashback Tracker</h2>
+              <span className="desktop-header-subtitle">Rewards, Rebates &amp; Performance</span>
+            </div>
           </div>
         </div>
       </header>

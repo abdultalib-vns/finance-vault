@@ -1,9 +1,10 @@
-import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff, User, Camera, Edit2, Save, Grid3x3, Code, Database, Cpu, RotateCcw, Bug, Terminal, Layers, Zap, QrCode, ScanLine, ShieldCheck, HelpCircle, BookOpen, Coins, Bell, Clock } from "lucide-react";
+import { XCircle, Archive, Upload, Download, Key, Timer, Smartphone, LayoutDashboard, CreditCard, Building2, Gift, Sun, Moon, Lock, CheckCircle, LogOut, Calendar, Trash, MessageSquare, Info, AlertTriangle, Send, DollarSign, Receipt, TrendingUp, RefreshCw, ClipboardList, Bot, Sparkles, Eye, EyeOff, User, Camera, Edit2, Save, Grid3x3, Code, Database, Cpu, RotateCcw, Bug, Terminal, Layers, Zap, QrCode, ScanLine, ShieldCheck, HelpCircle, BookOpen, Coins, Bell, Clock, Copy, Check, FileCode, Monitor } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { hashPin } from "../lib/crypto";
-import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses, saveAIOptions, loadAIOptions, getVeloAIUsageCount, loadUserProfile, saveUserProfile, saveExpenses, saveCashbacks, saveBankExpenses, saveBills, loadPayAndRecordEnabled, savePayAndRecordEnabled } from "../lib/storage";
+import { savePinHash, clearAll, saveItems, saveCurrency, saveIdleTimeout, loadItems, loadExpenses, loadCashbacks, loadBankExpenses, saveAIOptions, loadAIOptions, getVeloAIUsageCount, loadUserProfile, saveUserProfile, saveExpenses, saveCashbacks, saveBankExpenses, saveBills, loadPayAndRecordEnabled, savePayAndRecordEnabled, loadLoans, saveLoans, loadEmiPayments, saveEmiPayments, loadCurrency, loadTheme, loadIdleTimeout } from "../lib/storage";
+import { customAlert } from "../components/CustomAlert";
 import { encryptData, decryptData } from "../lib/crypto";
-import { FinanceItem, Currency, AIOptions, UserProfile } from "../types";
+import { FinanceItem, Currency, AIOptions, UserProfile, LoanEntry, EmiPayment } from "../types";
 import { OPENROUTER_MODELS, GROQ_MODELS } from "../lib/ai";
 import ImageCropper from "../components/ImageCropper";
 import VeloAppsModal from "../components/VeloAppsModal";
@@ -345,6 +346,69 @@ export default function Settings({
     devAddLog(`Loaded ${dummyExpenses.length} dummy card expenses across ${new Set([c1,c2,c3]).size} cards.`);
   }
 
+  function devLoadDummyLoans() {
+    const t = Date.now();
+    const l1: LoanEntry = {
+      id: `dev-loan-${t}-1`,
+      type: "loan",
+      name: "HDFC Home Loan",
+      lender: "HDFC Bank",
+      principalAmount: 2500000,
+      tenureMonths: 120,
+      interestRate: 8.5,
+      monthlyEmi: 30997,
+      taxes: [{ name: "CGST", percentage: 9 }, { name: "SGST", percentage: 9 }],
+      totalPayable: 3719640,
+      startDate: "2025-01",
+      notes: "Fixed interest for first 3 years",
+      createdAt: t
+    };
+    const l2: LoanEntry = {
+      id: `dev-loan-${t}-2`,
+      type: "credit_card",
+      name: "iPhone 16 Pro Max EMI",
+      lender: "HDFC Millennia",
+      principalAmount: 144900,
+      tenureMonths: 12,
+      interestRate: 0,
+      monthlyEmi: 12075,
+      taxes: [],
+      totalPayable: 144900,
+      startDate: "2026-01",
+      notes: "Purchased on Amazon Great Indian Festival",
+      createdAt: t
+    };
+
+    const existingLoans = loadLoans();
+    saveLoans([...existingLoans, l1, l2]);
+
+    const emi1: EmiPayment[] = [
+      { id: `dev-emi-${t}-1`, loanId: l1.id, monthIndex: 1, monthLabel: "Jan 2025", amount: 30997, paid: true, paidDate: "2025-01-05" },
+      { id: `dev-emi-${t}-2`, loanId: l1.id, monthIndex: 2, monthLabel: "Feb 2025", amount: 30997, paid: true, paidDate: "2025-02-05" },
+      { id: `dev-emi-${t}-3`, loanId: l1.id, monthIndex: 3, monthLabel: "Mar 2025", amount: 30997, paid: false },
+    ];
+    const emi2: EmiPayment[] = [
+      { id: `dev-emi-${t}-4`, loanId: l2.id, monthIndex: 1, monthLabel: "Jan 2026", amount: 12075, paid: true, paidDate: "2026-01-10" },
+      { id: `dev-emi-${t}-5`, loanId: l2.id, monthIndex: 2, monthLabel: "Feb 2026", amount: 12075, paid: true, paidDate: "2026-02-10" },
+      { id: `dev-emi-${t}-6`, loanId: l2.id, monthIndex: 3, monthLabel: "Mar 2026", amount: 12075, paid: false },
+    ];
+    saveEmiPayments([...loadEmiPayments(), ...emi1, ...emi2]);
+    devAddLog("Loaded 2 dummy loans (Home Loan & iPhone EMI) with EMI payments.");
+  }
+
+  function devLoadDummyCashbacks() {
+    const t = Date.now();
+    const dummyCashbacks = [
+      { id: `dev-cb-${t}-1`, source: "HDFC Millennia (Amazon 5%)", amount: 750, date: new Date().toISOString().split("T")[0], createdAt: t },
+      { id: `dev-cb-${t}-2`, source: "SBI Cashback (Online 5%)", amount: 1250, date: new Date(Date.now() - 3*86400000).toISOString().split("T")[0], createdAt: t },
+      { id: `dev-cb-${t}-3`, source: "Axis Airtel (Utility 10%)", amount: 300, date: new Date(Date.now() - 7*86400000).toISOString().split("T")[0], createdAt: t },
+      { id: `dev-cb-${t}-4`, source: "ICICI Amazon Pay", amount: 480, date: new Date(Date.now() - 12*86400000).toISOString().split("T")[0], createdAt: t },
+      { id: `dev-cb-${t}-5`, source: "Swiggy HDFC (Food 10%)", amount: 260, date: new Date(Date.now() - 15*86400000).toISOString().split("T")[0], createdAt: t }
+    ];
+    saveCashbacks([...dummyCashbacks, ...loadCashbacks()]);
+    devAddLog("Loaded 5 dummy cashback records across popular cards.");
+  }
+
   function devClearSessionStorage() {
     sessionStorage.clear();
     devAddLog("Session storage cleared.");
@@ -353,6 +417,88 @@ export default function Settings({
   function devForceReload() {
     devAddLog("Forcing full reload...");
     window.location.reload();
+  }
+
+  async function devPurgeCachesAndSW() {
+    try {
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k)));
+      }
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map(r => r.unregister()));
+      }
+      devAddLog("Purged all CacheStorage and unregistered Service Workers.");
+      customAlert("Cache cleared and service workers unregistered.", "Cache Cleared", "success");
+    } catch (e: any) {
+      devAddLog("Failed to purge caches: " + e.message);
+    }
+  }
+
+  const [showJsonModal, setShowJsonModal] = useState(false);
+  const [jsonImportText, setJsonImportText] = useState("");
+  const [jsonCopied, setJsonCopied] = useState(false);
+
+  function devExportRawJson(): string {
+    const rawData = {
+      exportedAt: new Date().toISOString(),
+      items: loadItems(),
+      expenses: loadExpenses(),
+      cashbacks: loadCashbacks(),
+      bankExpenses: loadBankExpenses(),
+      loans: loadLoans(),
+      emiPayments: loadEmiPayments(),
+      aiOptions: loadAIOptions(),
+      userProfile: loadUserProfile(),
+      settings: {
+        currency: loadCurrency(),
+        theme: loadTheme(),
+        idleTimeout: loadIdleTimeout(),
+        payAndRecordEnabled: loadPayAndRecordEnabled(),
+      }
+    };
+    return JSON.stringify(rawData, null, 2);
+  }
+
+  function devCopyRawJson() {
+    const json = devExportRawJson();
+    navigator.clipboard.writeText(json);
+    setJsonCopied(true);
+    setTimeout(() => setJsonCopied(false), 2000);
+    devAddLog("Copied full unencrypted vault JSON to clipboard.");
+  }
+
+  function devDownloadRawJson() {
+    const json = devExportRawJson();
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `finaura_vault_debug_${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    devAddLog("Downloaded raw vault JSON dump file.");
+  }
+
+  function devImportRawJson(text: string) {
+    try {
+      const data = JSON.parse(text);
+      if (Array.isArray(data.items)) { saveItems(data.items); onItemsChange(data.items); }
+      if (Array.isArray(data.expenses)) saveExpenses(data.expenses);
+      if (Array.isArray(data.cashbacks)) saveCashbacks(data.cashbacks);
+      if (Array.isArray(data.bankExpenses)) saveBankExpenses(data.bankExpenses);
+      if (Array.isArray(data.loans)) saveLoans(data.loans);
+      if (Array.isArray(data.emiPayments)) saveEmiPayments(data.emiPayments);
+      if (data.userProfile) saveUserProfile(data.userProfile);
+      if (data.aiOptions) saveAIOptions(data.aiOptions);
+      devAddLog("Successfully imported and restored raw vault JSON.");
+      customAlert("Raw JSON data has been restored to your vault.", "Import Successful", "success");
+      setShowJsonModal(false);
+      setJsonImportText("");
+    } catch (e: any) {
+      customAlert("Invalid JSON format: " + e.message, "Import Error", "error");
+    }
   }
 
   function getStorageUsage(): string {
@@ -384,6 +530,12 @@ export default function Settings({
     onItemsChange(updatedItems);
     const updatedExpenses = loadExpenses().filter((e: any) => !e.id.startsWith("dev-"));
     saveExpenses(updatedExpenses);
+    const updatedLoans = loadLoans().filter((l: any) => !l.id.startsWith("dev-"));
+    saveLoans(updatedLoans);
+    const updatedEmis = loadEmiPayments().filter((p: any) => !p.id.startsWith("dev-"));
+    saveEmiPayments(updatedEmis);
+    const updatedCashbacks = loadCashbacks().filter((c: any) => !c.id.startsWith("dev-"));
+    saveCashbacks(updatedCashbacks);
     devAddLog("Purged all dummy data (dev-* prefixed entries).");
   }
 
@@ -1182,9 +1334,8 @@ export default function Settings({
         {/* Credit */}
         <div 
           style={{ textAlign: "center", padding: "10px 0 30px", fontSize: "0.75rem", color: "var(--text3)", opacity: 0.8, lineHeight: 1.4, cursor: "default", userSelect: "none" }}
-          onClick={handleDevTap}
         >
-          Developed by Velo Launch <br /> A Company by <a href="https://smartvistaitsolutions.in" target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 600 }} onClick={(e) => e.stopPropagation()}>Smart Vista IT Solutions</a>
+          Developed by <a href="https://velolaunch-aistudio.vercel.app" target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 600 }} onClick={(e) => e.stopPropagation()}>VeloLaunch</a> <br /> A <span onClick={handleDevTap} style={{ cursor: "pointer", userSelect: "none", fontWeight: 600 }}>Company</span> by <a href="https://smartvistaitsolutions.in" target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 600 }} onClick={(e) => e.stopPropagation()}>Smart Vista IT Solutions</a>
         </div>
       </div>
     </div>
@@ -1388,6 +1539,26 @@ export default function Settings({
                 )}
               </div>
 
+              {/* Raw JSON Database Tools */}
+              <div className="settings-section" style={{ margin: 0, padding: '12px 16px', background: 'var(--surface2)', borderRadius: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                  <FileCode size={16} style={{ color: 'var(--primary)' }} />
+                  <strong style={{ fontSize: '0.9rem' }}>Raw Vault JSON</strong>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={devCopyRawJson}>
+                    {jsonCopied ? <Check size={16} style={{ color: 'var(--success)' }} /> : <Copy size={16} />}
+                    {jsonCopied ? "Copied JSON to Clipboard!" : "Copy Raw Vault JSON"}
+                  </button>
+                  <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={devDownloadRawJson}>
+                    <Download size={16} /> Download Raw JSON Dump
+                  </button>
+                  <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={() => setShowJsonModal(true)}>
+                    <Upload size={16} /> Import / Restore Raw JSON
+                  </button>
+                </div>
+              </div>
+
               {/* Data Seeding */}
               <div className="settings-section" style={{ margin: 0, padding: '12px 16px', background: 'var(--surface2)', borderRadius: '12px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
@@ -1400,6 +1571,12 @@ export default function Settings({
                   </button>
                   <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={devLoadDummyExpenses}>
                     <Receipt size={16} /> Load Dummy Card Expenses (15)
+                  </button>
+                  <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={devLoadDummyLoans}>
+                    <Coins size={16} /> Load Dummy Loans &amp; EMIs (2)
+                  </button>
+                  <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={devLoadDummyCashbacks}>
+                    <Gift size={16} /> Load Dummy Cashbacks (5)
                   </button>
                   <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start', borderColor: 'var(--danger)', color: 'var(--danger)' }} onClick={devPurgeDummyData}>
                     <Trash size={16} /> Purge All Dummy Data
@@ -1417,28 +1594,34 @@ export default function Settings({
                   <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={devClearSessionStorage}>
                     <RotateCcw size={16} /> Clear Session Storage
                   </button>
+                  <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={devPurgeCachesAndSW}>
+                    <RefreshCw size={16} /> Purge Cache &amp; Unregister SW
+                  </button>
                   <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={devForceReload}>
                     <RefreshCw size={16} /> Force App Reload
                   </button>
-                  <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={() => { console.log("[DEV] Items:", items); console.log("[DEV] Expenses:", loadExpenses()); console.log("[DEV] Cashbacks:", loadCashbacks()); devAddLog("Dumped all data to browser console."); }}>
+                  <button className="btn-outline" style={{ fontSize: '0.85rem', padding: '10px 14px', justifyContent: 'flex-start' }} onClick={() => { console.log("[DEV] Items:", items); console.log("[DEV] Expenses:", loadExpenses()); console.log("[DEV] Cashbacks:", loadCashbacks()); console.log("[DEV] Loans:", loadLoans()); devAddLog("Dumped all data to browser console."); }}>
                     <Terminal size={16} /> Dump Data to Console
                   </button>
                 </div>
               </div>
 
-              {/* Environment Info */}
+              {/* Environment & Diagnostics */}
               <div className="settings-section" style={{ margin: 0, padding: '12px 16px', background: 'var(--surface2)', borderRadius: '12px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                   <Cpu size={16} style={{ color: 'var(--primary)' }} />
-                  <strong style={{ fontSize: '0.9rem' }}>Environment</strong>
+                  <strong style={{ fontSize: '0.9rem' }}>Environment &amp; Diagnostics</strong>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', fontSize: '0.78rem', color: 'var(--text2)' }}>
                   <span>Version</span><strong style={{ textAlign: 'right' }}>{APP_VERSION}</strong>
                   <span>Theme</span><strong style={{ textAlign: 'right' }}>{theme}</strong>
                   <span>Currency</span><strong style={{ textAlign: 'right' }}>{currency.code}</strong>
                   <span>AI Provider</span><strong style={{ textAlign: 'right' }}>{aiOpts.provider || 'none'}</strong>
+                  <span>Viewport</span><strong style={{ textAlign: 'right' }}>{window.innerWidth} &times; {window.innerHeight}</strong>
+                  <span>DPR</span><strong style={{ textAlign: 'right' }}>{window.devicePixelRatio}x</strong>
+                  <span>Touch Device</span><strong style={{ textAlign: 'right' }}>{'ontouchstart' in window ? 'Yes' : 'No'}</strong>
                   <span>Biometric</span><strong style={{ textAlign: 'right' }}>{bioEnabled ? 'Enabled' : 'Disabled'}</strong>
-                  <span>User Agent</span><strong style={{ textAlign: 'right', fontSize: '0.65rem', wordBreak: 'break-all' }}>{navigator.userAgent.split(' ').slice(-2).join(' ')}</strong>
+                  <span>Memory</span><strong style={{ textAlign: 'right' }}>{(performance as any).memory ? `${Math.round((performance as any).memory.usedJSHeapSize / 1048576)} MB` : 'N/A'}</strong>
                 </div>
               </div>
 
@@ -1457,6 +1640,53 @@ export default function Settings({
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Raw JSON Import Modal */}
+      {showJsonModal && (
+        <div className="modal-overlay" onClick={() => setShowJsonModal(false)}>
+          <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ maxWidth: 480, width: '92%' }}>
+            <div className="modal-header">
+              <h3 className="form-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <FileCode size={18} /> Import Raw Vault JSON
+              </h3>
+              <button className="modal-close" onClick={() => setShowJsonModal(false)}><XCircle size={20} /></button>
+            </div>
+            <div style={{ padding: '16px 0', display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text2)', margin: 0 }}>
+                Paste unencrypted vault JSON data below. This will overwrite existing items, expenses, loans, and cashbacks.
+              </p>
+              <textarea
+                rows={10}
+                style={{ 
+                  width: '100%', 
+                  background: 'var(--surface2)', 
+                  border: '1px solid var(--border)', 
+                  borderRadius: 8, 
+                  padding: 10, 
+                  fontFamily: 'monospace', 
+                  fontSize: '0.75rem', 
+                  color: 'var(--text)',
+                  resize: 'vertical'
+                }}
+                placeholder="Paste raw JSON here..."
+                value={jsonImportText}
+                onChange={e => setJsonImportText(e.target.value)}
+              />
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
+                <button type="button" className="btn-secondary" onClick={() => setShowJsonModal(false)}>Cancel</button>
+                <button 
+                  type="button" 
+                  className="btn-primary" 
+                  disabled={!jsonImportText.trim()}
+                  onClick={() => devImportRawJson(jsonImportText)}
+                >
+                  Restore Data
+                </button>
+              </div>
             </div>
           </div>
         </div>

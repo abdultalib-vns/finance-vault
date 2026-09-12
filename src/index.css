@@ -1048,23 +1048,41 @@ html, body {
 }
 
 /* ── PWA Floating Install Banner ───────────────────── */
+@keyframes authInstallSlideUp {
+  0% {
+    transform: translate(-50%, calc(100% + 60px));
+    opacity: 0;
+  }
+  65% {
+    transform: translate(-50%, -4px);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
 .auth-luxury-install-banner {
   position: fixed;
-  bottom: 24px;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px);
-  max-width: 400px;
-  background: rgba(15, 23, 42, 0.92);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  border-radius: 18px;
+  max-width: 420px;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 20px;
   padding: 14px 18px;
   display: flex;
   align-items: center;
   gap: 12px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-  z-index: 1000;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65), 0 0 25px rgba(245, 158, 11, 0.12);
+  z-index: 9999;
+  animation: authInstallSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
 }
 
 .auth-install-icon-box {
@@ -1130,6 +1148,29 @@ html, body {
 
 .auth-install-btn-dismiss:hover {
   color: #F8FAFC;
+}
+
+/* Light mode support for install banner */
+.auth-screen-luxury.auth-light-mode .auth-luxury-install-banner {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(245, 158, 11, 0.18);
+}
+
+.auth-screen-luxury.auth-light-mode .auth-install-content h4 {
+  color: #0F172A;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-install-content p {
+  color: #64748B;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-install-btn-dismiss {
+  color: #64748B;
+}
+
+.auth-screen-luxury.auth-light-mode .auth-install-btn-dismiss:hover {
+  color: #0F172A;
 }
 
 /* Animations */

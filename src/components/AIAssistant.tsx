@@ -1,13 +1,19 @@
 import { customAlert, customConfirm } from "../components/CustomAlert";
 import React, { useState, useRef, useEffect } from "react";
 import { Bot, X, Send, Sparkles, User, RefreshCw, Trash2, Mic } from "lucide-react";
-import { AIOptions, FinanceItem, CardExpense } from "../types";
+import { AIOptions, FinanceItem, CardExpense, LoanEntry, EmiPayment } from "../types";
 import { askVault, AIResponse } from "../lib/ai";
 import { executeAITool } from "../lib/ai-tools";
+import { loadUserProfile } from "../lib/storage";
 
 interface Props {
   aiOpts: AIOptions;
-  contextData: { items: FinanceItem[]; expenses: CardExpense[] };
+  contextData: { 
+    items: FinanceItem[]; 
+    expenses: CardExpense[];
+    loans?: LoanEntry[];
+    emiPayments?: EmiPayment[];
+  };
   onClose: () => void;
   onDataChanged: () => void;
 }
@@ -161,9 +167,14 @@ export default function AIAssistant({ aiOpts, contextData, onClose, onDataChange
     recognition.start();
   }
 
+  const userProfile = loadUserProfile();
+  const userPhoto = userProfile?.photo || "";
+  const blankUserAvatar = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2394a3b8'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E";
+
   const promptSuggestions = [
     "How much did I spend this month?",
-    "When is my next FD maturing?",
+    "What is my total remaining EMI & loan balance?",
+    "When is my next upcoming due date or EMI?",
     "What is my highest credit card bill?"
   ];
 
@@ -171,8 +182,13 @@ export default function AIAssistant({ aiOpts, contextData, onClose, onDataChange
     <div className="ai-assistant-overlay">
       <div className="ai-assistant-panel">
         <div className="ai-header">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div className="ai-header-icon"><Bot size={20} /></div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <img 
+              src="/FinAura-AI.png" 
+              alt="FinAura AI" 
+              className="ai-header-avatar" 
+              style={{ width: 32, height: 32, borderRadius: 8, objectFit: "contain" }} 
+            />
             <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600 }}>FinAura Assistant</h3>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
@@ -196,8 +212,20 @@ export default function AIAssistant({ aiOpts, contextData, onClose, onDataChange
         >
           {messages.map(m => (
             <div key={m.id} className={`ai-msg-row ${m.role}`}>
-              <div className="ai-msg-avatar">
-                {m.role === "ai" ? <Sparkles size={14} /> : <User size={14} />}
+              <div className="ai-msg-avatar" style={{ overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {m.role === "ai" ? (
+                  <img 
+                    src="/FinAura_AI_Assistant.png" 
+                    alt="FinAura AI" 
+                    style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }} 
+                  />
+                ) : (
+                  <img 
+                    src={userPhoto || blankUserAvatar} 
+                    alt="User" 
+                    style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }} 
+                  />
+                )}
               </div>
               <div className={`ai-msg-bubble ${m.loading ? 'loading' : ''}`}>
                 {m.loading ? (

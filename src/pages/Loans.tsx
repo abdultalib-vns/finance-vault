@@ -555,6 +555,16 @@ export default function Loans({ currency, items }: Props) {
                         </div>
                       )}
 
+                      {/* Actions (Above EMI Schedule) */}
+                      <div className="loan-card-actions">
+                        <button type="button" className="btn-outline loan-action-btn" onClick={() => openEditForm(loan)}>
+                          <Edit3 size={14} /> Edit
+                        </button>
+                        <button type="button" className="btn-outline loan-action-btn del" onClick={() => deleteLoan(loan.id)}>
+                          <Trash2 size={14} /> Delete
+                        </button>
+                      </div>
+
                       {/* EMI Schedule List */}
                       <h4 className="loan-emi-heading">EMI Schedule</h4>
                       <div className="loan-emi-list">
@@ -592,16 +602,6 @@ export default function Loans({ currency, items }: Props) {
                             </div>
                           </div>
                         ))}
-                      </div>
-
-                      {/* Actions */}
-                      <div className="loan-card-actions">
-                        <button type="button" className="btn-outline loan-action-btn" onClick={() => openEditForm(loan)}>
-                          <Edit3 size={14} /> Edit
-                        </button>
-                        <button type="button" className="btn-outline loan-action-btn del" onClick={() => deleteLoan(loan.id)}>
-                          <Trash2 size={14} /> Delete
-                        </button>
                       </div>
                     </div>
                   )}
